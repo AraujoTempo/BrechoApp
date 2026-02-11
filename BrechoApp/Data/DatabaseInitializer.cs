@@ -1,0 +1,231 @@
+﻿using Microsoft.Data.Sqlite;
+
+namespace BrechoApp.Data
+{
+    /// <summary>
+    /// Responsável por criar todas as tabelas do banco SQLite.
+    /// Este arquivo define o schema oficial do sistema.
+    /// Sempre que um novo campo é adicionado em um modelo ou repositório,
+    /// ele deve ser incluído aqui.
+    /// </summary>
+    public static class DatabaseInitializer
+    {
+        public static void Initialize()
+        {
+            using var connection = Conexao.GetConnection();
+            connection.Open();
+
+            // -----------------------------------------------------------------
+            // IMPORTANTE:
+            // SQLite NÃO altera tabelas existentes.
+            // Se você mudar o schema, precisa APAGAR o arquivo brecho.db
+            // para que ele seja recriado com a estrutura nova.
+            // -----------------------------------------------------------------
+
+            string sql = @"
+
+                ---------------------------------------------------------
+                -- TABELA: PARCEIROS DE NEGÓCIO (PN)
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS ParceirosNegocio (
+                    CodigoParceiro TEXT PRIMARY KEY,
+                    Nome TEXT NOT NULL,
+                    CPF TEXT NOT NULL,
+                    Apelido TEXT NOT NULL,
+                    Telefone TEXT NOT NULL,
+
+                    Endereco TEXT,
+                    Email TEXT,
+
+                    Banco TEXT,
+                    Agencia TEXT,
+                    Conta TEXT,
+                    Pix TEXT,
+
+                    PercentualComissao REAL,
+                    AutorizaDoacao INTEGER,
+
+                    Observacao TEXT,
+                    Aniversario TEXT,
+
+                    SaldoCredito REAL,
+
+                    DataCriacao TEXT,
+                    UltimaAtualizacao TEXT
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE VENDEDORES
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS Vendedores (
+                    CodigoVendedor TEXT PRIMARY KEY,
+                    Nome TEXT NOT NULL,
+                    CPF TEXT,
+                    Telefone TEXT,
+                    Email TEXT,
+                    Endereco TEXT,
+
+                    Banco TEXT,
+                    Agencia TEXT,
+                    Conta TEXT,
+
+                    ComissaoVendedor REAL DEFAULT 0,
+                    Observacao TEXT,
+
+                    Ativo INTEGER DEFAULT 1
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE LOTE DE RECEBIMENTO
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS LoteRecebimento (
+                    CodigoLoteRecebimento TEXT PRIMARY KEY,
+                    CodigoParceiro TEXT NOT NULL,
+
+                    DataCriacao TEXT NOT NULL,
+                    DataRecebimento TEXT,
+                    DataAprovacao TEXT,
+
+                    StatusLote TEXT NOT NULL,
+
+                    TotalSugerido REAL DEFAULT 0,
+                    TotalVenda REAL DEFAULT 0,
+                    TotalComissao REAL DEFAULT 0,
+                    TotalCreditoParceiro REAL DEFAULT 0,
+
+                    Observacoes TEXT,
+                    UltimaAtualizacao TEXT,
+
+                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE ITENS DO LOTE
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS ItemLote (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                    CodigoLoteRecebimento TEXT NOT NULL,
+                    CodigoParceiro TEXT NOT NULL,
+
+                    NomeDoItem TEXT NOT NULL,
+                    MarcaDoItem TEXT NOT NULL,
+                    CategoriaDoItem TEXT NOT NULL,
+                    TamanhoCorDoItem TEXT NOT NULL,
+
+                    ObservacaoDoItem TEXT,
+
+                    PrecoSugeridoDoItem REAL NOT NULL,
+                    PrecoVendaDoItem REAL NOT NULL,
+
+                    StatusItem TEXT NOT NULL,
+
+                    CodigoProdutoGerado TEXT,
+
+                    DataCriacao TEXT NOT NULL,
+                    UltimaAtualizacao TEXT NOT NULL,
+
+                    FOREIGN KEY (CodigoLoteRecebimento) REFERENCES LoteRecebimento (CodigoLoteRecebimento),
+                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE CLIENTES
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS Clientes (
+                    CodigoCliente TEXT PRIMARY KEY,
+                    Nome TEXT NOT NULL,
+                    CPF TEXT,
+                    Telefone TEXT,
+                    Endereco TEXT,
+                    Email TEXT,
+                    Observacao TEXT,
+                    Aniversario TEXT,
+                    SaldoCredito REAL DEFAULT 0
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE PRODUTOS
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS Produtos (
+                    CodigoProduto TEXT PRIMARY KEY,
+                    CodigoLoteRecebimento TEXT NOT NULL,
+
+                    NomeDoItem TEXT NOT NULL,
+                    MarcaDoItem TEXT NOT NULL,
+                    ObservacaoDoItem TEXT,
+                    CategoriaDoItem TEXT NOT NULL,
+                    TamanhoCorDoItem TEXT NOT NULL,
+
+                    PrecoVendaDoItem REAL NOT NULL,
+                    StatusDoProduto TEXT NOT NULL,
+
+                    CodigoParceiro TEXT NOT NULL,
+
+                    DataCriacao TEXT NOT NULL,
+                    UltimaAtualizacao TEXT NOT NULL,
+
+                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro),
+                    FOREIGN KEY (CodigoLoteRecebimento) REFERENCES LoteRecebimento (CodigoLoteRecebimento)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE CRÉDITOS DO PARCEIRO
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS CreditoParceiro (
+                    CodigoCredito TEXT PRIMARY KEY,
+                    CodigoParceiro TEXT NOT NULL,
+                    ValorCredito REAL NOT NULL,
+                    DataCredito TEXT NOT NULL,
+                    OrigemCredito TEXT,
+
+                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE LOTE DE DEVOLUÇÃO
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS LoteDevolucao (
+                    CodigoLoteDevolucao TEXT PRIMARY KEY,
+                    CodigoParceiro TEXT NOT NULL,
+                    DataDevolucao TEXT,
+                    StatusDevolucao TEXT,
+
+                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE PRODUTOS DEVOLVIDOS
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS ProdutosDevolucao (
+                    CodigoProdutoDevolucao TEXT PRIMARY KEY,
+                    CodigoLoteDevolucao TEXT NOT NULL,
+                    CodigoProduto TEXT NOT NULL,
+                    MotivoDevolucao TEXT,
+                    DataDevolucao TEXT,
+
+                    FOREIGN KEY (CodigoLoteDevolucao) REFERENCES LoteDevolucao (CodigoLoteDevolucao),
+                    FOREIGN KEY (CodigoProduto) REFERENCES Produtos (CodigoProduto)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE VENDAS
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS Vendas (
+                    CodigoVenda TEXT PRIMARY KEY,
+                    CodigoProduto TEXT NOT NULL,
+                    CodigoParceiro TEXT NOT NULL,
+                    DataVenda TEXT NOT NULL,
+                    ValorVenda REAL NOT NULL,
+                    FormaPagamento TEXT,
+
+                    FOREIGN KEY (CodigoProduto) REFERENCES Produtos (CodigoProduto),
+                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
+            ";
+
+            using var cmd = new SqliteCommand(sql, connection);
+            cmd.ExecuteNonQuery();
+        }
+    }
+}
