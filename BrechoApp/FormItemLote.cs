@@ -23,6 +23,7 @@ namespace BrechoApp
         // CONTEXTO
         // ============================================================
         private readonly string _codigoLote;
+        private readonly string _codigoParceiro;
         private readonly string _statusLote;
         private ItemLote _itemEdicao;
 
@@ -49,11 +50,12 @@ namespace BrechoApp
         // ============================================================
         // CONSTRUTOR PARA NOVO ITEM
         // ============================================================
-        public FormItemLote(string codigoLote, string statusLote)
+        public FormItemLote(string codigoLote, string codigoParceiro, string statusLote)
         {
             InitializeComponent();
 
             _codigoLote = NormalizarCodigo(codigoLote);
+            _codigoParceiro = NormalizarCodigo(codigoParceiro);
             _statusLote = statusLote;
 
             // Valores padrão
@@ -72,11 +74,12 @@ namespace BrechoApp
         // ============================================================
         // CONSTRUTOR PARA EDITAR ITEM EXISTENTE
         // ============================================================
-        public FormItemLote(string codigoLote, string statusLote, ItemLote item)
+        public FormItemLote(string codigoLote, string codigoParceiro, string statusLote, ItemLote item)
         {
             InitializeComponent();
 
             _codigoLote = NormalizarCodigo(codigoLote);
+            _codigoParceiro = NormalizarCodigo(codigoParceiro);
             _statusLote = statusLote;
             _itemEdicao = item;
 
@@ -210,6 +213,7 @@ namespace BrechoApp
 
             // Normalização aplicada aqui
             _itemEdicao.CodigoLoteRecebimento = NormalizarCodigo(_codigoLote);
+            _itemEdicao.CodigoParceiro = NormalizarCodigo(_codigoParceiro);
 
             _itemEdicao.NomeDoItem = txtNomeItem.Text.Trim();
             _itemEdicao.MarcaDoItem = txtMarca.Text.Trim();

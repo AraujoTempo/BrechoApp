@@ -528,6 +528,7 @@ namespace BrechoApp
 
             using var frm = new FormItemLote(
                 NormalizarCodigo(_loteAtual.CodigoLoteRecebimento),
+                NormalizarCodigo(_loteAtual.CodigoParceiro),
                 _loteAtual.StatusLote
             );
 
@@ -593,6 +594,7 @@ namespace BrechoApp
 
             using var frm = new FormItemLote(
                 NormalizarCodigo(_loteAtual.CodigoLoteRecebimento),
+                NormalizarCodigo(_loteAtual.CodigoParceiro),
                 _loteAtual.StatusLote,
                 item
             );
