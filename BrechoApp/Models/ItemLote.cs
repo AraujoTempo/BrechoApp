@@ -39,6 +39,11 @@ namespace BrechoApp.Models
         // PREÇO DEFINIDO PELO BRECHÓ
         // ============================================================
 
+        /// <summary>
+        /// Preço sugerido pelo parceiro ou sistema (referência inicial).
+        /// </summary>
+        public double PrecoSugeridoDoItem { get; set; }
+
         public double PrecoVendaDoItem { get; set; }
 
         // ============================================================

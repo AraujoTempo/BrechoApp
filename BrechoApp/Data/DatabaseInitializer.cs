@@ -115,6 +115,7 @@ namespace BrechoApp.Data
 
                     ObservacaoDoItem TEXT,
 
+                    PrecoSugeridoDoItem REAL DEFAULT 0,
                     PrecoVendaDoItem REAL NOT NULL,
 
                     StatusItem TEXT NOT NULL,
