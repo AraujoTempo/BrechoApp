@@ -5,6 +5,10 @@ using ClosedXML.Excel;
 
 namespace BrechoApp
 {
+    /// <summary>
+    /// Tela de operações do sistema.
+    /// Centraliza exportações, relatórios e operações administrativas.
+    /// </summary>
     public partial class FormOperacoes : Form
     {
         public FormOperacoes()
@@ -27,7 +31,8 @@ namespace BrechoApp
 
                 if (produtos.Count == 0)
                 {
-                    MessageBox.Show("Não há produtos disponíveis para exportar.");
+                    MessageBox.Show("Não há produtos disponíveis para exportar.", 
+                        "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -35,7 +40,9 @@ namespace BrechoApp
                 {
                     var ws = wb.Worksheets.Add("Produtos Disponíveis");
 
-                    // Cabeçalho
+                    // ============================================================
+                    // CABEÇALHO
+                    // ============================================================
                     ws.Cell(1, 1).Value = "Código Produto";
                     ws.Cell(1, 2).Value = "Nome";
                     ws.Cell(1, 3).Value = "Marca";
@@ -44,13 +51,21 @@ namespace BrechoApp
                     ws.Cell(1, 6).Value = "Observação";
                     ws.Cell(1, 7).Value = "Preço Venda";
                     ws.Cell(1, 8).Value = "Status";
-                    ws.Cell(1, 9).Value = "Parceiro";              // <<< atualizado
+                    ws.Cell(1, 9).Value = "Parceiro";
                     ws.Cell(1, 10).Value = "Lote";
                     ws.Cell(1, 11).Value = "Data Criação";
                     ws.Cell(1, 12).Value = "Última Atualização";
 
-                    ws.Range(1, 1, 1, 12).Style.Font.Bold = true;
+                    // Formatação do cabeçalho
+                    var headerRange = ws.Range(1, 1, 1, 12);
+                    headerRange.Style.Font.Bold = true;
+                    headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
+                    headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                    headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
 
+                    // ============================================================
+                    // DADOS
+                    // ============================================================
                     int row = 2;
 
                     foreach (var p in produtos)
@@ -60,35 +75,77 @@ namespace BrechoApp
                         ws.Cell(row, 3).Value = p.MarcaDoItem;
                         ws.Cell(row, 4).Value = p.CategoriaDoItem;
                         ws.Cell(row, 5).Value = p.TamanhoCorDoItem;
-                        ws.Cell(row, 6).Value = p.ObservacaoDoItem;
+                        ws.Cell(row, 6).Value = p.ObservacaoDoItem ?? "";
                         ws.Cell(row, 7).Value = p.PrecoVendaDoItem;
                         ws.Cell(row, 8).Value = p.StatusDoProduto;
-                        ws.Cell(row, 9).Value = p.CodigoParceiro;     // <<< atualizado
+                        ws.Cell(row, 9).Value = p.CodigoParceiro;
                         ws.Cell(row, 10).Value = p.CodigoLoteRecebimento;
                         ws.Cell(row, 11).Value = p.DataCriacao.ToString("dd/MM/yyyy HH:mm");
                         ws.Cell(row, 12).Value = p.UltimaAtualizacao.ToString("dd/MM/yyyy HH:mm");
 
+                        // Formatação do preço
+                        ws.Cell(row, 7).Style.NumberFormat.Format = "R$ #,##0.00";
+
                         row++;
                     }
 
+                    // ============================================================
+                    // FORMATAÇÃO FINAL
+                    // ============================================================
+                    // Ajustar largura das colunas
                     ws.Columns().AdjustToContents();
 
+                    // Adicionar filtros
+                    ws.RangeUsed().SetAutoFilter();
+
+                    // Congelar primeira linha
+                    ws.SheetView.FreezeRows(1);
+
+                    // Adicionar rodapé com total de produtos
+                    int lastRow = row;
+                    ws.Cell(lastRow, 1).Value = "TOTAL DE PRODUTOS:";
+                    ws.Cell(lastRow, 1).Style.Font.Bold = true;
+                    ws.Cell(lastRow, 2).Value = produtos.Count;
+                    ws.Cell(lastRow, 2).Style.Font.Bold = true;
+
+                    // ============================================================
+                    // SALVAR ARQUIVO
+                    // ============================================================
                     var dialog = new SaveFileDialog
                     {
                         Filter = "Excel (*.xlsx)|*.xlsx",
-                        FileName = "Produtos_Disponiveis.xlsx"
+                        FileName = $"Produtos_Disponiveis_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx",
+                        Title = "Salvar Lista de Produtos Disponíveis"
                     };
 
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         wb.SaveAs(dialog.FileName);
-                        MessageBox.Show("Arquivo Excel gerado com sucesso!");
+                        
+                        var result = MessageBox.Show(
+                            $"Arquivo Excel gerado com sucesso!\n\n" +
+                            $"Total de produtos: {produtos.Count}\n" +
+                            $"Local: {dialog.FileName}\n\n" +
+                            "Deseja abrir o arquivo agora?",
+                            "Sucesso",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Information);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = dialog.FileName,
+                                UseShellExecute = true
+                            });
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Erro ao gerar Excel: " + ex.Message);
+                MessageBox.Show($"Erro ao gerar arquivo Excel:\n\n{ex.Message}", 
+                    "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
