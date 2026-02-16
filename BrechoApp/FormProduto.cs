@@ -68,6 +68,7 @@ namespace BrechoApp
             txtDescricao.Clear();
             txtCategoria.Clear();
             txtTamanhoCor.Clear();
+            txtPrecoSugerido.Clear();
             txtPreco.Clear();
             txtStatus.Clear();
         }
@@ -105,6 +106,7 @@ namespace BrechoApp
                 CategoriaDoItem = txtCategoria.Text,
                 TamanhoCorDoItem = txtTamanhoCor.Text,
 
+                PrecoSugeridoDoItem = double.TryParse(txtPrecoSugerido.Text, out var precoSug) ? precoSug : 0,
                 PrecoVendaDoItem = double.TryParse(txtPreco.Text, out var preco) ? preco : 0,
                 StatusDoProduto = txtStatus.Text,
 
@@ -137,7 +139,8 @@ namespace BrechoApp
             txtDescricao.Text = row.Cells["ObservacaoDoItem"].Value.ToString();
             txtCategoria.Text = row.Cells["CategoriaDoItem"].Value.ToString();
             txtTamanhoCor.Text = row.Cells["TamanhoCorDoItem"].Value.ToString();
-            txtPreco.Text = row.Cells["PrecoVendaDoItem"].Value.ToString();
+            txtPrecoSugerido.Text = Convert.ToDouble(row.Cells["PrecoSugeridoDoItem"].Value).ToString("F2");
+            txtPreco.Text = Convert.ToDouble(row.Cells["PrecoVendaDoItem"].Value).ToString("F2");
             txtStatus.Text = row.Cells["StatusDoProduto"].Value.ToString();
         }
 
@@ -185,8 +188,9 @@ namespace BrechoApp
                 ws.Cell(1, 4).Value = "Descrição";
                 ws.Cell(1, 5).Value = "Categoria";
                 ws.Cell(1, 6).Value = "Tamanho/Cor";
-                ws.Cell(1, 7).Value = "Preço Venda";
-                ws.Cell(1, 8).Value = "Status";
+                ws.Cell(1, 7).Value = "Preço Sugerido";
+                ws.Cell(1, 8).Value = "Preço Venda";
+                ws.Cell(1, 9).Value = "Status";
 
                 int row = 2;
                 foreach (var p in produtos)
@@ -197,8 +201,9 @@ namespace BrechoApp
                     ws.Cell(row, 4).Value = p.ObservacaoDoItem;
                     ws.Cell(row, 5).Value = p.CategoriaDoItem;
                     ws.Cell(row, 6).Value = p.TamanhoCorDoItem;
-                    ws.Cell(row, 7).Value = p.PrecoVendaDoItem;
-                    ws.Cell(row, 8).Value = p.StatusDoProduto;
+                    ws.Cell(row, 7).Value = p.PrecoSugeridoDoItem;
+                    ws.Cell(row, 8).Value = p.PrecoVendaDoItem;
+                    ws.Cell(row, 9).Value = p.StatusDoProduto;
                     row++;
                 }
 

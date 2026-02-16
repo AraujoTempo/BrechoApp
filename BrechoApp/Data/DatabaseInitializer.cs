@@ -157,6 +157,7 @@ namespace BrechoApp.Data
                     CategoriaDoItem TEXT NOT NULL,
                     TamanhoCorDoItem TEXT NOT NULL,
 
+                    PrecoSugeridoDoItem REAL NOT NULL,
                     PrecoVendaDoItem REAL NOT NULL,
                     StatusDoProduto TEXT NOT NULL,
 
@@ -226,6 +227,48 @@ namespace BrechoApp.Data
 
             using var cmd = new SqliteCommand(sql, connection);
             cmd.ExecuteNonQuery();
+
+            // -----------------------------------------------------------------
+            // MIGRAÇÃO: Adicionar PrecoSugeridoDoItem em bancos existentes
+            // -----------------------------------------------------------------
+            MigrarPrecoSugeridoDoItem(connection);
+        }
+
+        /// <summary>
+        /// Migração para adicionar PrecoSugeridoDoItem em bancos existentes.
+        /// Verifica se a coluna existe antes de adicionar.
+        /// </summary>
+        private static void MigrarPrecoSugeridoDoItem(SqliteConnection connection)
+        {
+            try
+            {
+                // Verificar se a coluna já existe
+                var checkCmd = new SqliteCommand(
+                    "SELECT COUNT(*) FROM pragma_table_info('Produtos') WHERE name='PrecoSugeridoDoItem';",
+                    connection);
+                
+                var columnExists = Convert.ToInt32(checkCmd.ExecuteScalar()) > 0;
+
+                if (!columnExists)
+                {
+                    // Adicionar a coluna com valor padrão
+                    var alterCmd = new SqliteCommand(
+                        "ALTER TABLE Produtos ADD COLUMN PrecoSugeridoDoItem REAL DEFAULT 0.0;",
+                        connection);
+                    alterCmd.ExecuteNonQuery();
+
+                    // Atualizar registros existentes copiando PrecoVendaDoItem para PrecoSugeridoDoItem
+                    var updateCmd = new SqliteCommand(
+                        "UPDATE Produtos SET PrecoSugeridoDoItem = PrecoVendaDoItem WHERE PrecoSugeridoDoItem IS NULL OR PrecoSugeridoDoItem = 0;",
+                        connection);
+                    updateCmd.ExecuteNonQuery();
+                }
+            }
+            catch
+            {
+                // Ignora erro se a coluna já existe ou outro problema
+                // A migração é segura para executar múltiplas vezes
+            }
         }
     }
 }

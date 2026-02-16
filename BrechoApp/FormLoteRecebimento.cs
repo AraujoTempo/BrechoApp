@@ -392,6 +392,7 @@ namespace BrechoApp
                             CategoriaDoItem = item.CategoriaDoItem,
                             TamanhoCorDoItem = item.TamanhoCorDoItem,
                             ObservacaoDoItem = item.ObservacaoDoItem,
+                            PrecoSugeridoDoItem = item.PrecoSugeridoDoItem,
                             PrecoVendaDoItem = item.PrecoVendaDoItem,
 
                             StatusDoProduto = "Disponível",
@@ -414,6 +415,7 @@ namespace BrechoApp
                             produtoExistente.CategoriaDoItem = item.CategoriaDoItem;
                             produtoExistente.TamanhoCorDoItem = item.TamanhoCorDoItem;
                             produtoExistente.ObservacaoDoItem = item.ObservacaoDoItem;
+                            produtoExistente.PrecoSugeridoDoItem = item.PrecoSugeridoDoItem;
                             produtoExistente.PrecoVendaDoItem = item.PrecoVendaDoItem;
                             produtoExistente.UltimaAtualizacao = DateTime.Now;
 
@@ -440,6 +442,7 @@ namespace BrechoApp
                         produtoExistente.CategoriaDoItem = item.CategoriaDoItem;
                         produtoExistente.TamanhoCorDoItem = item.TamanhoCorDoItem;
                         produtoExistente.ObservacaoDoItem = item.ObservacaoDoItem;
+                        produtoExistente.PrecoSugeridoDoItem = item.PrecoSugeridoDoItem;
                         produtoExistente.PrecoVendaDoItem = item.PrecoVendaDoItem;
                         produtoExistente.UltimaAtualizacao = DateTime.Now;
 

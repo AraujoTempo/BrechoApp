@@ -58,6 +58,11 @@ namespace BrechoApp.Models
         // ============================================================
 
         /// <summary>
+        /// Preço sugerido inicialmente para o item.
+        /// </summary>
+        public double PrecoSugeridoDoItem { get; set; }
+
+        /// <summary>
         /// Preço final aprovado para venda.
         /// </summary>
         public double PrecoVendaDoItem { get; set; }
