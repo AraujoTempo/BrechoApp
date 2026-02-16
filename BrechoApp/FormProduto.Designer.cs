@@ -25,7 +25,6 @@
             this.labelDescricao = new System.Windows.Forms.Label();
             this.labelCategoria = new System.Windows.Forms.Label();
             this.labelTamanhoCor = new System.Windows.Forms.Label();
-            this.labelPrecoSugerido = new System.Windows.Forms.Label();
             this.labelPreco = new System.Windows.Forms.Label();
             this.labelStatus = new System.Windows.Forms.Label();
             this.labelDevolucao = new System.Windows.Forms.Label();
@@ -35,7 +34,6 @@
             this.txtDescricao = new System.Windows.Forms.TextBox();
             this.txtCategoria = new System.Windows.Forms.TextBox();
             this.txtTamanhoCor = new System.Windows.Forms.TextBox();
-            this.txtPrecoSugerido = new System.Windows.Forms.TextBox();
             this.txtPreco = new System.Windows.Forms.TextBox();
             this.txtStatus = new System.Windows.Forms.TextBox();
 
@@ -78,17 +76,14 @@
             this.labelTamanhoCor.Text = "Tamanho/Cor:";
             this.labelTamanhoCor.Location = new System.Drawing.Point(350, 80);
 
-            this.labelPrecoSugerido.Text = "Preço Sugerido:";
-            this.labelPrecoSugerido.Location = new System.Drawing.Point(350, 130);
-
             this.labelPreco.Text = "Preço Venda:";
-            this.labelPreco.Location = new System.Drawing.Point(350, 180);
+            this.labelPreco.Location = new System.Drawing.Point(350, 130);
 
             this.labelStatus.Text = "Status:";
-            this.labelStatus.Location = new System.Drawing.Point(350, 230);
+            this.labelStatus.Location = new System.Drawing.Point(350, 180);
 
             this.labelDevolucao.Text = "Data Limite Devolução:";
-            this.labelDevolucao.Location = new System.Drawing.Point(350, 280);
+            this.labelDevolucao.Location = new System.Drawing.Point(350, 230);
 
             // TextBoxes esquerda
             this.txtNome.Font = new System.Drawing.Font("Segoe UI", 10F);
@@ -112,45 +107,41 @@
             this.txtTamanhoCor.Location = new System.Drawing.Point(350, 100);
             this.txtTamanhoCor.Size = new System.Drawing.Size(300, 25);
 
-            this.txtPrecoSugerido.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtPrecoSugerido.Location = new System.Drawing.Point(350, 150);
-            this.txtPrecoSugerido.Size = new System.Drawing.Size(300, 25);
-
             this.txtPreco.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtPreco.Location = new System.Drawing.Point(350, 200);
+            this.txtPreco.Location = new System.Drawing.Point(350, 150);
             this.txtPreco.Size = new System.Drawing.Size(300, 25);
 
             this.txtStatus.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtStatus.Location = new System.Drawing.Point(350, 250);
+            this.txtStatus.Location = new System.Drawing.Point(350, 200);
             this.txtStatus.Size = new System.Drawing.Size(300, 25);
 
             // dtpDevolucao (visual only)
             this.dtpDevolucao.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.dtpDevolucao.Location = new System.Drawing.Point(350, 300);
+            this.dtpDevolucao.Location = new System.Drawing.Point(350, 250);
             this.dtpDevolucao.Size = new System.Drawing.Size(300, 25);
             this.dtpDevolucao.Enabled = false;
 
             // Buttons
             this.btnSalvar.Text = "Salvar";
             this.btnSalvar.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnSalvar.Location = new System.Drawing.Point(20, 350);
+            this.btnSalvar.Location = new System.Drawing.Point(20, 300);
             this.btnSalvar.Size = new System.Drawing.Size(120, 35);
             this.btnSalvar.Click += new System.EventHandler(this.btnSalvar_Click);
 
             this.btnExcluir.Text = "Excluir";
             this.btnExcluir.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnExcluir.Location = new System.Drawing.Point(160, 350);
+            this.btnExcluir.Location = new System.Drawing.Point(160, 300);
             this.btnExcluir.Size = new System.Drawing.Size(120, 35);
             this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click);
 
             this.btnExcel.Text = "Gerar Excel";
             this.btnExcel.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnExcel.Location = new System.Drawing.Point(300, 350);
+            this.btnExcel.Location = new System.Drawing.Point(300, 300);
             this.btnExcel.Size = new System.Drawing.Size(120, 35);
             this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
 
             // Grid
-            this.gridProdutos.Location = new System.Drawing.Point(20, 400);
+            this.gridProdutos.Location = new System.Drawing.Point(20, 350);
             this.gridProdutos.Size = new System.Drawing.Size(630, 250);
             this.gridProdutos.ReadOnly = true;
             this.gridProdutos.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -158,7 +149,7 @@
             this.gridProdutos.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridProdutos_CellClick);
 
             // FormProduto
-            this.ClientSize = new System.Drawing.Size(680, 670);
+            this.ClientSize = new System.Drawing.Size(680, 620);
             this.Controls.Add(this.comboLote);
             this.Controls.Add(this.label1);
 
@@ -167,7 +158,6 @@
             this.Controls.Add(this.labelDescricao);
             this.Controls.Add(this.labelCategoria);
             this.Controls.Add(this.labelTamanhoCor);
-            this.Controls.Add(this.labelPrecoSugerido);
             this.Controls.Add(this.labelPreco);
             this.Controls.Add(this.labelStatus);
             this.Controls.Add(this.labelDevolucao);
@@ -177,7 +167,6 @@
             this.Controls.Add(this.txtDescricao);
             this.Controls.Add(this.txtCategoria);
             this.Controls.Add(this.txtTamanhoCor);
-            this.Controls.Add(this.txtPrecoSugerido);
             this.Controls.Add(this.txtPreco);
             this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.dtpDevolucao);
@@ -206,7 +195,6 @@
         private System.Windows.Forms.Label labelDescricao;
         private System.Windows.Forms.Label labelCategoria;
         private System.Windows.Forms.Label labelTamanhoCor;
-        private System.Windows.Forms.Label labelPrecoSugerido;
         private System.Windows.Forms.Label labelPreco;
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.Label labelDevolucao;
@@ -216,7 +204,6 @@
         private System.Windows.Forms.TextBox txtDescricao;
         private System.Windows.Forms.TextBox txtCategoria;
         private System.Windows.Forms.TextBox txtTamanhoCor;
-        private System.Windows.Forms.TextBox txtPrecoSugerido;
         private System.Windows.Forms.TextBox txtPreco;
         private System.Windows.Forms.TextBox txtStatus;
 
