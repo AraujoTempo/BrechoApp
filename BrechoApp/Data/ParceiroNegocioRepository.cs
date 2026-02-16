@@ -33,6 +33,16 @@ namespace BrechoApp.Data
         }
 
         // ============================================================
+        //  HELPER: PARSE TIPO PARCEIRO
+        // ============================================================
+        private TipoParceiro ParseTipoParceiroOrDefault(object value)
+        {
+            return Enum.TryParse<TipoParceiro>(value?.ToString(), out var tipo) 
+                ? tipo 
+                : TipoParceiro.Outro;
+        }
+
+        // ============================================================
         //  GERA PRÓXIMO CÓDIGO PN (PN1, PN2, PN3...)
         // ============================================================
         private string GerarProximoCodigo()
@@ -158,9 +168,7 @@ namespace BrechoApp.Data
                 {
                     CodigoParceiro = reader["CodigoParceiro"].ToString()!,
                     Nome = reader["Nome"].ToString()!,
-                    TipoParceiro = Enum.TryParse<TipoParceiro>(reader["TipoParceiro"]?.ToString(), out var tipo) 
-                        ? tipo 
-                        : TipoParceiro.Outro,
+                    TipoParceiro = ParseTipoParceiroOrDefault(reader["TipoParceiro"]),
                     CPF = reader["CPF"].ToString()!,
                     Apelido = reader["Apelido"].ToString()!,
                     Telefone = reader["Telefone"].ToString()!,
@@ -219,9 +227,7 @@ namespace BrechoApp.Data
             {
                 CodigoParceiro = reader["CodigoParceiro"].ToString()!,
                 Nome = reader["Nome"].ToString()!,
-                TipoParceiro = Enum.TryParse<TipoParceiro>(reader["TipoParceiro"]?.ToString(), out var tipo) 
-                    ? tipo 
-                    : TipoParceiro.Outro,
+                TipoParceiro = ParseTipoParceiroOrDefault(reader["TipoParceiro"]),
                 CPF = reader["CPF"].ToString()!,
                 Apelido = reader["Apelido"].ToString()!,
                 Telefone = reader["Telefone"].ToString()!,
