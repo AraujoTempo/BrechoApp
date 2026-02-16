@@ -47,6 +47,82 @@ namespace BrechoApp.Utils
             return cpf.EndsWith(digito);
         }
 
+        // ✅ CNPJ
+        public static bool CNPJValido(string cnpj)
+        {
+            if (string.IsNullOrWhiteSpace(cnpj))
+                return false;
+
+            cnpj = Regex.Replace(cnpj, "[^0-9]", "");
+
+            if (cnpj.Length != 14)
+                return false;
+
+            // Verifica se todos os dígitos são iguais
+            if (new string(cnpj[0], cnpj.Length) == cnpj)
+                return false;
+
+            // Calcula primeiro dígito verificador
+            int[] multiplicador1 = { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+            int soma = 0;
+
+            for (int i = 0; i < 12; i++)
+                soma += int.Parse(cnpj[i].ToString()) * multiplicador1[i];
+
+            int resto = soma % 11;
+            resto = resto < 2 ? 0 : 11 - resto;
+
+            string digito = resto.ToString();
+
+            // Calcula segundo dígito verificador
+            int[] multiplicador2 = { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+            soma = 0;
+
+            for (int i = 0; i < 13; i++)
+                soma += int.Parse(cnpj[i].ToString()) * multiplicador2[i];
+
+            resto = soma % 11;
+            resto = resto < 2 ? 0 : 11 - resto;
+
+            digito += resto.ToString();
+
+            return cnpj.EndsWith(digito);
+        }
+
+        // ✅ Detecta se o documento é CPF, CNPJ ou inválido
+        public static string DetectarTipoDocumento(string documento)
+        {
+            if (string.IsNullOrWhiteSpace(documento))
+                return "Inválido";
+
+            documento = Regex.Replace(documento, "[^0-9]", "");
+
+            if (documento.Length == 11)
+                return CPFValido(documento) ? "CPF" : "Inválido";
+
+            if (documento.Length == 14)
+                return CNPJValido(documento) ? "CNPJ" : "Inválido";
+
+            return "Inválido";
+        }
+
+        // ✅ Valida CPF ou CNPJ automaticamente
+        public static bool DocumentoValido(string documento)
+        {
+            if (string.IsNullOrWhiteSpace(documento))
+                return false;
+
+            documento = Regex.Replace(documento, "[^0-9]", "");
+
+            if (documento.Length == 11)
+                return CPFValido(documento);
+
+            if (documento.Length == 14)
+                return CNPJValido(documento);
+
+            return false;
+        }
+
         // ✅ E-mail
         public static bool EmailValido(string email)
         {
@@ -79,7 +155,7 @@ namespace BrechoApp.Utils
 
             if (CPFValido(pix)) return true;
 
-            if (Regex.IsMatch(pix, @"^\d{14}$")) return true;
+            if (CNPJValido(pix)) return true;
 
             if (EmailValido(pix)) return true;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using BrechoApp.Enums;
 
 namespace BrechoApp.Models
 {
@@ -35,7 +36,16 @@ namespace BrechoApp.Models
         public string Nome { get; set; } = string.Empty;
 
         /// <summary>
-        /// CPF do parceiro (opcional).
+        /// Tipo de parceiro de negócio.
+        /// Define o papel do parceiro (Socio, Vendedor, Fornecedor, Cliente, Outro).
+        /// Valor padrão: Outro
+        /// </summary>
+        public TipoParceiro TipoParceiro { get; set; } = TipoParceiro.Outro;
+
+        /// <summary>
+        /// CPF ou CNPJ do parceiro (opcional).
+        /// Aceita CPF (11 dígitos) ou CNPJ (14 dígitos).
+        /// Pode ser formatado ou não.
         /// </summary>
         public string CPF { get; set; } = string.Empty;
 

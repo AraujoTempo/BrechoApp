@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using BrechoApp.Data;
 using BrechoApp.Models;
 using BrechoApp.Utils;
+using BrechoApp.Enums;
 using ClosedXML.Excel;
 
 namespace BrechoApp
@@ -14,7 +15,17 @@ namespace BrechoApp
         public FormCadastroParceiroNegocio()
         {
             InitializeComponent();
+            CarregarTiposParceiro();
             CarregarParceiros();
+        }
+
+        // ============================================================
+        //  CARREGAR TIPOS DE PARCEIRO NO COMBOBOX
+        // ============================================================
+        private void CarregarTiposParceiro()
+        {
+            cboTipoParceiro.DataSource = Enum.GetValues(typeof(TipoParceiro));
+            cboTipoParceiro.SelectedItem = TipoParceiro.Outro;
         }
 
         // ============================================================
@@ -50,6 +61,14 @@ namespace BrechoApp
 
             txtCodigoParceiro.Text = row.Cells["CodigoParceiro"].Value?.ToString();
             txtNome.Text = row.Cells["Nome"].Value?.ToString();
+            
+            // Carrega TipoParceiro
+            if (row.Cells["TipoParceiro"].Value != null && 
+                Enum.TryParse<TipoParceiro>(row.Cells["TipoParceiro"].Value.ToString(), out var tipo))
+            {
+                cboTipoParceiro.SelectedItem = tipo;
+            }
+            
             txtCPF.Text = row.Cells["CPF"].Value?.ToString();
             txtApelido.Text = row.Cells["Apelido"].Value?.ToString();
             txtTelefone.Text = row.Cells["Telefone"].Value?.ToString();
@@ -95,9 +114,9 @@ namespace BrechoApp
                 // CPF dummy é permitido e ignora validação
                 if (!string.IsNullOrWhiteSpace(txtCPF.Text) &&
                     txtCPF.Text != CPF_DUMMY &&
-                    !ValidadorBrasil.CPFValido(txtCPF.Text))
+                    !ValidadorBrasil.DocumentoValido(txtCPF.Text))
                 {
-                    throw new Exception("CPF inválido.");
+                    throw new Exception("CPF ou CNPJ inválido.");
                 }
 
                 if (!string.IsNullOrWhiteSpace(txtEmail.Text) &&
@@ -121,14 +140,14 @@ namespace BrechoApp
                     throw new Exception("Chave PIX inválida.");
 
                 // ------------------------------
-                // Verificação de duplicidade de CPF
+                // Verificação de duplicidade de documento
                 // (exceto se for o CPF dummy)
                 // ------------------------------
                 if (txtCPF.Text != CPF_DUMMY)
                 {
                     var repoCheck = new ParceiroNegocioRepository();
-                    if (repoCheck.CpfExiste(txtCPF.Text, txtCodigoParceiro.Text))
-                        throw new Exception("Já existe um parceiro cadastrado com este CPF.");
+                    if (repoCheck.DocumentoExiste(txtCPF.Text, txtCodigoParceiro.Text))
+                        throw new Exception("Já existe um parceiro cadastrado com este documento (CPF/CNPJ).");
                 }
 
                 // ------------------------------
@@ -138,6 +157,7 @@ namespace BrechoApp
                 {
                     CodigoParceiro = txtCodigoParceiro.Text, // vazio = novo PN
                     Nome = txtNome.Text,
+                    TipoParceiro = (TipoParceiro)cboTipoParceiro.SelectedItem,
                     CPF = txtCPF.Text,
                     Apelido = txtApelido.Text,
                     Telefone = txtTelefone.Text,
@@ -198,22 +218,23 @@ namespace BrechoApp
 
                 ws.Cell(1, 1).Value = "Código";
                 ws.Cell(1, 2).Value = "Nome";
-                ws.Cell(1, 3).Value = "CPF";
-                ws.Cell(1, 4).Value = "Apelido";
-                ws.Cell(1, 5).Value = "Telefone";
-                ws.Cell(1, 6).Value = "Endereço";
-                ws.Cell(1, 7).Value = "Email";
-                ws.Cell(1, 8).Value = "Banco";
-                ws.Cell(1, 9).Value = "Agência";
-                ws.Cell(1, 10).Value = "Conta";
-                ws.Cell(1, 11).Value = "Pix";
-                ws.Cell(1, 12).Value = "Percentual Comissão";
-                ws.Cell(1, 13).Value = "Autoriza Doação";
-                ws.Cell(1, 14).Value = "Observação";
-                ws.Cell(1, 15).Value = "Aniversário";
-                ws.Cell(1, 16).Value = "Saldo Crédito";
+                ws.Cell(1, 3).Value = "Tipo Parceiro";
+                ws.Cell(1, 4).Value = "CPF/CNPJ";
+                ws.Cell(1, 5).Value = "Apelido";
+                ws.Cell(1, 6).Value = "Telefone";
+                ws.Cell(1, 7).Value = "Endereço";
+                ws.Cell(1, 8).Value = "Email";
+                ws.Cell(1, 9).Value = "Banco";
+                ws.Cell(1, 10).Value = "Agência";
+                ws.Cell(1, 11).Value = "Conta";
+                ws.Cell(1, 12).Value = "Pix";
+                ws.Cell(1, 13).Value = "Percentual Comissão";
+                ws.Cell(1, 14).Value = "Autoriza Doação";
+                ws.Cell(1, 15).Value = "Observação";
+                ws.Cell(1, 16).Value = "Aniversário";
+                ws.Cell(1, 17).Value = "Saldo Crédito";
 
-                ws.Range(1, 1, 1, 16).Style.Font.Bold = true;
+                ws.Range(1, 1, 1, 17).Style.Font.Bold = true;
 
                 int row = 2;
 
@@ -221,20 +242,21 @@ namespace BrechoApp
                 {
                     ws.Cell(row, 1).Value = p.CodigoParceiro;
                     ws.Cell(row, 2).Value = p.Nome;
-                    ws.Cell(row, 3).Value = p.CPF;
-                    ws.Cell(row, 4).Value = p.Apelido;
-                    ws.Cell(row, 5).Value = p.Telefone;
-                    ws.Cell(row, 6).Value = p.Endereco;
-                    ws.Cell(row, 7).Value = p.Email;
-                    ws.Cell(row, 8).Value = p.Banco;
-                    ws.Cell(row, 9).Value = p.Agencia;
-                    ws.Cell(row, 10).Value = p.Conta;
-                    ws.Cell(row, 11).Value = p.Pix;
-                    ws.Cell(row, 12).Value = p.PercentualComissao;
-                    ws.Cell(row, 13).Value = p.AutorizaDoacao ? "Sim" : "Não";
-                    ws.Cell(row, 14).Value = p.Observacao;
-                    ws.Cell(row, 15).Value = p.Aniversario;
-                    ws.Cell(row, 16).Value = p.SaldoCredito;
+                    ws.Cell(row, 3).Value = p.TipoParceiro.ToString();
+                    ws.Cell(row, 4).Value = p.CPF;
+                    ws.Cell(row, 5).Value = p.Apelido;
+                    ws.Cell(row, 6).Value = p.Telefone;
+                    ws.Cell(row, 7).Value = p.Endereco;
+                    ws.Cell(row, 8).Value = p.Email;
+                    ws.Cell(row, 9).Value = p.Banco;
+                    ws.Cell(row, 10).Value = p.Agencia;
+                    ws.Cell(row, 11).Value = p.Conta;
+                    ws.Cell(row, 12).Value = p.Pix;
+                    ws.Cell(row, 13).Value = p.PercentualComissao;
+                    ws.Cell(row, 14).Value = p.AutorizaDoacao ? "Sim" : "Não";
+                    ws.Cell(row, 15).Value = p.Observacao;
+                    ws.Cell(row, 16).Value = p.Aniversario;
+                    ws.Cell(row, 17).Value = p.SaldoCredito;
 
                     row++;
                 }
@@ -289,6 +311,7 @@ namespace BrechoApp
         {
             txtCodigoParceiro.Clear();
             txtNome.Clear();
+            cboTipoParceiro.SelectedItem = TipoParceiro.Outro;
             txtCPF.Clear();
             txtApelido.Clear();
             txtTelefone.Clear();

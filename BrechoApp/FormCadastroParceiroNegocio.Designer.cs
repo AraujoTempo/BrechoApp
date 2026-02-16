@@ -11,6 +11,7 @@
 
         private System.Windows.Forms.TextBox txtCodigoParceiro;
         private System.Windows.Forms.TextBox txtNome;
+        private System.Windows.Forms.ComboBox cboTipoParceiro;
         private System.Windows.Forms.TextBox txtCPF;
         private System.Windows.Forms.TextBox txtApelido;
         private System.Windows.Forms.TextBox txtTelefone;
@@ -36,6 +37,7 @@
 
         private System.Windows.Forms.Label lblCodigoParceiro;
         private System.Windows.Forms.Label lblNome;
+        private System.Windows.Forms.Label lblTipoParceiro;
         private System.Windows.Forms.Label lblCPF;
         private System.Windows.Forms.Label lblApelido;
         private System.Windows.Forms.Label lblTelefone;
@@ -99,8 +101,17 @@
             this.txtNome.Location = new System.Drawing.Point(20, 350);
             this.txtNome.Size = new System.Drawing.Size(250, 27);
 
+            this.lblTipoParceiro = new System.Windows.Forms.Label();
+            this.lblTipoParceiro.Text = "Tipo de Parceiro:";
+            this.lblTipoParceiro.Location = new System.Drawing.Point(290, 325);
+
+            this.cboTipoParceiro = new System.Windows.Forms.ComboBox();
+            this.cboTipoParceiro.Location = new System.Drawing.Point(290, 350);
+            this.cboTipoParceiro.Size = new System.Drawing.Size(180, 27);
+            this.cboTipoParceiro.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+
             this.lblCPF = new System.Windows.Forms.Label();
-            this.lblCPF.Text = "CPF:";
+            this.lblCPF.Text = "CPF/CNPJ:";
             this.lblCPF.Location = new System.Drawing.Point(20, 390);
 
             this.txtCPF = new System.Windows.Forms.TextBox();
@@ -277,6 +288,9 @@
 
             this.Controls.Add(this.lblNome);
             this.Controls.Add(this.txtNome);
+
+            this.Controls.Add(this.lblTipoParceiro);
+            this.Controls.Add(this.cboTipoParceiro);
 
             this.Controls.Add(this.lblCPF);
             this.Controls.Add(this.txtCPF);
