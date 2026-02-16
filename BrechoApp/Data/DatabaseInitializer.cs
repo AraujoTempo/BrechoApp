@@ -258,15 +258,16 @@ namespace BrechoApp.Data
                     alterCmd.ExecuteNonQuery();
 
                     // Atualizar registros existentes copiando PrecoVendaDoItem para PrecoSugeridoDoItem
+                    // Esta atualização afeta apenas registros criados antes desta migração
                     var updateCmd = new SqliteCommand(
-                        "UPDATE Produtos SET PrecoSugeridoDoItem = PrecoVendaDoItem WHERE PrecoSugeridoDoItem IS NULL OR PrecoSugeridoDoItem = 0;",
+                        "UPDATE Produtos SET PrecoSugeridoDoItem = PrecoVendaDoItem WHERE PrecoSugeridoDoItem = 0;",
                         connection);
                     updateCmd.ExecuteNonQuery();
                 }
             }
-            catch
+            catch (SqliteException)
             {
-                // Ignora erro se a coluna já existe ou outro problema
+                // Ignora erro se a coluna já existe
                 // A migração é segura para executar múltiplas vezes
             }
         }
