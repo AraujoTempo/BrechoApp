@@ -707,7 +707,7 @@ namespace BrechoApp
             {
                 // Buscar o nome do parceiro do banco
                 var parceiro = _repoParceiro.BuscarPorCodigo(_loteAtual.CodigoParceiro);
-                string nomeParceiro = parceiro?.Nome ?? "N/A";
+                string nomeParceiro = parceiro?.Nome ?? "Parceiro não encontrado";
 
                 var workbook = new XLWorkbook();
                 var ws = workbook.Worksheets.Add("Itens do Lote");
