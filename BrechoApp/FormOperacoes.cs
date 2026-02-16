@@ -49,16 +49,15 @@ namespace BrechoApp
                     ws.Cell(1, 4).Value = "Categoria";
                     ws.Cell(1, 5).Value = "Tamanho/Cor";
                     ws.Cell(1, 6).Value = "Observação";
-                    ws.Cell(1, 7).Value = "Preço Sugerido";
-                    ws.Cell(1, 8).Value = "Preço Venda";
-                    ws.Cell(1, 9).Value = "Status";
-                    ws.Cell(1, 10).Value = "Parceiro";
-                    ws.Cell(1, 11).Value = "Lote";
-                    ws.Cell(1, 12).Value = "Data Criação";
-                    ws.Cell(1, 13).Value = "Última Atualização";
+                    ws.Cell(1, 7).Value = "Preço Venda";
+                    ws.Cell(1, 8).Value = "Status";
+                    ws.Cell(1, 9).Value = "Parceiro";
+                    ws.Cell(1, 10).Value = "Lote";
+                    ws.Cell(1, 11).Value = "Data Criação";
+                    ws.Cell(1, 12).Value = "Última Atualização";
 
                     // Formatação do cabeçalho
-                    var headerRange = ws.Range(1, 1, 1, 13);
+                    var headerRange = ws.Range(1, 1, 1, 12);
                     headerRange.Style.Font.Bold = true;
                     headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
                     headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
@@ -77,17 +76,15 @@ namespace BrechoApp
                         ws.Cell(row, 4).Value = p.CategoriaDoItem;
                         ws.Cell(row, 5).Value = p.TamanhoCorDoItem;
                         ws.Cell(row, 6).Value = p.ObservacaoDoItem ?? "";
-                        ws.Cell(row, 7).Value = p.PrecoSugeridoDoItem;
-                        ws.Cell(row, 8).Value = p.PrecoVendaDoItem;
-                        ws.Cell(row, 9).Value = p.StatusDoProduto;
-                        ws.Cell(row, 10).Value = p.CodigoParceiro;
-                        ws.Cell(row, 11).Value = p.CodigoLoteRecebimento;
-                        ws.Cell(row, 12).Value = p.DataCriacao.ToString("dd/MM/yyyy HH:mm");
-                        ws.Cell(row, 13).Value = p.UltimaAtualizacao.ToString("dd/MM/yyyy HH:mm");
+                        ws.Cell(row, 7).Value = p.PrecoVendaDoItem;
+                        ws.Cell(row, 8).Value = p.StatusDoProduto;
+                        ws.Cell(row, 9).Value = p.CodigoParceiro;
+                        ws.Cell(row, 10).Value = p.CodigoLoteRecebimento;
+                        ws.Cell(row, 11).Value = p.DataCriacao.ToString("dd/MM/yyyy HH:mm");
+                        ws.Cell(row, 12).Value = p.UltimaAtualizacao.ToString("dd/MM/yyyy HH:mm");
 
                         // Formatação dos preços
                         ws.Cell(row, 7).Style.NumberFormat.Format = "R$ #,##0.00";
-                        ws.Cell(row, 8).Style.NumberFormat.Format = "R$ #,##0.00";
 
                         row++;
                     }

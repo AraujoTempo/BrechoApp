@@ -155,16 +155,13 @@ namespace BrechoApp
 
             var itens = _repoItem.ListarItensPorLote(_loteAtual.CodigoLoteRecebimento);
 
-            double totalSugerido = 0;
             double totalVenda = 0;
 
             foreach (var item in itens)
             {
-                totalSugerido += item.PrecoSugeridoDoItem;
                 totalVenda += item.PrecoVendaDoItem;
             }
 
-            txtTotalSugerido.Text = totalSugerido.ToString("N2");
             txtTotalVenda.Text = totalVenda.ToString("N2");
         }
 
@@ -392,7 +389,6 @@ namespace BrechoApp
                             CategoriaDoItem = item.CategoriaDoItem,
                             TamanhoCorDoItem = item.TamanhoCorDoItem,
                             ObservacaoDoItem = item.ObservacaoDoItem,
-                            PrecoSugeridoDoItem = item.PrecoSugeridoDoItem,
                             PrecoVendaDoItem = item.PrecoVendaDoItem,
 
                             StatusDoProduto = "Disponível",
@@ -415,7 +411,6 @@ namespace BrechoApp
                             produtoExistente.CategoriaDoItem = item.CategoriaDoItem;
                             produtoExistente.TamanhoCorDoItem = item.TamanhoCorDoItem;
                             produtoExistente.ObservacaoDoItem = item.ObservacaoDoItem;
-                            produtoExistente.PrecoSugeridoDoItem = item.PrecoSugeridoDoItem;
                             produtoExistente.PrecoVendaDoItem = item.PrecoVendaDoItem;
                             produtoExistente.UltimaAtualizacao = DateTime.Now;
 
@@ -442,7 +437,6 @@ namespace BrechoApp
                         produtoExistente.CategoriaDoItem = item.CategoriaDoItem;
                         produtoExistente.TamanhoCorDoItem = item.TamanhoCorDoItem;
                         produtoExistente.ObservacaoDoItem = item.ObservacaoDoItem;
-                        produtoExistente.PrecoSugeridoDoItem = item.PrecoSugeridoDoItem;
                         produtoExistente.PrecoVendaDoItem = item.PrecoVendaDoItem;
                         produtoExistente.UltimaAtualizacao = DateTime.Now;
 
@@ -735,12 +729,11 @@ namespace BrechoApp
                 ws.Cell(4, 2).Value = "Nome";
                 ws.Cell(4, 3).Value = "Marca";
                 ws.Cell(4, 4).Value = "Categoria";
-                ws.Cell(4, 5).Value = "Preço Sugerido";
-                ws.Cell(4, 6).Value = "Preço Venda";
-                ws.Cell(4, 7).Value = "Status";
-                ws.Cell(4, 8).Value = "Observação";
+                ws.Cell(4, 5).Value = "Preço Venda";
+                ws.Cell(4, 6).Value = "Status";
+                ws.Cell(4, 7).Value = "Observação";
 
-                ws.Range("A4:H4").Style.Font.Bold = true;
+                ws.Range("A4:G4").Style.Font.Bold = true;
 
                 int row = 5;
                 foreach (var item in itens)
@@ -749,10 +742,9 @@ namespace BrechoApp
                     ws.Cell(row, 2).Value = item.NomeDoItem;
                     ws.Cell(row, 3).Value = item.MarcaDoItem;
                     ws.Cell(row, 4).Value = item.CategoriaDoItem;
-                    ws.Cell(row, 5).Value = item.PrecoSugeridoDoItem;
-                    ws.Cell(row, 6).Value = item.PrecoVendaDoItem;
-                    ws.Cell(row, 7).Value = item.StatusItem;
-                    ws.Cell(row, 8).Value = item.ObservacaoDoItem;
+                    ws.Cell(row, 5).Value = item.PrecoVendaDoItem;
+                    ws.Cell(row, 6).Value = item.StatusItem;
+                    ws.Cell(row, 7).Value = item.ObservacaoDoItem;
 
                     row++;
                 }

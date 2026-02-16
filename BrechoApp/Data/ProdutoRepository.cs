@@ -42,14 +42,13 @@ namespace BrechoApp.Data
                     ObservacaoDoItem,
                     CategoriaDoItem,
                     TamanhoCorDoItem,
-                    PrecoSugeridoDoItem,
                     PrecoVendaDoItem,
                     StatusDoProduto,
                     DataCriacao,
                     UltimaAtualizacao
                 ) VALUES (
                     $codigo, $parceiro, $lote, $nome, $marca, $obs, $cat, $tamcor,
-                    $precoSugerido, $precoVenda, $status, $criacao, $atualizacao
+                    $precoVenda, $status, $criacao, $atualizacao
                 );
             ";
 
@@ -61,7 +60,6 @@ namespace BrechoApp.Data
             command.Parameters.AddWithValue("$obs", produto.ObservacaoDoItem ?? "");
             command.Parameters.AddWithValue("$cat", produto.CategoriaDoItem);
             command.Parameters.AddWithValue("$tamcor", produto.TamanhoCorDoItem);
-            command.Parameters.AddWithValue("$precoSugerido", produto.PrecoSugeridoDoItem);
             command.Parameters.AddWithValue("$precoVenda", produto.PrecoVendaDoItem);
             command.Parameters.AddWithValue("$status", produto.StatusDoProduto);
 
@@ -92,7 +90,6 @@ namespace BrechoApp.Data
                     ObservacaoDoItem = $obs,
                     CategoriaDoItem = $cat,
                     TamanhoCorDoItem = $tamcor,
-                    PrecoSugeridoDoItem = $precoSugerido,
                     PrecoVendaDoItem = $precoVenda,
                     StatusDoProduto = $status,
                     CodigoParceiro = $parceiro,
@@ -107,7 +104,6 @@ namespace BrechoApp.Data
             command.Parameters.AddWithValue("$obs", produto.ObservacaoDoItem ?? "");
             command.Parameters.AddWithValue("$cat", produto.CategoriaDoItem);
             command.Parameters.AddWithValue("$tamcor", produto.TamanhoCorDoItem);
-            command.Parameters.AddWithValue("$precoSugerido", produto.PrecoSugeridoDoItem);
             command.Parameters.AddWithValue("$precoVenda", produto.PrecoVendaDoItem);
             command.Parameters.AddWithValue("$status", produto.StatusDoProduto);
 
@@ -283,7 +279,6 @@ namespace BrechoApp.Data
                 ObservacaoDoItem = reader["ObservacaoDoItem"]?.ToString(),
                 CategoriaDoItem = reader["CategoriaDoItem"].ToString(),
                 TamanhoCorDoItem = reader["TamanhoCorDoItem"].ToString(),
-                PrecoSugeridoDoItem = Convert.ToDouble(reader["PrecoSugeridoDoItem"]),
                 PrecoVendaDoItem = Convert.ToDouble(reader["PrecoVendaDoItem"]),
                 StatusDoProduto = reader["StatusDoProduto"].ToString(),
                 DataCriacao = DateTime.Parse(reader["DataCriacao"].ToString()),

@@ -77,7 +77,6 @@ namespace BrechoApp.Data
                     CategoriaDoItem,
                     TamanhoCorDoItem,
                     ObservacaoDoItem,
-                    PrecoSugeridoDoItem,
                     PrecoVendaDoItem,
                     StatusItem,
                     CodigoProdutoGerado,
@@ -118,7 +117,6 @@ namespace BrechoApp.Data
                     CategoriaDoItem,
                     TamanhoCorDoItem,
                     ObservacaoDoItem,
-                    PrecoSugeridoDoItem,
                     PrecoVendaDoItem,
                     StatusItem,
                     CodigoProdutoGerado,
@@ -164,7 +162,6 @@ namespace BrechoApp.Data
                     CategoriaDoItem,
                     TamanhoCorDoItem,
                     ObservacaoDoItem,
-                    PrecoSugeridoDoItem,
                     PrecoVendaDoItem,
                     StatusItem,
                     CodigoProdutoGerado,
@@ -179,7 +176,6 @@ namespace BrechoApp.Data
                     @CategoriaDoItem,
                     @TamanhoCorDoItem,
                     @ObservacaoDoItem,
-                    @PrecoSugeridoDoItem,
                     @PrecoVendaDoItem,
                     @StatusItem,
                     @CodigoProdutoGerado,
@@ -198,7 +194,6 @@ namespace BrechoApp.Data
             cmd.Parameters.AddWithValue("@TamanhoCorDoItem", item.TamanhoCorDoItem);
             cmd.Parameters.AddWithValue("@ObservacaoDoItem", item.ObservacaoDoItem ?? "");
 
-            cmd.Parameters.AddWithValue("@PrecoSugeridoDoItem", item.PrecoSugeridoDoItem);
             cmd.Parameters.AddWithValue("@PrecoVendaDoItem", item.PrecoVendaDoItem);
 
             cmd.Parameters.AddWithValue("@StatusItem", item.StatusItem);
@@ -237,7 +232,6 @@ namespace BrechoApp.Data
                     CategoriaDoItem = @CategoriaDoItem,
                     TamanhoCorDoItem = @TamanhoCorDoItem,
                     ObservacaoDoItem = @ObservacaoDoItem,
-                    PrecoSugeridoDoItem = @PrecoSugeridoDoItem,
                     PrecoVendaDoItem = @PrecoVendaDoItem,
                     StatusItem = @StatusItem,
                     CodigoProdutoGerado = @CodigoProdutoGerado,
@@ -255,7 +249,6 @@ namespace BrechoApp.Data
             cmd.Parameters.AddWithValue("@TamanhoCorDoItem", item.TamanhoCorDoItem);
             cmd.Parameters.AddWithValue("@ObservacaoDoItem", item.ObservacaoDoItem ?? "");
 
-            cmd.Parameters.AddWithValue("@PrecoSugeridoDoItem", item.PrecoSugeridoDoItem);
             cmd.Parameters.AddWithValue("@PrecoVendaDoItem", item.PrecoVendaDoItem);
 
             cmd.Parameters.AddWithValue("@StatusItem", item.StatusItem);
@@ -320,11 +313,10 @@ namespace BrechoApp.Data
 
                 ObservacaoDoItem = reader.IsDBNull(7) ? "" : reader.GetString(7),
 
-                PrecoSugeridoDoItem = reader.GetDouble(8),
-                PrecoVendaDoItem = reader.GetDouble(9),
+                PrecoVendaDoItem = reader.GetDouble(8),
 
-                StatusItem = reader.GetString(10),
-                CodigoProdutoGerado = reader.IsDBNull(11) ? null : reader.GetString(11),
+                StatusItem = reader.GetString(9),
+                CodigoProdutoGerado = reader.IsDBNull(10) ? null : reader.GetString(10),
 
                 DataCriacao = Convert.ToDateTime(reader["DataCriacao"]),
                 UltimaAtualizacao = Convert.ToDateTime(reader["UltimaAtualizacao"])

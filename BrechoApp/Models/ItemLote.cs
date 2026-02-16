@@ -36,10 +36,9 @@ namespace BrechoApp.Models
         public string ObservacaoDoItem { get; set; } = "";
 
         // ============================================================
-        // PREÇOS DEFINIDOS PELO BRECHÓ
+        // PREÇO DEFINIDO PELO BRECHÓ
         // ============================================================
 
-        public double PrecoSugeridoDoItem { get; set; }
         public double PrecoVendaDoItem { get; set; }
 
         // ============================================================
