@@ -2,7 +2,6 @@
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace BrechoApp.Data
 {
@@ -20,28 +19,6 @@ namespace BrechoApp.Data
         // do sistema, garantindo consistência.
         // ---------------------------------------------------------------------
         private readonly string _connectionString = DatabaseConfig.ConnectionString;
-
-        // =====================================================================
-        // LOGGING
-        // =====================================================================
-        private void Log(string mensagem)
-        {
-            try
-            {
-                string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-                if (!Directory.Exists(logPath))
-                    Directory.CreateDirectory(logPath);
-
-                string logFile = Path.Combine(logPath, $"produto_repository_{DateTime.Now:yyyy-MM-dd}.log");
-                string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {mensagem}{Environment.NewLine}";
-
-                File.AppendAllText(logFile, logEntry);
-            }
-            catch
-            {
-                // Silently ignore logging errors to avoid breaking the application
-            }
-        }
 
         // =====================================================================
         // CRIAR PRODUTO
@@ -65,14 +42,13 @@ namespace BrechoApp.Data
                     ObservacaoDoItem,
                     CategoriaDoItem,
                     TamanhoCorDoItem,
-                    PrecoSugeridoDoItem,
                     PrecoVendaDoItem,
                     StatusDoProduto,
                     DataCriacao,
                     UltimaAtualizacao
                 ) VALUES (
                     $codigo, $parceiro, $lote, $nome, $marca, $obs, $cat, $tamcor,
-                    $precoSugerido, $precoVenda, $status, $criacao, $atualizacao
+                    $precoVenda, $status, $criacao, $atualizacao
                 );
             ";
 
@@ -84,7 +60,6 @@ namespace BrechoApp.Data
             command.Parameters.AddWithValue("$obs", produto.ObservacaoDoItem ?? "");
             command.Parameters.AddWithValue("$cat", produto.CategoriaDoItem);
             command.Parameters.AddWithValue("$tamcor", produto.TamanhoCorDoItem);
-            command.Parameters.AddWithValue("$precoSugerido", produto.PrecoSugeridoDoItem);
             command.Parameters.AddWithValue("$precoVenda", produto.PrecoVendaDoItem);
             command.Parameters.AddWithValue("$status", produto.StatusDoProduto);
 
@@ -103,11 +78,6 @@ namespace BrechoApp.Data
         // =====================================================================
         public void AtualizarProduto(Produto produto)
         {
-            Log($"=== ATUALIZARPRODUTO - Início ===");
-            Log($"  CodigoProduto: {produto.CodigoProduto}");
-            Log($"  PrecoSugeridoDoItem (recebido): {produto.PrecoSugeridoDoItem:F2}");
-            Log($"  PrecoVendaDoItem (recebido): {produto.PrecoVendaDoItem:F2}");
-
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
@@ -120,7 +90,6 @@ namespace BrechoApp.Data
                     ObservacaoDoItem = $obs,
                     CategoriaDoItem = $cat,
                     TamanhoCorDoItem = $tamcor,
-                    PrecoSugeridoDoItem = $precoSugerido,
                     PrecoVendaDoItem = $precoVenda,
                     StatusDoProduto = $status,
                     CodigoParceiro = $parceiro,
@@ -135,61 +104,13 @@ namespace BrechoApp.Data
             command.Parameters.AddWithValue("$obs", produto.ObservacaoDoItem ?? "");
             command.Parameters.AddWithValue("$cat", produto.CategoriaDoItem);
             command.Parameters.AddWithValue("$tamcor", produto.TamanhoCorDoItem);
-            command.Parameters.AddWithValue("$precoSugerido", produto.PrecoSugeridoDoItem);
             command.Parameters.AddWithValue("$precoVenda", produto.PrecoVendaDoItem);
             command.Parameters.AddWithValue("$status", produto.StatusDoProduto);
 
             command.Parameters.AddWithValue("$atualizacao",
                 produto.UltimaAtualizacao.ToString("yyyy-MM-dd HH:mm:ss"));
 
-            Log($"  Parâmetros configurados:");
-            Log($"    $precoSugerido = {produto.PrecoSugeridoDoItem:F2}");
-            Log($"    $precoVenda = {produto.PrecoVendaDoItem:F2}");
-
-            int rowsAffected = command.ExecuteNonQuery();
-
-            Log($"  Linhas afetadas: {rowsAffected}");
-            
-            if (rowsAffected == 0)
-            {
-                Log($"  ALERTA: Nenhuma linha foi atualizada!");
-            }
-
-            // Verificação imediata: buscar o produto para confirmar a atualização
-            var checkCommand = connection.CreateCommand();
-            checkCommand.CommandText = @"
-                SELECT PrecoSugeridoDoItem, PrecoVendaDoItem 
-                FROM Produtos 
-                WHERE CodigoProduto = $codigo;
-            ";
-            checkCommand.Parameters.AddWithValue("$codigo", produto.CodigoProduto);
-
-            using var reader = checkCommand.ExecuteReader();
-            if (reader.Read())
-            {
-                double precoSugeridoDb = reader.GetDouble(0);
-                double precoVendaDb = reader.GetDouble(1);
-
-                Log($"  Verificação no DB após UPDATE:");
-                Log($"    PrecoSugeridoDoItem no DB: {precoSugeridoDb:F2}");
-                Log($"    PrecoVendaDoItem no DB: {precoVendaDb:F2}");
-
-                if (Math.Abs(precoSugeridoDb - produto.PrecoSugeridoDoItem) > 0.01)
-                {
-                    Log($"  ERRO: PrecoSugerido no DB ({precoSugeridoDb:F2}) != valor esperado ({produto.PrecoSugeridoDoItem:F2})");
-                }
-
-                if (Math.Abs(precoVendaDb - produto.PrecoVendaDoItem) > 0.01)
-                {
-                    Log($"  ERRO: PrecoVenda no DB ({precoVendaDb:F2}) != valor esperado ({produto.PrecoVendaDoItem:F2})");
-                }
-            }
-            else
-            {
-                Log($"  ERRO: Produto não encontrado no DB após UPDATE!");
-            }
-
-            Log($"=== ATUALIZARPRODUTO - Fim ===");
+            command.ExecuteNonQuery();
         }
 
         // =====================================================================
@@ -358,7 +279,6 @@ namespace BrechoApp.Data
                 ObservacaoDoItem = reader["ObservacaoDoItem"]?.ToString(),
                 CategoriaDoItem = reader["CategoriaDoItem"].ToString(),
                 TamanhoCorDoItem = reader["TamanhoCorDoItem"].ToString(),
-                PrecoSugeridoDoItem = Convert.ToDouble(reader["PrecoSugeridoDoItem"]),
                 PrecoVendaDoItem = Convert.ToDouble(reader["PrecoVendaDoItem"]),
                 StatusDoProduto = reader["StatusDoProduto"].ToString(),
                 DataCriacao = DateTime.Parse(reader["DataCriacao"].ToString()),
