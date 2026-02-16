@@ -10,7 +10,7 @@ namespace BrechoApp
 {
     public partial class FormCadastroParceiroNegocio : Form
     {
-        private const string CPF_DUMMY = "123.456.789-09";
+        private const string CPFCNPJ_DUMMY = "123.456.789-09";
 
         public FormCadastroParceiroNegocio()
         {
@@ -69,7 +69,7 @@ namespace BrechoApp
                 cboTipoParceiro.SelectedItem = tipo;
             }
             
-            txtCPF.Text = row.Cells["CPF"].Value?.ToString();
+            txtCPF.Text = row.Cells["CpfCnpj"].Value?.ToString();
             txtApelido.Text = row.Cells["Apelido"].Value?.ToString();
             txtTelefone.Text = row.Cells["Telefone"].Value?.ToString();
             txtEndereco.Text = row.Cells["Endereco"].Value?.ToString();
@@ -111,9 +111,9 @@ namespace BrechoApp
                 if (string.IsNullOrWhiteSpace(txtNome.Text))
                     throw new Exception("O nome do parceiro é obrigatório.");
 
-                // CPF dummy é permitido e ignora validação
+                // CPF/CNPJ dummy é permitido e ignora validação
                 if (!string.IsNullOrWhiteSpace(txtCPF.Text) &&
-                    txtCPF.Text != CPF_DUMMY &&
+                    txtCPF.Text != CPFCNPJ_DUMMY &&
                     !ValidadorBrasil.DocumentoValido(txtCPF.Text))
                 {
                     throw new Exception("CPF ou CNPJ inválido.");
@@ -141,9 +141,9 @@ namespace BrechoApp
 
                 // ------------------------------
                 // Verificação de duplicidade de documento
-                // (exceto se for o CPF dummy)
+                // (exceto se for o CPF/CNPJ dummy)
                 // ------------------------------
-                if (txtCPF.Text != CPF_DUMMY)
+                if (txtCPF.Text != CPFCNPJ_DUMMY)
                 {
                     var repoCheck = new ParceiroNegocioRepository();
                     if (repoCheck.DocumentoExiste(txtCPF.Text, txtCodigoParceiro.Text))
@@ -158,7 +158,7 @@ namespace BrechoApp
                     CodigoParceiro = txtCodigoParceiro.Text, // vazio = novo PN
                     Nome = txtNome.Text,
                     TipoParceiro = (TipoParceiro)cboTipoParceiro.SelectedItem,
-                    CPF = txtCPF.Text,
+                    CpfCnpj = txtCPF.Text,
                     Apelido = txtApelido.Text,
                     Telefone = txtTelefone.Text,
                     Endereco = txtEndereco.Text,
@@ -243,7 +243,7 @@ namespace BrechoApp
                     ws.Cell(row, 1).Value = p.CodigoParceiro;
                     ws.Cell(row, 2).Value = p.Nome;
                     ws.Cell(row, 3).Value = p.TipoParceiro.ToString();
-                    ws.Cell(row, 4).Value = p.CPF;
+                    ws.Cell(row, 4).Value = p.CpfCnpj;
                     ws.Cell(row, 5).Value = p.Apelido;
                     ws.Cell(row, 6).Value = p.Telefone;
                     ws.Cell(row, 7).Value = p.Endereco;
