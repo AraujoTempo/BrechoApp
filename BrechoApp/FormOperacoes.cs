@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using BrechoApp.Data;
+using BrechoApp.Utils;
 using ClosedXML.Excel;
 
 namespace BrechoApp
@@ -148,6 +151,91 @@ namespace BrechoApp
             catch (Exception ex)
             {
                 MessageBox.Show($"Erro ao gerar arquivo Excel:\n\n{ex.Message}", 
+                    "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // ============================================================
+        // BOTÃO: DIAGNÓSTICO DE PRODUTOS
+        //
+        // Executa verificação de inconsistências entre ItemLote e Produtos
+        // e gera um relatório detalhado.
+        // ============================================================
+        private void btnDiagnosticoProdutos_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Executar diagnóstico
+                var inconsistencias = DiagnosticoProdutos.VerificarInconsistencias();
+                var produtosIguais = DiagnosticoProdutos.VerificarProdutosComPrecosIguais();
+
+                // Gerar relatório
+                string reportPath = DiagnosticoProdutos.GerarRelatorio();
+
+                // Mostrar resultado
+                string mensagem = $"Diagnóstico concluído!\n\n" +
+                                 $"Inconsistências encontradas: {inconsistencias.Count}\n" +
+                                 $"Produtos com preços iguais: {produtosIguais.Count}\n\n" +
+                                 $"Relatório salvo em:\n{reportPath}\n\n";
+
+                if (inconsistencias.Count > 0)
+                {
+                    mensagem += "ATENÇÃO: Foram encontradas inconsistências!\n\n";
+                    
+                    var result = MessageBox.Show(
+                        mensagem + "Deseja tentar corrigir automaticamente as inconsistências?\n\n" +
+                        "AVISO: Esta operação irá modificar a tabela Produtos no banco de dados.",
+                        "Diagnóstico de Produtos",
+                        MessageBoxButtons.YesNoCancel,
+                        MessageBoxIcon.Warning);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        int corrigidos = DiagnosticoProdutos.CorrigirInconsistencias();
+                        
+                        MessageBox.Show(
+                            $"Correção concluída!\n\n" +
+                            $"Produtos corrigidos: {corrigidos}\n\n" +
+                            "Execute o diagnóstico novamente para verificar se ainda há inconsistências.",
+                            "Correção Concluída",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+                    else if (result == DialogResult.No)
+                    {
+                        // Abrir o relatório
+                        if (File.Exists(reportPath))
+                        {
+                            Process.Start(new ProcessStartInfo
+                            {
+                                FileName = reportPath,
+                                UseShellExecute = true
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    var result = MessageBox.Show(
+                        mensagem + "Nenhuma inconsistência detectada.\n\n" +
+                        "Deseja abrir o relatório completo?",
+                        "Diagnóstico de Produtos",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Information);
+
+                    if (result == DialogResult.Yes && File.Exists(reportPath))
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = reportPath,
+                            UseShellExecute = true
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao executar diagnóstico:\n\n{ex.Message}", 
                     "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
