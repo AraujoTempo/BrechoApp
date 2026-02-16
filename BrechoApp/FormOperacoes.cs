@@ -156,6 +156,21 @@ namespace BrechoApp
         }
 
         // ============================================================
+        // HELPER: ABRIR ARQUIVO DE RELATÓRIO
+        // ============================================================
+        private void AbrirRelatorio(string reportPath)
+        {
+            if (File.Exists(reportPath))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = reportPath,
+                    UseShellExecute = true
+                });
+            }
+        }
+
+        // ============================================================
         // BOTÃO: DIAGNÓSTICO DE PRODUTOS
         //
         // Executa verificação de inconsistências entre ItemLote e Produtos
@@ -204,14 +219,7 @@ namespace BrechoApp
                     else if (result == DialogResult.No)
                     {
                         // Abrir o relatório
-                        if (File.Exists(reportPath))
-                        {
-                            Process.Start(new ProcessStartInfo
-                            {
-                                FileName = reportPath,
-                                UseShellExecute = true
-                            });
-                        }
+                        AbrirRelatorio(reportPath);
                     }
                 }
                 else
@@ -223,13 +231,9 @@ namespace BrechoApp
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Information);
 
-                    if (result == DialogResult.Yes && File.Exists(reportPath))
+                    if (result == DialogResult.Yes)
                     {
-                        Process.Start(new ProcessStartInfo
-                        {
-                            FileName = reportPath,
-                            UseShellExecute = true
-                        });
+                        AbrirRelatorio(reportPath);
                     }
                 }
             }

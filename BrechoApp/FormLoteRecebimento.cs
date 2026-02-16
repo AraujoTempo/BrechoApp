@@ -69,6 +69,37 @@ namespace BrechoApp
         }
 
         // ============================================================
+        // VALIDAÇÃO DE PRODUTO APÓS ATUALIZAÇÃO
+        // ============================================================
+        private void ValidarProdutoAposAtualizacao(string codigoProduto, ItemLote item, bool mostrarAlerta)
+        {
+            var produtoValidacao = _repoProduto.BuscarPorCodigo(codigoProduto);
+            Log($"  VALIDAÇÃO - PrecoSugerido após UPDATE: {produtoValidacao.PrecoSugeridoDoItem:F2}");
+            Log($"  VALIDAÇÃO - PrecoVenda após UPDATE: {produtoValidacao.PrecoVendaDoItem:F2}");
+
+            if (Math.Abs(produtoValidacao.PrecoSugeridoDoItem - item.PrecoSugeridoDoItem) > 0.01 ||
+                Math.Abs(produtoValidacao.PrecoVendaDoItem - item.PrecoVendaDoItem) > 0.01)
+            {
+                Log($"  ALERTA: Valores não foram atualizados corretamente!");
+                
+                if (mostrarAlerta)
+                {
+                    MessageBox.Show($"ATENÇÃO: Os preços do produto {codigoProduto} não foram atualizados corretamente.\n\n" +
+                                  $"Esperado:\n" +
+                                  $"  PrecoSugerido: {item.PrecoSugeridoDoItem:F2}\n" +
+                                  $"  PrecoVenda: {item.PrecoVendaDoItem:F2}\n\n" +
+                                  $"Obtido:\n" +
+                                  $"  PrecoSugerido: {produtoValidacao.PrecoSugeridoDoItem:F2}\n" +
+                                  $"  PrecoVenda: {produtoValidacao.PrecoVendaDoItem:F2}\n\n" +
+                                  $"Verifique os logs em {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs")}",
+                                  "Alerta de Atualização",
+                                  MessageBoxButtons.OK,
+                                  MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        // ============================================================
         // CONSTRUTOR PRINCIPAL
         // ============================================================
         public FormLoteRecebimento(ParceiroNegocio parceiro)
@@ -477,15 +508,7 @@ namespace BrechoApp
                             Log($"  Produto atualizado com sucesso");
 
                             // Validação: buscar o produto novamente para confirmar a atualização
-                            var produtoValidacao = _repoProduto.BuscarPorCodigo(codigoProduto);
-                            Log($"  VALIDAÇÃO - PrecoSugerido após UPDATE: {produtoValidacao.PrecoSugeridoDoItem:F2}");
-                            Log($"  VALIDAÇÃO - PrecoVenda após UPDATE: {produtoValidacao.PrecoVendaDoItem:F2}");
-
-                            if (Math.Abs(produtoValidacao.PrecoSugeridoDoItem - item.PrecoSugeridoDoItem) > 0.01 ||
-                                Math.Abs(produtoValidacao.PrecoVendaDoItem - item.PrecoVendaDoItem) > 0.01)
-                            {
-                                Log($"  ALERTA: Valores não foram atualizados corretamente!");
-                            }
+                            ValidarProdutoAposAtualizacao(codigoProduto, item, false);
                         }
                         else
                         {
@@ -529,26 +552,7 @@ namespace BrechoApp
                         Log($"  Produto atualizado com sucesso");
 
                         // Validação: buscar o produto novamente para confirmar a atualização
-                        var produtoValidacao = _repoProduto.BuscarPorCodigo(codigoProduto);
-                        Log($"  VALIDAÇÃO - PrecoSugerido após UPDATE: {produtoValidacao.PrecoSugeridoDoItem:F2}");
-                        Log($"  VALIDAÇÃO - PrecoVenda após UPDATE: {produtoValidacao.PrecoVendaDoItem:F2}");
-
-                        if (Math.Abs(produtoValidacao.PrecoSugeridoDoItem - item.PrecoSugeridoDoItem) > 0.01 ||
-                            Math.Abs(produtoValidacao.PrecoVendaDoItem - item.PrecoVendaDoItem) > 0.01)
-                        {
-                            Log($"  ALERTA: Valores não foram atualizados corretamente!");
-                            MessageBox.Show($"ATENÇÃO: Os preços do produto {codigoProduto} não foram atualizados corretamente.\n\n" +
-                                          $"Esperado:\n" +
-                                          $"  PrecoSugerido: {item.PrecoSugeridoDoItem:F2}\n" +
-                                          $"  PrecoVenda: {item.PrecoVendaDoItem:F2}\n\n" +
-                                          $"Obtido:\n" +
-                                          $"  PrecoSugerido: {produtoValidacao.PrecoSugeridoDoItem:F2}\n" +
-                                          $"  PrecoVenda: {produtoValidacao.PrecoVendaDoItem:F2}\n\n" +
-                                          $"Verifique os logs em {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs")}",
-                                          "Alerta de Atualização",
-                                          MessageBoxButtons.OK,
-                                          MessageBoxIcon.Warning);
-                        }
+                        ValidarProdutoAposAtualizacao(codigoProduto, item, true);
                     }
                     else
                     {
