@@ -1,6 +1,7 @@
 ﻿#pragma warning disable CA1416
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using BrechoApp.Data;
 using BrechoApp.Models;
@@ -43,6 +44,28 @@ namespace BrechoApp
                 .Replace("‑", "-")
                 .Replace("\r", "")
                 .Replace("\n", "");
+        }
+
+        // ============================================================
+        // LOGGING
+        // ============================================================
+        private void Log(string mensagem)
+        {
+            try
+            {
+                string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+                if (!Directory.Exists(logPath))
+                    Directory.CreateDirectory(logPath);
+
+                string logFile = Path.Combine(logPath, $"aprovacao_lote_{DateTime.Now:yyyy-MM-dd}.log");
+                string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {mensagem}{Environment.NewLine}";
+
+                File.AppendAllText(logFile, logEntry);
+            }
+            catch
+            {
+                // Silently ignore logging errors to avoid breaking the application
+            }
         }
 
         // ============================================================
@@ -340,6 +363,10 @@ namespace BrechoApp
                 MessageBoxButtons.YesNo) == DialogResult.No)
                 return;
 
+            Log($"=== INICIANDO APROVAÇÃO DO LOTE: {_loteAtual.CodigoLoteRecebimento} ===");
+            Log($"Status do lote: {_loteAtual.StatusLote}");
+            Log($"EstaAberto: {_loteAtual.EstaAberto}, EstaReaberto: {_loteAtual.EstaReaberto}");
+
             var itens = _repoItem.ListarItensPorLote(_loteAtual.CodigoLoteRecebimento);
 
             if (itens.Count == 0)
@@ -347,6 +374,8 @@ namespace BrechoApp
                 MessageBox.Show("Lote vazio. Adicione itens antes de aprovar.");
                 return;
             }
+
+            Log($"Total de itens no lote: {itens.Count}");
 
             if (_loteAtual.EstaReaberto)
             {
@@ -375,6 +404,12 @@ namespace BrechoApp
                     codigoProduto = $"{_loteAtual.CodigoLoteRecebimento}-P{sequencia}";
                 }
 
+                Log($"--- Processando item ID {item.Id} ---");
+                Log($"  Nome: {item.NomeDoItem}");
+                Log($"  Código produto: {codigoProduto}");
+                Log($"  PrecoSugerido do ItemLote: {item.PrecoSugeridoDoItem:F2}");
+                Log($"  PrecoVenda do ItemLote: {item.PrecoVendaDoItem:F2}");
+
                 var produtoExistente = _repoProduto.BuscarPorCodigo(codigoProduto);
 
                 if (_loteAtual.EstaAberto)
@@ -400,16 +435,26 @@ namespace BrechoApp
                             UltimaAtualizacao = DateTime.Now
                         };
 
+                        Log($"  Ação: CRIAR novo produto");
+                        Log($"  PrecoSugerido para criar: {novoProduto.PrecoSugeridoDoItem:F2}");
+                        Log($"  PrecoVenda para criar: {novoProduto.PrecoVendaDoItem:F2}");
+
                         _repoProduto.CriarProduto(novoProduto);
 
                         item.CodigoProdutoGerado = codigoProduto;
                         item.UltimaAtualizacao = DateTime.Now;
                         _repoItem.AtualizarItem(item);
+
+                        Log($"  Produto criado com sucesso");
                     }
                     else
                     {
                         if (produtoExistente.StatusDoProduto == "Disponível")
                         {
+                            Log($"  Produto já existe - Status: {produtoExistente.StatusDoProduto}");
+                            Log($"  PrecoSugerido ANTES da atualização: {produtoExistente.PrecoSugeridoDoItem:F2}");
+                            Log($"  PrecoVenda ANTES da atualização: {produtoExistente.PrecoVendaDoItem:F2}");
+
                             produtoExistente.NomeDoItem = item.NomeDoItem;
                             produtoExistente.MarcaDoItem = item.MarcaDoItem;
                             produtoExistente.CategoriaDoItem = item.CategoriaDoItem;
@@ -419,11 +464,32 @@ namespace BrechoApp
                             produtoExistente.PrecoVendaDoItem = item.PrecoVendaDoItem;
                             produtoExistente.UltimaAtualizacao = DateTime.Now;
 
+                            Log($"  Ação: ATUALIZAR produto existente (lote aberto)");
+                            Log($"  PrecoSugerido para atualizar: {produtoExistente.PrecoSugeridoDoItem:F2}");
+                            Log($"  PrecoVenda para atualizar: {produtoExistente.PrecoVendaDoItem:F2}");
+
                             _repoProduto.AtualizarProduto(produtoExistente);
 
                             item.CodigoProdutoGerado = codigoProduto;
                             item.UltimaAtualizacao = DateTime.Now;
                             _repoItem.AtualizarItem(item);
+
+                            Log($"  Produto atualizado com sucesso");
+
+                            // Validação: buscar o produto novamente para confirmar a atualização
+                            var produtoValidacao = _repoProduto.BuscarPorCodigo(codigoProduto);
+                            Log($"  VALIDAÇÃO - PrecoSugerido após UPDATE: {produtoValidacao.PrecoSugeridoDoItem:F2}");
+                            Log($"  VALIDAÇÃO - PrecoVenda após UPDATE: {produtoValidacao.PrecoVendaDoItem:F2}");
+
+                            if (Math.Abs(produtoValidacao.PrecoSugeridoDoItem - item.PrecoSugeridoDoItem) > 0.01 ||
+                                Math.Abs(produtoValidacao.PrecoVendaDoItem - item.PrecoVendaDoItem) > 0.01)
+                            {
+                                Log($"  ALERTA: Valores não foram atualizados corretamente!");
+                            }
+                        }
+                        else
+                        {
+                            Log($"  IGNORADO: Produto não está Disponível (Status: {produtoExistente.StatusDoProduto})");
                         }
                     }
                 }
@@ -431,12 +497,17 @@ namespace BrechoApp
                 {
                     if (produtoExistente == null)
                     {
+                        Log($"  ERRO: Produto deveria existir mas não foi encontrado");
                         sequencia++;
                         continue;
                     }
 
                     if (produtoExistente.StatusDoProduto == "Disponível")
                     {
+                        Log($"  Produto existe - Status: {produtoExistente.StatusDoProduto}");
+                        Log($"  PrecoSugerido ANTES da atualização: {produtoExistente.PrecoSugeridoDoItem:F2}");
+                        Log($"  PrecoVenda ANTES da atualização: {produtoExistente.PrecoVendaDoItem:F2}");
+
                         produtoExistente.NomeDoItem = item.NomeDoItem;
                         produtoExistente.MarcaDoItem = item.MarcaDoItem;
                         produtoExistente.CategoriaDoItem = item.CategoriaDoItem;
@@ -446,10 +517,42 @@ namespace BrechoApp
                         produtoExistente.PrecoVendaDoItem = item.PrecoVendaDoItem;
                         produtoExistente.UltimaAtualizacao = DateTime.Now;
 
+                        Log($"  Ação: ATUALIZAR produto (lote reaberto)");
+                        Log($"  PrecoSugerido para atualizar: {produtoExistente.PrecoSugeridoDoItem:F2}");
+                        Log($"  PrecoVenda para atualizar: {produtoExistente.PrecoVendaDoItem:F2}");
+
                         _repoProduto.AtualizarProduto(produtoExistente);
 
                         item.UltimaAtualizacao = DateTime.Now;
                         _repoItem.AtualizarItem(item);
+
+                        Log($"  Produto atualizado com sucesso");
+
+                        // Validação: buscar o produto novamente para confirmar a atualização
+                        var produtoValidacao = _repoProduto.BuscarPorCodigo(codigoProduto);
+                        Log($"  VALIDAÇÃO - PrecoSugerido após UPDATE: {produtoValidacao.PrecoSugeridoDoItem:F2}");
+                        Log($"  VALIDAÇÃO - PrecoVenda após UPDATE: {produtoValidacao.PrecoVendaDoItem:F2}");
+
+                        if (Math.Abs(produtoValidacao.PrecoSugeridoDoItem - item.PrecoSugeridoDoItem) > 0.01 ||
+                            Math.Abs(produtoValidacao.PrecoVendaDoItem - item.PrecoVendaDoItem) > 0.01)
+                        {
+                            Log($"  ALERTA: Valores não foram atualizados corretamente!");
+                            MessageBox.Show($"ATENÇÃO: Os preços do produto {codigoProduto} não foram atualizados corretamente.\n\n" +
+                                          $"Esperado:\n" +
+                                          $"  PrecoSugerido: {item.PrecoSugeridoDoItem:F2}\n" +
+                                          $"  PrecoVenda: {item.PrecoVendaDoItem:F2}\n\n" +
+                                          $"Obtido:\n" +
+                                          $"  PrecoSugerido: {produtoValidacao.PrecoSugeridoDoItem:F2}\n" +
+                                          $"  PrecoVenda: {produtoValidacao.PrecoVendaDoItem:F2}\n\n" +
+                                          $"Verifique os logs em {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs")}",
+                                          "Alerta de Atualização",
+                                          MessageBoxButtons.OK,
+                                          MessageBoxIcon.Warning);
+                        }
+                    }
+                    else
+                    {
+                        Log($"  IGNORADO: Produto não está Disponível (Status: {produtoExistente.StatusDoProduto})");
                     }
                 }
 
@@ -457,6 +560,8 @@ namespace BrechoApp
             }
 
             _repoLote.AprovarLote(_loteAtual.CodigoLoteRecebimento);
+
+            Log($"=== APROVAÇÃO CONCLUÍDA: {_loteAtual.CodigoLoteRecebimento} ===");
 
             MessageBox.Show("Lote aprovado com sucesso.");
             CarregarLote(_loteAtual.CodigoLoteRecebimento);
