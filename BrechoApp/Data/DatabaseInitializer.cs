@@ -26,13 +26,13 @@ namespace BrechoApp.Data
 
                 ---------------------------------------------------------
                 -- TABELA: PARCEIROS DE NEGÓCIO (PN)
-                -- CPF aceita CPF ou CNPJ (até 18 caracteres formatado)
+                -- CpfCnpj aceita CPF ou CNPJ (até 18 caracteres formatado)
                 ---------------------------------------------------------
                 CREATE TABLE IF NOT EXISTS ParceirosNegocio (
                     CodigoParceiro TEXT PRIMARY KEY,
                     Nome TEXT NOT NULL,
                     TipoParceiro TEXT DEFAULT 'Outro',
-                    CPF TEXT NOT NULL,
+                    CpfCnpj TEXT NOT NULL,
                     Apelido TEXT NOT NULL,
                     Telefone TEXT NOT NULL,
 

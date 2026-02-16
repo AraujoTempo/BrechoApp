@@ -23,8 +23,8 @@ namespace BrechoApp.Data
     {
         private readonly string _connectionString = DatabaseConfig.ConnectionString;
 
-        // CPF dummy usado quando o parceiro não deseja informar CPF real
-        private const string CPF_DUMMY = "123.456.789-09";
+        // CPF/CNPJ dummy usado quando o parceiro não deseja informar CPF/CNPJ real
+        private const string CPFCNPJ_DUMMY = "123.456.789-09";
 
         public ParceiroNegocioRepository()
         {
@@ -100,7 +100,7 @@ namespace BrechoApp.Data
             string sql = @"
                 SELECT COUNT(*)
                 FROM ParceirosNegocio
-                WHERE CPF = @Documento
+                WHERE CpfCnpj = @Documento
                 AND (@CodigoAtual IS NULL OR CodigoParceiro <> @CodigoAtual)
             ";
 
@@ -152,7 +152,7 @@ namespace BrechoApp.Data
             connection.Open();
 
             string sql = @"
-                SELECT CodigoParceiro, Nome, TipoParceiro, CPF, Apelido, Telefone, Endereco, Email,
+                SELECT CodigoParceiro, Nome, TipoParceiro, CpfCnpj, Apelido, Telefone, Endereco, Email,
                        Banco, Agencia, Conta, Pix, PercentualComissao, AutorizaDoacao,
                        Observacao, Aniversario, SaldoCredito
                 FROM ParceirosNegocio
@@ -169,7 +169,7 @@ namespace BrechoApp.Data
                     CodigoParceiro = reader["CodigoParceiro"].ToString()!,
                     Nome = reader["Nome"].ToString()!,
                     TipoParceiro = ParseTipoParceiroOrDefault(reader["TipoParceiro"]),
-                    CPF = reader["CPF"].ToString()!,
+                    CpfCnpj = reader["CpfCnpj"].ToString()!,
                     Apelido = reader["Apelido"].ToString()!,
                     Telefone = reader["Telefone"].ToString()!,
 
@@ -207,7 +207,7 @@ namespace BrechoApp.Data
             connection.Open();
 
             string sql = @"
-                SELECT CodigoParceiro, Nome, TipoParceiro, CPF, Apelido, Telefone, Endereco, Email,
+                SELECT CodigoParceiro, Nome, TipoParceiro, CpfCnpj, Apelido, Telefone, Endereco, Email,
                        Banco, Agencia, Conta, Pix, PercentualComissao, AutorizaDoacao,
                        Observacao, Aniversario, SaldoCredito
                 FROM ParceirosNegocio
@@ -228,7 +228,7 @@ namespace BrechoApp.Data
                 CodigoParceiro = reader["CodigoParceiro"].ToString()!,
                 Nome = reader["Nome"].ToString()!,
                 TipoParceiro = ParseTipoParceiroOrDefault(reader["TipoParceiro"]),
-                CPF = reader["CPF"].ToString()!,
+                CpfCnpj = reader["CpfCnpj"].ToString()!,
                 Apelido = reader["Apelido"].ToString()!,
                 Telefone = reader["Telefone"].ToString()!,
 
@@ -265,7 +265,7 @@ namespace BrechoApp.Data
                 .Where(p =>
                     (p.Nome?.ToLower().Contains(termo) ?? false) ||
                     (p.Apelido?.ToLower().Contains(termo) ?? false) ||
-                    (p.CPF?.ToLower().Contains(termo) ?? false) ||
+                    (p.CpfCnpj?.ToLower().Contains(termo) ?? false) ||
                     (p.Telefone?.ToLower().Contains(termo) ?? false) ||
                     (p.Email?.ToLower().Contains(termo) ?? false) ||
                     (p.Endereco?.ToLower().Contains(termo) ?? false) ||
@@ -288,11 +288,11 @@ namespace BrechoApp.Data
 
             string sql = @"
                 INSERT INTO ParceirosNegocio
-                (CodigoParceiro, Nome, TipoParceiro, CPF, Apelido, Telefone, Endereco, Email, Banco, Agencia, Conta, Pix,
+                (CodigoParceiro, Nome, TipoParceiro, CpfCnpj, Apelido, Telefone, Endereco, Email, Banco, Agencia, Conta, Pix,
                  PercentualComissao, AutorizaDoacao, Observacao, Aniversario, SaldoCredito,
                  DataCriacao, UltimaAtualizacao)
                 VALUES
-                (@Codigo, @Nome, @TipoParceiro, @CPF, @Apelido, @Telefone, @Endereco, @Email, @Banco, @Agencia, @Conta, @Pix,
+                (@Codigo, @Nome, @TipoParceiro, @CpfCnpj, @Apelido, @Telefone, @Endereco, @Email, @Banco, @Agencia, @Conta, @Pix,
                  @Comissao, @Doacao, @Obs, @Aniversario, @Saldo,
                  @DataCriacao, @UltimaAtualizacao)
             ";
@@ -302,7 +302,7 @@ namespace BrechoApp.Data
             cmd.Parameters.AddWithValue("@Codigo", p.CodigoParceiro);
             cmd.Parameters.AddWithValue("@Nome", p.Nome);
             cmd.Parameters.AddWithValue("@TipoParceiro", p.TipoParceiro.ToString());
-            cmd.Parameters.AddWithValue("@CPF", p.CPF);
+            cmd.Parameters.AddWithValue("@CpfCnpj", p.CpfCnpj);
             cmd.Parameters.AddWithValue("@Apelido", p.Apelido);
             cmd.Parameters.AddWithValue("@Telefone", p.Telefone);
 
@@ -337,7 +337,7 @@ namespace BrechoApp.Data
                 UPDATE ParceirosNegocio SET
                     Nome=@Nome,
                     TipoParceiro=@TipoParceiro,
-                    CPF=@CPF,
+                    CpfCnpj=@CpfCnpj,
                     Apelido=@Apelido,
                     Telefone=@Telefone,
                     Endereco=@Endereco,
@@ -360,7 +360,7 @@ namespace BrechoApp.Data
             cmd.Parameters.AddWithValue("@Codigo", p.CodigoParceiro);
             cmd.Parameters.AddWithValue("@Nome", p.Nome);
             cmd.Parameters.AddWithValue("@TipoParceiro", p.TipoParceiro.ToString());
-            cmd.Parameters.AddWithValue("@CPF", p.CPF);
+            cmd.Parameters.AddWithValue("@CpfCnpj", p.CpfCnpj);
             cmd.Parameters.AddWithValue("@Apelido", p.Apelido);
             cmd.Parameters.AddWithValue("@Telefone", p.Telefone);
 
@@ -412,7 +412,7 @@ namespace BrechoApp.Data
             if (string.IsNullOrWhiteSpace(p.Nome))
                 throw new Exception("O campo Nome é obrigatório.");
 
-            if (string.IsNullOrWhiteSpace(p.CPF))
+            if (string.IsNullOrWhiteSpace(p.CpfCnpj))
                 throw new Exception("O campo CPF/CNPJ é obrigatório.");
 
             if (string.IsNullOrWhiteSpace(p.Apelido))
@@ -422,14 +422,14 @@ namespace BrechoApp.Data
                 throw new Exception("O Percentual de Comissão não pode ser negativo.");
 
             // ------------------------------
-            // TRATAMENTO ESPECIAL PARA CPF DUMMY
+            // TRATAMENTO ESPECIAL PARA CPF/CNPJ DUMMY
             // ------------------------------
-            if (p.CPF != CPF_DUMMY)
+            if (p.CpfCnpj != CPFCNPJ_DUMMY)
             {
-                if (DocumentoExiste(p.CPF, novo ? null : p.CodigoParceiro))
+                if (DocumentoExiste(p.CpfCnpj, novo ? null : p.CodigoParceiro))
                     throw new Exception("Já existe um parceiro cadastrado com este CPF/CNPJ.");
 
-                if (!ValidadorBrasil.DocumentoValido(p.CPF))
+                if (!ValidadorBrasil.DocumentoValido(p.CpfCnpj))
                     throw new Exception("CPF/CNPJ inválido.");
             }
 

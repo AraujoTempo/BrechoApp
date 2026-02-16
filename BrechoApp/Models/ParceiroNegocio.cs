@@ -47,7 +47,7 @@ namespace BrechoApp.Models
         /// Aceita CPF (11 dígitos) ou CNPJ (14 dígitos).
         /// Pode ser formatado ou não.
         /// </summary>
-        public string CPF { get; set; } = string.Empty;
+        public string CpfCnpj { get; set; } = string.Empty;
 
         /// <summary>
         /// Apelido ou nome social.
