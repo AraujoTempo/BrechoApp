@@ -705,21 +705,41 @@ namespace BrechoApp
 
             try
             {
+                // Buscar o nome do parceiro do banco
+                var parceiro = _repoParceiro.BuscarPorCodigo(_loteAtual.CodigoParceiro);
+                string nomeParceiro = parceiro?.Nome ?? "N/A";
+
                 var workbook = new XLWorkbook();
                 var ws = workbook.Worksheets.Add("Itens do Lote");
 
-                ws.Cell(1, 1).Value = "ID";
-                ws.Cell(1, 2).Value = "Nome";
-                ws.Cell(1, 3).Value = "Marca";
-                ws.Cell(1, 4).Value = "Categoria";
-                ws.Cell(1, 5).Value = "Preço Sugerido";
-                ws.Cell(1, 6).Value = "Preço Venda";
-                ws.Cell(1, 7).Value = "Status";
-                ws.Cell(1, 8).Value = "Observação";
+                // Linha 1: Código do Lote e Parceiro de Negócio
+                ws.Cell(1, 1).Value = "Código do Lote:";
+                ws.Cell(1, 1).Style.Font.Bold = true;
+                ws.Cell(1, 2).Value = _loteAtual.CodigoLoteRecebimento;
+                ws.Cell(1, 4).Value = "Parceiro de Negócio:";
+                ws.Cell(1, 4).Style.Font.Bold = true;
+                ws.Cell(1, 5).Value = nomeParceiro;
 
-                ws.Range("A1:H1").Style.Font.Bold = true;
+                // Linha 2: Status do Lote
+                ws.Cell(2, 1).Value = "Status do Lote:";
+                ws.Cell(2, 1).Style.Font.Bold = true;
+                ws.Cell(2, 2).Value = _loteAtual.StatusLote;
 
-                int row = 2;
+                // Linha 3: Vazia (separação)
+
+                // Linha 4: Cabeçalhos das colunas
+                ws.Cell(4, 1).Value = "ID";
+                ws.Cell(4, 2).Value = "Nome";
+                ws.Cell(4, 3).Value = "Marca";
+                ws.Cell(4, 4).Value = "Categoria";
+                ws.Cell(4, 5).Value = "Preço Sugerido";
+                ws.Cell(4, 6).Value = "Preço Venda";
+                ws.Cell(4, 7).Value = "Status";
+                ws.Cell(4, 8).Value = "Observação";
+
+                ws.Range("A4:H4").Style.Font.Bold = true;
+
+                int row = 5;
                 foreach (var item in itens)
                 {
                     ws.Cell(row, 1).Value = item.Id;
