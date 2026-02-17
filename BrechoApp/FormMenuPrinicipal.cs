@@ -63,5 +63,15 @@ namespace BrechoApp
             var form = new FormVenda();
             form.ShowDialog();
         }
+
+        // ============================================================
+        // BOTÃO: RELATÓRIOS GERENCIAIS
+        // Abre o módulo de relatórios gerenciais
+        // ============================================================
+        private void btnRelatoriosGerenciais_Click(object sender, EventArgs e)
+        {
+            var form = new FormRelatoriosGerenciais();
+            form.ShowDialog();
+        }
     }
 }

@@ -30,6 +30,7 @@
             this.btnCuradoria = new System.Windows.Forms.Button();
             this.btnOperacoes = new System.Windows.Forms.Button();
             this.btnVendas = new System.Windows.Forms.Button();
+            this.btnRelatoriosGerenciais = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureLogo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -109,11 +110,23 @@
             this.btnVendas.UseVisualStyleBackColor = true;
             this.btnVendas.Click += new System.EventHandler(this.btnVendas_Click);
             // 
+            // btnRelatoriosGerenciais
+            // 
+            this.btnRelatoriosGerenciais.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.btnRelatoriosGerenciais.Location = new System.Drawing.Point(20, 485);
+            this.btnRelatoriosGerenciais.Name = "btnRelatoriosGerenciais";
+            this.btnRelatoriosGerenciais.Size = new System.Drawing.Size(260, 45);
+            this.btnRelatoriosGerenciais.TabIndex = 7;
+            this.btnRelatoriosGerenciais.Text = "Relatórios Gerenciais";
+            this.btnRelatoriosGerenciais.UseVisualStyleBackColor = true;
+            this.btnRelatoriosGerenciais.Click += new System.EventHandler(this.btnRelatoriosGerenciais_Click);
+            // 
             // FormMenuPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(300, 500);
+            this.ClientSize = new System.Drawing.Size(300, 555);
+            this.Controls.Add(this.btnRelatoriosGerenciais);
             this.Controls.Add(this.btnVendas);
             this.Controls.Add(this.btnOperacoes);
             this.Controls.Add(this.btnCuradoria);
@@ -140,5 +153,6 @@
         private System.Windows.Forms.Button btnCuradoria;
         private System.Windows.Forms.Button btnOperacoes;
         private System.Windows.Forms.Button btnVendas;
+        private System.Windows.Forms.Button btnRelatoriosGerenciais;
     }
 }
