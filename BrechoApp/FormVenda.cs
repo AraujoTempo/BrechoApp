@@ -19,6 +19,9 @@ namespace BrechoApp
     /// </summary>
     public partial class FormVenda : Form
     {
+        // Constante para tolerância de arredondamento em cálculos financeiros
+        private const double ROUNDING_TOLERANCE = 0.01;
+
         private Venda _vendaAtual;
         private readonly VendaRepository _vendaRepo;
         private readonly ParceiroNegocioRepository _parceiroRepo;
@@ -154,16 +157,18 @@ namespace BrechoApp
         // ============================================================
         private void btnSelecionarVendedor_Click(object sender, EventArgs e)
         {
+            // Criar formulário em modo de seleção
+            // Nota: Como precisamos filtrar por dois tipos (Socio OU Vendedor),
+            // fazemos o filtro manualmente após a construção
             var form = new FormCadastroParceiroNegocio(modoSelecao: true);
             
             // Filtrar apenas vendedores
-            var repo = new ParceiroNegocioRepository();
-            var vendedores = repo.ListarVendedores();
+            var vendedores = _parceiroRepo.ListarVendedores();
             form.dataGridParceiros.DataSource = vendedores;
 
             if (form.ShowDialog() == DialogResult.OK)
             {
-                var vendedor = repo.BuscarPorCodigo(form.ParceiroSelecionado);
+                var vendedor = _parceiroRepo.BuscarPorCodigo(form.ParceiroSelecionado);
                 if (vendedor != null)
                 {
                     _vendaAtual.IdVendedor = vendedor.CodigoParceiro;
@@ -370,7 +375,7 @@ namespace BrechoApp
             double somaFinal = _vendaAtual.Itens.Sum(i => i.PrecoFinalNegociado);
             double diferencaArredondamento = _vendaAtual.ValorTotalFinal - somaFinal;
             
-            if (Math.Abs(diferencaArredondamento) > 0.01)
+            if (Math.Abs(diferencaArredondamento) > ROUNDING_TOLERANCE)
             {
                 _vendaAtual.Itens[0].PrecoFinalNegociado += diferencaArredondamento;
             }

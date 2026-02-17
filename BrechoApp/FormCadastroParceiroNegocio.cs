@@ -27,10 +27,8 @@ namespace BrechoApp
                 // Ocultar botões de edição no modo de seleção
                 btnSalvar.Visible = false;
                 btnIncluir.Visible = false;
-                if (Controls.Find("btnLotes", true).Length > 0)
-                    Controls.Find("btnLotes", true)[0].Visible = false;
-                if (Controls.Find("btnExportarExcel", true).Length > 0)
-                    Controls.Find("btnExportarExcel", true)[0].Visible = false;
+                btnLotes.Visible = false;
+                btnExportarExcel.Visible = false;
 
                 // Mudar título
                 this.Text = "Selecionar Parceiro de Negócio";
