@@ -87,6 +87,15 @@ namespace BrechoApp
         }
 
         // ============================================================
+        // BOTÃO: CADASTRO DE CATEGORIAS DE PRODUTOS
+        // ============================================================
+        private void btnCadastroCategorias_Click(object sender, EventArgs e)
+        {
+            var form = new FormCadastroCategorias();
+            form.ShowDialog();
+        }
+
+        // ============================================================
         // BOTÃO: VOLTAR
         // Fecha o formulário
         // ============================================================
