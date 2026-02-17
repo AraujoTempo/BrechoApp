@@ -118,8 +118,9 @@ namespace BrechoApp
                 }
 
                 // Tentar converter o percentual
-                if (!decimal.TryParse(txtPercentual.Text.Replace(",", "."), 
-                    NumberStyles.Any, CultureInfo.InvariantCulture, out decimal percentual))
+                string percentualText = txtPercentual.Text.Trim().Replace(",", ".");
+                if (!decimal.TryParse(percentualText, 
+                    NumberStyles.Number, CultureInfo.InvariantCulture, out decimal percentual))
                 {
                     MessageBox.Show("Percentual inválido. Use apenas números.", "Atenção",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
