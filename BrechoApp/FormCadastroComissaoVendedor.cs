@@ -30,7 +30,6 @@ namespace BrechoApp
         // ============================================================
         private void CarregarVendedores()
         {
-            // Obtém apenas vendedores (Socio ou Vendedor)
             var vendedores = _parceiroRepo.ListarVendedores();
 
             cmbVendedor.DataSource = null;
@@ -39,9 +38,20 @@ namespace BrechoApp
             cmbVendedor.DataSource = vendedores;
 
             if (vendedores.Count > 0)
+            {
                 cmbVendedor.SelectedIndex = 0;
+            }
             else
+            {
                 cmbVendedor.SelectedIndex = -1;
+                MessageBox.Show(
+                    "Nenhum vendedor cadastrado.\n\n" +
+                    "Para cadastrar comissões, é necessário primeiro cadastrar Parceiros de Negócio com TipoParceiro = 'Vendedor'.\n\n" +
+                    "Acesse: Menu Principal → Cadastros → Parceiros de Negócio",
+                    "Atenção",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
         }
 
         // ============================================================
@@ -49,46 +59,62 @@ namespace BrechoApp
         // ============================================================
         private void CarregarComissoes()
         {
-            var comissoes = _comissaoRepo.ListarTodas();
-            dgvComissoes.DataSource = comissoes;
-
-            // Configurar colunas
-            if (comissoes != null && comissoes.Count > 0 && dgvComissoes.Columns.Count > 0)
+            try
             {
-                // Ocultar IdComissao e CodigoPN
-                if (dgvComissoes.Columns.Contains("IdComissao"))
-                    dgvComissoes.Columns["IdComissao"].Visible = false;
+                var comissoes = _comissaoRepo.ListarTodas();
+                
+                // Garantir que nunca seja nulo
+                if (comissoes == null)
+                    comissoes = new List<ComissaoVendedor>();
 
-                if (dgvComissoes.Columns.Contains("CodigoPN"))
-                    dgvComissoes.Columns["CodigoPN"].Visible = false;
+                dgvComissoes.DataSource = comissoes;
 
-                // Configurar cabeçalhos e larguras
-                if (dgvComissoes.Columns.Contains("NomeVendedor"))
+                // Configurar colunas (mesmo se lista vazia)
+                if (dgvComissoes.Columns.Count > 0)
                 {
-                    dgvComissoes.Columns["NomeVendedor"].HeaderText = "Vendedor";
-                    dgvComissoes.Columns["NomeVendedor"].Width = 250;
-                }
+                    // Ocultar IdComissao e CodigoPN
+                    if (dgvComissoes.Columns.Contains("IdComissao"))
+                        dgvComissoes.Columns["IdComissao"].Visible = false;
 
-                if (dgvComissoes.Columns.Contains("PercentualComissao"))
-                {
-                    dgvComissoes.Columns["PercentualComissao"].HeaderText = "Comissão (%)";
-                    dgvComissoes.Columns["PercentualComissao"].Width = 100;
-                    dgvComissoes.Columns["PercentualComissao"].DefaultCellStyle.Format = "N2";
-                }
+                    if (dgvComissoes.Columns.Contains("CodigoPN"))
+                        dgvComissoes.Columns["CodigoPN"].Visible = false;
 
-                if (dgvComissoes.Columns.Contains("DataCadastro"))
-                {
-                    dgvComissoes.Columns["DataCadastro"].HeaderText = "Data de Cadastro";
-                    dgvComissoes.Columns["DataCadastro"].Width = 150;
-                    dgvComissoes.Columns["DataCadastro"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
-                }
+                    // Configurar cabeçalhos e larguras
+                    if (dgvComissoes.Columns.Contains("NomeVendedor"))
+                    {
+                        dgvComissoes.Columns["NomeVendedor"].HeaderText = "Vendedor";
+                        dgvComissoes.Columns["NomeVendedor"].Width = 250;
+                    }
 
-                if (dgvComissoes.Columns.Contains("DataUltimaAlteracao"))
-                {
-                    dgvComissoes.Columns["DataUltimaAlteracao"].HeaderText = "Última Alteração";
-                    dgvComissoes.Columns["DataUltimaAlteracao"].Width = 150;
-                    dgvComissoes.Columns["DataUltimaAlteracao"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                    if (dgvComissoes.Columns.Contains("PercentualComissao"))
+                    {
+                        dgvComissoes.Columns["PercentualComissao"].HeaderText = "Comissão (%)";
+                        dgvComissoes.Columns["PercentualComissao"].Width = 100;
+                        dgvComissoes.Columns["PercentualComissao"].DefaultCellStyle.Format = "N2";
+                    }
+
+                    if (dgvComissoes.Columns.Contains("DataCadastro"))
+                    {
+                        dgvComissoes.Columns["DataCadastro"].HeaderText = "Data de Cadastro";
+                        dgvComissoes.Columns["DataCadastro"].Width = 150;
+                        dgvComissoes.Columns["DataCadastro"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                    }
+
+                    if (dgvComissoes.Columns.Contains("DataUltimaAlteracao"))
+                    {
+                        dgvComissoes.Columns["DataUltimaAlteracao"].HeaderText = "Última Alteração";
+                        dgvComissoes.Columns["DataUltimaAlteracao"].Width = 150;
+                        dgvComissoes.Columns["DataUltimaAlteracao"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Erro ao carregar comissões: {ex.Message}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -148,7 +174,7 @@ namespace BrechoApp
                     return;
                 }
 
-                if (parceiro.TipoParceiro != TipoParceiro.Vendedor && parceiro.TipoParceiro != TipoParceiro.Socio)
+                if (parceiro.TipoParceiro != TipoParceiro.Vendedor)
                 {
                     MessageBox.Show("Apenas Parceiros de Negócio do tipo Vendedor podem receber comissão.", "Atenção",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
