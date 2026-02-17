@@ -22,17 +22,23 @@ namespace BrechoApp
             var categorias = _repo.ListarTodas();
             dgvCategorias.DataSource = categorias;
 
-            // Verificar se há colunas E se as colunas esperadas existem
-            if (dgvCategorias.Columns.Count > 0 && 
-                dgvCategorias.Columns["Id"] != null &&
-                dgvCategorias.Columns["NomeCategoria"] != null &&
-                dgvCategorias.Columns["DataCriacao"] != null)
+            // Only configure columns if data exists and columns are created
+            if (categorias != null && categorias.Count > 0 && dgvCategorias.Columns.Count > 0)
             {
-                dgvCategorias.Columns["Id"].Visible = false;
-                dgvCategorias.Columns["NomeCategoria"].HeaderText = "Categoria";
-                dgvCategorias.Columns["NomeCategoria"].Width = 300;
-                dgvCategorias.Columns["DataCriacao"].HeaderText = "Data de Criação";
-                dgvCategorias.Columns["DataCriacao"].Width = 150;
+                if (dgvCategorias.Columns.Contains("Id"))
+                    dgvCategorias.Columns["Id"].Visible = false;
+                
+                if (dgvCategorias.Columns.Contains("NomeCategoria"))
+                {
+                    dgvCategorias.Columns["NomeCategoria"].HeaderText = "Categoria";
+                    dgvCategorias.Columns["NomeCategoria"].Width = 300;
+                }
+                
+                if (dgvCategorias.Columns.Contains("DataCriacao"))
+                {
+                    dgvCategorias.Columns["DataCriacao"].HeaderText = "Data de Criação";
+                    dgvCategorias.Columns["DataCriacao"].Width = 150;
+                }
             }
         }
 
