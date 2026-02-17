@@ -212,17 +212,41 @@ namespace BrechoApp.Data
 
                 ---------------------------------------------------------
                 -- TABELA DE VENDAS
+                -- Sistema completo de vendas com suporte a múltiplos itens
                 ---------------------------------------------------------
                 CREATE TABLE IF NOT EXISTS Vendas (
-                    CodigoVenda TEXT PRIMARY KEY,
-                    CodigoProduto TEXT NOT NULL,
-                    CodigoParceiro TEXT NOT NULL,
+                    IdVenda INTEGER PRIMARY KEY AUTOINCREMENT,
+                    CodigoVenda TEXT NOT NULL UNIQUE,
+                    IdVendedor TEXT NOT NULL,
+                    IdCliente TEXT NOT NULL,
                     DataVenda TEXT NOT NULL,
-                    ValorVenda REAL NOT NULL,
-                    FormaPagamento TEXT,
+                    ValorTotalOriginal REAL NOT NULL,
+                    DescontoPercentual REAL DEFAULT 0,
+                    DescontoValor REAL DEFAULT 0,
+                    ValorTotalFinal REAL NOT NULL,
+                    FormaPagamento TEXT NOT NULL,
+                    Observacoes TEXT,
+                    DataCriacao TEXT NOT NULL,
+                    
+                    FOREIGN KEY (IdVendedor) REFERENCES ParceirosNegocio (CodigoParceiro),
+                    FOREIGN KEY (IdCliente) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
 
-                    FOREIGN KEY (CodigoProduto) REFERENCES Produtos (CodigoProduto),
-                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro)
+                ---------------------------------------------------------
+                -- TABELA DE ITENS DAS VENDAS
+                -- Armazena cada produto vendido em uma venda
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS VendasItens (
+                    IdVendaItem INTEGER PRIMARY KEY AUTOINCREMENT,
+                    IdVenda INTEGER NOT NULL,
+                    IdProduto TEXT NOT NULL,
+                    IdFornecedor TEXT NOT NULL,
+                    PrecoOriginal REAL NOT NULL,
+                    PrecoFinalNegociado REAL NOT NULL,
+                    
+                    FOREIGN KEY (IdVenda) REFERENCES Vendas (IdVenda),
+                    FOREIGN KEY (IdProduto) REFERENCES Produtos (CodigoProduto),
+                    FOREIGN KEY (IdFornecedor) REFERENCES ParceirosNegocio (CodigoParceiro)
                 );
             ";
 

@@ -56,11 +56,11 @@ namespace BrechoApp
 
         // ============================================================
         // BOTÃO: VENDAS
-        // Abre o cadastro de vendedores (módulo de vendas)
+        // Abre o formulário de vendas
         // ============================================================
         private void btnVendas_Click(object sender, EventArgs e)
         {
-            var form = new FormCadastroVendedor();
+            var form = new FormVenda();
             form.ShowDialog();
         }
     }
