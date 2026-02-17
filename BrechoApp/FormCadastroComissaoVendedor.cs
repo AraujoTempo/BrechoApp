@@ -74,37 +74,65 @@ namespace BrechoApp
                 {
                     // Ocultar IdComissao e CodigoPN
                     if (dgvComissoes.Columns.Contains("IdComissao"))
-                        dgvComissoes.Columns["IdComissao"].Visible = false;
+                    {
+                        var column = dgvComissoes.Columns["IdComissao"];
+                        if (column != null)
+                        {
+                            column.Visible = false;
+                        }
+                    }
 
                     if (dgvComissoes.Columns.Contains("CodigoPN"))
-                        dgvComissoes.Columns["CodigoPN"].Visible = false;
+                    {
+                        var column = dgvComissoes.Columns["CodigoPN"];
+                        if (column != null)
+                        {
+                            column.Visible = false;
+                        }
+                    }
 
                     // Configurar cabeçalhos e larguras
                     if (dgvComissoes.Columns.Contains("NomeVendedor"))
                     {
-                        dgvComissoes.Columns["NomeVendedor"].HeaderText = "Vendedor";
-                        dgvComissoes.Columns["NomeVendedor"].Width = 250;
+                        var column = dgvComissoes.Columns["NomeVendedor"];
+                        if (column != null)
+                        {
+                            column.HeaderText = "Vendedor";
+                            column.Width = 250;
+                        }
                     }
 
                     if (dgvComissoes.Columns.Contains("PercentualComissao"))
                     {
-                        dgvComissoes.Columns["PercentualComissao"].HeaderText = "Comissão (%)";
-                        dgvComissoes.Columns["PercentualComissao"].Width = 100;
-                        dgvComissoes.Columns["PercentualComissao"].DefaultCellStyle.Format = "N2";
+                        var column = dgvComissoes.Columns["PercentualComissao"];
+                        if (column != null)
+                        {
+                            column.HeaderText = "Comissão (%)";
+                            column.Width = 100;
+                            column.DefaultCellStyle.Format = "N2";
+                        }
                     }
 
                     if (dgvComissoes.Columns.Contains("DataCadastro"))
                     {
-                        dgvComissoes.Columns["DataCadastro"].HeaderText = "Data de Cadastro";
-                        dgvComissoes.Columns["DataCadastro"].Width = 150;
-                        dgvComissoes.Columns["DataCadastro"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                        var column = dgvComissoes.Columns["DataCadastro"];
+                        if (column != null)
+                        {
+                            column.HeaderText = "Data de Cadastro";
+                            column.Width = 150;
+                            column.DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                        }
                     }
 
                     if (dgvComissoes.Columns.Contains("DataUltimaAlteracao"))
                     {
-                        dgvComissoes.Columns["DataUltimaAlteracao"].HeaderText = "Última Alteração";
-                        dgvComissoes.Columns["DataUltimaAlteracao"].Width = 150;
-                        dgvComissoes.Columns["DataUltimaAlteracao"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                        var column = dgvComissoes.Columns["DataUltimaAlteracao"];
+                        if (column != null)
+                        {
+                            column.HeaderText = "Última Alteração";
+                            column.Width = 150;
+                            column.DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                        }
                     }
                 }
             }
