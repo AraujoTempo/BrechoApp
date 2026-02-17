@@ -15,15 +15,12 @@ namespace BrechoApp
         }
 
         // ============================================================
-        // BOTÃO: COMISSÃO DO PARCEIRO DE NEGÓCIOS
-        // Ainda não implementado
+        // BOTÃO: CADASTRAR COMISSÃO DE VENDEDORES
         // ============================================================
         private void btnComissaoParceiro_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Comissão do Parceiro de Negócios em desenvolvimento.", 
-                "Em Desenvolvimento", 
-                MessageBoxButtons.OK, 
-                MessageBoxIcon.Information);
+            var form = new FormCadastroComissaoVendedor();
+            form.ShowDialog();
         }
 
         // ============================================================

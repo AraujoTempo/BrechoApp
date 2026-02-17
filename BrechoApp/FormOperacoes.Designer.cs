@@ -51,10 +51,9 @@
             this.lblTitulo.Text = "OPERAÇÕES";
             
             // ============================================================
-            // BOTÃO: COMISSÃO DO PARCEIRO DE NEGÓCIOS
+            // BOTÃO: CADASTRAR COMISSÃO DE VENDEDORES
             // ============================================================
             this.btnComissaoParceiro.BackColor = System.Drawing.Color.FromArgb(52, 152, 219);
-            this.btnComissaoParceiro.Enabled = false;
             this.btnComissaoParceiro.FlatAppearance.BorderSize = 0;
             this.btnComissaoParceiro.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnComissaoParceiro.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
@@ -63,7 +62,7 @@
             this.btnComissaoParceiro.Name = "btnComissaoParceiro";
             this.btnComissaoParceiro.Size = new System.Drawing.Size(320, 60);
             this.btnComissaoParceiro.TabIndex = 1;
-            this.btnComissaoParceiro.Text = "Comissão do Parceiro de Negócios\r\n(Em Desenvolvimento)";
+            this.btnComissaoParceiro.Text = "Cadastrar Comissão de Vendedores";
             this.btnComissaoParceiro.UseVisualStyleBackColor = false;
             this.btnComissaoParceiro.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnComissaoParceiro.Click += new System.EventHandler(this.btnComissaoParceiro_Click);
