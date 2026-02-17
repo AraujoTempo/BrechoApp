@@ -238,7 +238,7 @@
             this.lblComissaoVendedor.AutoSize = true;
 
             this.numComissaoDeVendedor = new System.Windows.Forms.NumericUpDown();
-            this.numComissaoDeVendedor.Location = new System.Drawing.Point(730, 517);
+            this.numComissaoDeVendedor.Location = new System.Drawing.Point(780, 517);
             this.numComissaoDeVendedor.Size = new System.Drawing.Size(80, 27);
             this.numComissaoDeVendedor.DecimalPlaces = 2;
             this.numComissaoDeVendedor.Minimum = 0;
