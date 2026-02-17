@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using BrechoApp.Data;
 using BrechoApp.Models;
@@ -12,11 +13,44 @@ namespace BrechoApp
     {
         private const string CPFCNPJ_DUMMY = "123.456.789-09";
 
-        public FormCadastroParceiroNegocio()
+        // Propriedades para modo de seleção
+        public bool ModoSelecao { get; set; } = false;
+        public string ParceiroSelecionado { get; private set; }
+
+        public FormCadastroParceiroNegocio(bool modoSelecao = false, TipoParceiro? filtroTipo = null)
         {
             InitializeComponent();
+            ModoSelecao = modoSelecao;
+
+            if (modoSelecao)
+            {
+                // Ocultar botões de edição no modo de seleção
+                btnSalvar.Visible = false;
+                btnNovo.Visible = false;
+                if (Controls.Find("btnLotes", true).Length > 0)
+                    Controls.Find("btnLotes", true)[0].Visible = false;
+                if (Controls.Find("btnExportarExcel", true).Length > 0)
+                    Controls.Find("btnExportarExcel", true)[0].Visible = false;
+
+                // Mudar título
+                this.Text = "Selecionar Parceiro de Negócio";
+            }
+
             CarregarTiposParceiro();
-            CarregarParceiros();
+
+            if (filtroTipo.HasValue)
+            {
+                // Aplicar filtro por tipo
+                var repo = new ParceiroNegocioRepository();
+                var lista = repo.ListarParceiros()
+                    .Where(p => p.TipoParceiro == filtroTipo.Value)
+                    .ToList();
+                dataGridParceiros.DataSource = lista;
+            }
+            else
+            {
+                CarregarParceiros();
+            }
         }
 
         // ============================================================
@@ -326,6 +360,24 @@ namespace BrechoApp
             txtSaldoCredito.Clear();
             chkAutorizaDoacao.Checked = false;
             dtpAniversario.Value = DateTime.Now;
+        }
+
+        // ============================================================
+        //  DUPLO CLIQUE NO GRID (para modo de seleção)
+        // ============================================================
+        private void dataGridParceiros_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (!ModoSelecao) return;
+            if (e.RowIndex < 0) return;
+
+            ParceiroSelecionado = dataGridParceiros.Rows[e.RowIndex]
+                .Cells["CodigoParceiro"].Value?.ToString();
+
+            if (!string.IsNullOrWhiteSpace(ParceiroSelecionado))
+            {
+                DialogResult = DialogResult.OK;
+                Close();
+            }
         }
     }
 }

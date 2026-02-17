@@ -465,5 +465,17 @@ namespace BrechoApp.Data
             else
                 AdicionarParceiro(p);
         }
+
+        // ============================================================
+        //  LISTAR VENDEDORES
+        //  Retorna apenas PNs com TipoParceiro = Socio ou Vendedor
+        // ============================================================
+        public List<ParceiroNegocio> ListarVendedores()
+        {
+            return ListarParceiros()
+                .Where(p => p.TipoParceiro == TipoParceiro.Socio || 
+                            p.TipoParceiro == TipoParceiro.Vendedor)
+                .ToList();
+        }
     }
 }
