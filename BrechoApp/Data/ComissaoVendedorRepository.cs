@@ -256,7 +256,7 @@ namespace BrechoApp.Data
             if (parceiro == null)
                 throw new Exception("Parceiro de Negócio não encontrado.");
 
-            if (parceiro.TipoParceiro != TipoParceiro.Vendedor && parceiro.TipoParceiro != TipoParceiro.Socio)
+            if (parceiro.TipoParceiro != TipoParceiro.Vendedor)
                 throw new Exception("Apenas Parceiros de Negócio do tipo Vendedor podem receber comissão.");
 
             // Verificar se já existe comissão para este vendedor
