@@ -257,6 +257,21 @@ namespace BrechoApp.Data
                     NomeCategoria TEXT NOT NULL UNIQUE,
                     DataCriacao TEXT NOT NULL
                 );
+
+                ---------------------------------------------------------
+                -- TABELA DE COMISSÕES DE VENDEDORES
+                -- Armazena o percentual de comissão para cada vendedor
+                -- Um vendedor pode ter apenas uma comissão cadastrada (UNIQUE)
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS ComissoesVendedores (
+                    IdComissao INTEGER PRIMARY KEY AUTOINCREMENT,
+                    CodigoPN TEXT NOT NULL UNIQUE,
+                    PercentualComissao REAL NOT NULL,
+                    DataCadastro TEXT NOT NULL,
+                    DataUltimaAlteracao TEXT,
+                    
+                    FOREIGN KEY (CodigoPN) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
             ";
 
             using var cmd = new SqliteCommand(sql, connection);
