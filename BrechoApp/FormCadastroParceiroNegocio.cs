@@ -26,7 +26,7 @@ namespace BrechoApp
             {
                 // Ocultar botões de edição no modo de seleção
                 btnSalvar.Visible = false;
-                btnNovo.Visible = false;
+                btnIncluir.Visible = false;
                 if (Controls.Find("btnLotes", true).Length > 0)
                     Controls.Find("btnLotes", true)[0].Visible = false;
                 if (Controls.Find("btnExportarExcel", true).Length > 0)

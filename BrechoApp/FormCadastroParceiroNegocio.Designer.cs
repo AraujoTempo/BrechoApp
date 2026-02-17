@@ -7,7 +7,7 @@
         // ============================================================
         //  DECLARAÇÃO DE CONTROLES
         // ============================================================
-        private System.Windows.Forms.DataGridView dataGridParceiros;
+        public System.Windows.Forms.DataGridView dataGridParceiros;
 
         private System.Windows.Forms.TextBox txtCodigoParceiro;
         private System.Windows.Forms.TextBox txtNome;
@@ -80,6 +80,7 @@
             this.dataGridParceiros.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridParceiros.MultiSelect = false;
             this.dataGridParceiros.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridParceiros_CellClick);
+            this.dataGridParceiros.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridParceiros_CellDoubleClick);
 
             // ============================================================
             //  CAMPOS DO FORMULÁRIO
