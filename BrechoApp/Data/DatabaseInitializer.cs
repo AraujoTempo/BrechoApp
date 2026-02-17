@@ -248,6 +248,15 @@ namespace BrechoApp.Data
                     FOREIGN KEY (IdProduto) REFERENCES Produtos (CodigoProduto),
                     FOREIGN KEY (IdFornecedor) REFERENCES ParceirosNegocio (CodigoParceiro)
                 );
+
+                ---------------------------------------------------------
+                -- TABELA DE CATEGORIAS DE PRODUTOS
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS Categorias (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    NomeCategoria TEXT NOT NULL UNIQUE,
+                    DataCriacao TEXT NOT NULL
+                );
             ";
 
             using var cmd = new SqliteCommand(sql, connection);
