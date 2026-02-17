@@ -45,6 +45,7 @@ namespace BrechoApp.Data
                     Pix TEXT,
 
                     PercentualComissao REAL,
+                    ComissaoDeVendedor REAL DEFAULT NULL,
                     AutorizaDoacao INTEGER,
 
                     Observacao TEXT,
@@ -256,21 +257,6 @@ namespace BrechoApp.Data
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     NomeCategoria TEXT NOT NULL UNIQUE,
                     DataCriacao TEXT NOT NULL
-                );
-
-                ---------------------------------------------------------
-                -- TABELA DE COMISSÕES DE VENDEDORES
-                -- Armazena o percentual de comissão para cada vendedor
-                -- Um vendedor pode ter apenas uma comissão cadastrada (UNIQUE)
-                ---------------------------------------------------------
-                CREATE TABLE IF NOT EXISTS ComissoesVendedores (
-                    IdComissao INTEGER PRIMARY KEY AUTOINCREMENT,
-                    CodigoPN TEXT NOT NULL UNIQUE,
-                    PercentualComissao REAL NOT NULL,
-                    DataCadastro TEXT NOT NULL,
-                    DataUltimaAlteracao TEXT,
-                    
-                    FOREIGN KEY (CodigoPN) REFERENCES ParceirosNegocio (CodigoParceiro)
                 );
             ";
 

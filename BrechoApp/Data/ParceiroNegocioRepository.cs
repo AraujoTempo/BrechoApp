@@ -153,7 +153,7 @@ namespace BrechoApp.Data
 
             string sql = @"
                 SELECT CodigoParceiro, Nome, TipoParceiro, CpfCnpj, Apelido, Telefone, Endereco, Email,
-                       Banco, Agencia, Conta, Pix, PercentualComissao, AutorizaDoacao,
+                       Banco, Agencia, Conta, Pix, PercentualComissao, ComissaoDeVendedor, AutorizaDoacao,
                        Observacao, Aniversario, SaldoCredito
                 FROM ParceirosNegocio
                 ORDER BY CAST(SUBSTR(CodigoParceiro, 3) AS INTEGER)
@@ -184,6 +184,10 @@ namespace BrechoApp.Data
                         ? 0
                         : Convert.ToDouble(reader["PercentualComissao"], CultureInfo.InvariantCulture),
 
+                    ComissaoDeVendedor = reader["ComissaoDeVendedor"] == DBNull.Value
+                        ? null
+                        : Convert.ToDecimal(reader["ComissaoDeVendedor"], CultureInfo.InvariantCulture),
+
                     AutorizaDoacao = Convert.ToInt32(reader["AutorizaDoacao"]) == 1,
 
                     Observacao = reader["Observacao"]?.ToString(),
@@ -208,7 +212,7 @@ namespace BrechoApp.Data
 
             string sql = @"
                 SELECT CodigoParceiro, Nome, TipoParceiro, CpfCnpj, Apelido, Telefone, Endereco, Email,
-                       Banco, Agencia, Conta, Pix, PercentualComissao, AutorizaDoacao,
+                       Banco, Agencia, Conta, Pix, PercentualComissao, ComissaoDeVendedor, AutorizaDoacao,
                        Observacao, Aniversario, SaldoCredito
                 FROM ParceirosNegocio
                 WHERE CodigoParceiro = @Codigo
@@ -242,6 +246,10 @@ namespace BrechoApp.Data
                 PercentualComissao = reader["PercentualComissao"] == DBNull.Value
                     ? 0
                     : Convert.ToDouble(reader["PercentualComissao"], CultureInfo.InvariantCulture),
+
+                ComissaoDeVendedor = reader["ComissaoDeVendedor"] == DBNull.Value
+                    ? null
+                    : Convert.ToDecimal(reader["ComissaoDeVendedor"], CultureInfo.InvariantCulture),
 
                 AutorizaDoacao = Convert.ToInt32(reader["AutorizaDoacao"]) == 1,
 
@@ -289,11 +297,11 @@ namespace BrechoApp.Data
             string sql = @"
                 INSERT INTO ParceirosNegocio
                 (CodigoParceiro, Nome, TipoParceiro, CpfCnpj, Apelido, Telefone, Endereco, Email, Banco, Agencia, Conta, Pix,
-                 PercentualComissao, AutorizaDoacao, Observacao, Aniversario, SaldoCredito,
+                 PercentualComissao, ComissaoDeVendedor, AutorizaDoacao, Observacao, Aniversario, SaldoCredito,
                  DataCriacao, UltimaAtualizacao)
                 VALUES
                 (@Codigo, @Nome, @TipoParceiro, @CpfCnpj, @Apelido, @Telefone, @Endereco, @Email, @Banco, @Agencia, @Conta, @Pix,
-                 @Comissao, @Doacao, @Obs, @Aniversario, @Saldo,
+                 @Comissao, @ComissaoVendedor, @Doacao, @Obs, @Aniversario, @Saldo,
                  @DataCriacao, @UltimaAtualizacao)
             ";
 
@@ -314,6 +322,7 @@ namespace BrechoApp.Data
             cmd.Parameters.AddWithValue("@Pix", (object?)p.Pix ?? DBNull.Value);
 
             cmd.Parameters.AddWithValue("@Comissao", p.PercentualComissao);
+            cmd.Parameters.AddWithValue("@ComissaoVendedor", p.ComissaoDeVendedor.HasValue ? (object)p.ComissaoDeVendedor.Value : DBNull.Value);
             cmd.Parameters.AddWithValue("@Doacao", p.AutorizaDoacao ? 1 : 0);
             cmd.Parameters.AddWithValue("@Obs", (object?)p.Observacao ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Aniversario", (object?)p.Aniversario ?? DBNull.Value);
@@ -347,6 +356,7 @@ namespace BrechoApp.Data
                     Conta=@Conta,
                     Pix=@Pix,
                     PercentualComissao=@Comissao,
+                    ComissaoDeVendedor=@ComissaoVendedor,
                     AutorizaDoacao=@Doacao,
                     Observacao=@Obs,
                     Aniversario=@Aniversario,
@@ -372,6 +382,7 @@ namespace BrechoApp.Data
             cmd.Parameters.AddWithValue("@Pix", (object?)p.Pix ?? DBNull.Value);
 
             cmd.Parameters.AddWithValue("@Comissao", p.PercentualComissao);
+            cmd.Parameters.AddWithValue("@ComissaoVendedor", p.ComissaoDeVendedor.HasValue ? (object)p.ComissaoDeVendedor.Value : DBNull.Value);
             cmd.Parameters.AddWithValue("@Doacao", p.AutorizaDoacao ? 1 : 0);
             cmd.Parameters.AddWithValue("@Obs", (object?)p.Observacao ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@Aniversario", (object?)p.Aniversario ?? DBNull.Value);
@@ -468,13 +479,11 @@ namespace BrechoApp.Data
 
         // ============================================================
         //  LISTAR VENDEDORES
-        //  Retorna apenas PNs com TipoParceiro = Vendedor
+        //  Retorna todos os PNs (qualquer PN pode ser vendedor)
         // ============================================================
         public List<ParceiroNegocio> ListarVendedores()
         {
-            return ListarParceiros()
-                .Where(p => p.TipoParceiro == TipoParceiro.Vendedor)
-                .ToList();
+            return ListarParceiros();
         }
     }
 }

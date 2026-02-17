@@ -84,6 +84,14 @@ namespace BrechoApp.Models
         public double PercentualComissao { get; set; }
 
         /// <summary>
+        /// Comissão de vendedor (percentual).
+        /// Qualquer PN pode ter uma comissão associada, tornando-o apto a receber comissão sobre vendas.
+        /// Valores aceitos: 0%, 5%, 7.5%, 10%, etc.
+        /// Null indica que o PN não atua como vendedor ou não recebe comissão.
+        /// </summary>
+        public decimal? ComissaoDeVendedor { get; set; }
+
+        /// <summary>
         /// Indica se o parceiro autoriza doação de itens não vendidos.
         /// </summary>
         public bool AutorizaDoacao { get; set; }
