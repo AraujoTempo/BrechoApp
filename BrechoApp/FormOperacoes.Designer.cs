@@ -35,6 +35,7 @@
             this.btnAuditorias = new System.Windows.Forms.Button();
             this.btnDoacoes = new System.Windows.Forms.Button();
             this.btnDevolucoes = new System.Windows.Forms.Button();
+            this.btnCadastroCategorias = new System.Windows.Forms.Button();
             this.btnVoltar = new System.Windows.Forms.Button();
             this.SuspendLayout();
             
@@ -158,6 +159,23 @@
             this.btnDevolucoes.Click += new System.EventHandler(this.btnDevolucoes_Click);
             
             // ============================================================
+            // BOTÃO: CADASTRO DE CATEGORIAS DE PRODUTOS
+            // ============================================================
+            this.btnCadastroCategorias.BackColor = System.Drawing.Color.FromArgb(52, 152, 219);
+            this.btnCadastroCategorias.FlatAppearance.BorderSize = 0;
+            this.btnCadastroCategorias.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCadastroCategorias.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.btnCadastroCategorias.ForeColor = System.Drawing.Color.White;
+            this.btnCadastroCategorias.Location = new System.Drawing.Point(40, 500);
+            this.btnCadastroCategorias.Name = "btnCadastroCategorias";
+            this.btnCadastroCategorias.Size = new System.Drawing.Size(320, 60);
+            this.btnCadastroCategorias.TabIndex = 7;
+            this.btnCadastroCategorias.Text = "Cadastro de Categorias de Produtos";
+            this.btnCadastroCategorias.UseVisualStyleBackColor = false;
+            this.btnCadastroCategorias.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCadastroCategorias.Click += new System.EventHandler(this.btnCadastroCategorias_Click);
+            
+            // ============================================================
             // BOTÃO: VOLTAR
             // ============================================================
             this.btnVoltar.BackColor = System.Drawing.Color.FromArgb(149, 165, 166);
@@ -165,10 +183,10 @@
             this.btnVoltar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnVoltar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnVoltar.ForeColor = System.Drawing.Color.White;
-            this.btnVoltar.Location = new System.Drawing.Point(40, 510);
+            this.btnVoltar.Location = new System.Drawing.Point(40, 580);
             this.btnVoltar.Name = "btnVoltar";
             this.btnVoltar.Size = new System.Drawing.Size(320, 50);
-            this.btnVoltar.TabIndex = 7;
+            this.btnVoltar.TabIndex = 8;
             this.btnVoltar.Text = "Voltar";
             this.btnVoltar.UseVisualStyleBackColor = false;
             this.btnVoltar.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -188,8 +206,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(400, 590);
+            this.ClientSize = new System.Drawing.Size(400, 660);
             this.Controls.Add(this.btnVoltar);
+            this.Controls.Add(this.btnCadastroCategorias);
             this.Controls.Add(this.btnDevolucoes);
             this.Controls.Add(this.btnDoacoes);
             this.Controls.Add(this.btnAuditorias);
@@ -216,6 +235,7 @@
         private System.Windows.Forms.Button btnAuditorias;
         private System.Windows.Forms.Button btnDoacoes;
         private System.Windows.Forms.Button btnDevolucoes;
+        private System.Windows.Forms.Button btnCadastroCategorias;
         private System.Windows.Forms.Button btnVoltar;
     }
 }

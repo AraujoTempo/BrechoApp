@@ -11,7 +11,7 @@
         private System.Windows.Forms.TextBox txtMarca;
 
         private System.Windows.Forms.Label lblCategoria;
-        private System.Windows.Forms.TextBox txtCategoria;
+        private System.Windows.Forms.ComboBox cboCategoria;
 
         private System.Windows.Forms.Label lblTamanhoCor;
         private System.Windows.Forms.TextBox txtTamanhoCor;
@@ -57,7 +57,7 @@
             this.txtMarca = new System.Windows.Forms.TextBox();
 
             this.lblCategoria = new System.Windows.Forms.Label();
-            this.txtCategoria = new System.Windows.Forms.TextBox();
+            this.cboCategoria = new System.Windows.Forms.ComboBox();
 
             this.lblTamanhoCor = new System.Windows.Forms.Label();
             this.txtTamanhoCor = new System.Windows.Forms.TextBox();
@@ -115,8 +115,13 @@
             this.lblCategoria.Location = new System.Drawing.Point(12, 85);
             this.lblCategoria.Text = "Categoria:";
 
-            this.txtCategoria.Location = new System.Drawing.Point(150, 82);
-            this.txtCategoria.Size = new System.Drawing.Size(200, 23);
+            this.cboCategoria.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.cboCategoria.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.cboCategoria.FormattingEnabled = true;
+            this.cboCategoria.Location = new System.Drawing.Point(150, 82);
+            this.cboCategoria.Name = "cboCategoria";
+            this.cboCategoria.Size = new System.Drawing.Size(200, 23);
+            this.cboCategoria.TabIndex = 3;
 
             // ============================================================
             // TAMANHO / COR
@@ -235,7 +240,7 @@
             this.Controls.Add(this.lblMarca);
             this.Controls.Add(this.txtMarca);
             this.Controls.Add(this.lblCategoria);
-            this.Controls.Add(this.txtCategoria);
+            this.Controls.Add(this.cboCategoria);
             this.Controls.Add(this.lblTamanhoCor);
             this.Controls.Add(this.txtTamanhoCor);
             this.Controls.Add(this.lblObservacao);

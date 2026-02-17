@@ -18,6 +18,7 @@ namespace BrechoApp
         // REPOSITÓRIO
         // ============================================================
         private readonly ItemLoteRepository _repoItem = new ItemLoteRepository();
+        private readonly CategoriaRepository _repoCategoria = new CategoriaRepository();
 
         // ============================================================
         // CONTEXTO
@@ -58,6 +59,8 @@ namespace BrechoApp
             _codigoParceiro = NormalizarCodigo(codigoParceiro);
             _statusLote = statusLote;
 
+            CarregarCategorias();
+
             // Valores padrão
             txtPrecoSugerido.Text = "9,90";
             txtPrecoVenda.Text = "9,90";
@@ -83,6 +86,8 @@ namespace BrechoApp
             _statusLote = statusLote;
             _itemEdicao = item;
 
+            CarregarCategorias();
+
             txtPrecoSugerido.Leave += CorrigirCampoVazio;
             txtPrecoVenda.Leave += CorrigirCampoVazio;
 
@@ -90,6 +95,32 @@ namespace BrechoApp
 
             if (_statusLote == "Aprovado")
                 BloquearEdicao();
+        }
+
+        // ============================================================
+        // CARREGAR CATEGORIAS DO BANCO DE DADOS
+        // ============================================================
+        private void CarregarCategorias()
+        {
+            var categorias = _repoCategoria.ListarTodas();
+            
+            cboCategoria.Items.Clear();
+            
+            if (categorias.Count == 0)
+            {
+                MessageBox.Show(
+                    "Nenhuma categoria cadastrada. Por favor, cadastre categorias em:\nOperações → Cadastro de Categorias de Produtos",
+                    "Atenção",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            else
+            {
+                foreach (var cat in categorias)
+                {
+                    cboCategoria.Items.Add(cat.NomeCategoria);
+                }
+            }
         }
 
         // ============================================================
@@ -122,7 +153,7 @@ namespace BrechoApp
 
             txtNomeItem.Text = _itemEdicao.NomeDoItem;
             txtMarca.Text = _itemEdicao.MarcaDoItem;
-            txtCategoria.Text = _itemEdicao.CategoriaDoItem;
+            cboCategoria.Text = _itemEdicao.CategoriaDoItem;
             txtTamanhoCor.Text = _itemEdicao.TamanhoCorDoItem;
             txtObservacao.Text = _itemEdicao.ObservacaoDoItem ?? "";
 
@@ -143,10 +174,10 @@ namespace BrechoApp
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtCategoria.Text))
+            if (string.IsNullOrWhiteSpace(cboCategoria.Text))
             {
                 MessageBox.Show("Informe a categoria do item.");
-                txtCategoria.Focus();
+                cboCategoria.Focus();
                 return false;
             }
 
@@ -217,7 +248,7 @@ namespace BrechoApp
 
             _itemEdicao.NomeDoItem = txtNomeItem.Text.Trim();
             _itemEdicao.MarcaDoItem = txtMarca.Text.Trim();
-            _itemEdicao.CategoriaDoItem = txtCategoria.Text.Trim();
+            _itemEdicao.CategoriaDoItem = cboCategoria.Text.Trim();
             _itemEdicao.TamanhoCorDoItem = txtTamanhoCor.Text.Trim();
             _itemEdicao.ObservacaoDoItem = txtObservacao.Text.Trim();
 
