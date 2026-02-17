@@ -22,7 +22,11 @@ namespace BrechoApp
             var categorias = _repo.ListarTodas();
             dgvCategorias.DataSource = categorias;
 
-            if (dgvCategorias.Columns.Count > 0)
+            // Verificar se há colunas E se as colunas esperadas existem
+            if (dgvCategorias.Columns.Count > 0 && 
+                dgvCategorias.Columns["Id"] != null &&
+                dgvCategorias.Columns["NomeCategoria"] != null &&
+                dgvCategorias.Columns["DataCriacao"] != null)
             {
                 dgvCategorias.Columns["Id"].Visible = false;
                 dgvCategorias.Columns["NomeCategoria"].HeaderText = "Categoria";
