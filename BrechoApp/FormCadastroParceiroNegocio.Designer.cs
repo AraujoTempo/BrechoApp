@@ -28,6 +28,7 @@
 
         private System.Windows.Forms.CheckBox chkAutorizaDoacao;
         private System.Windows.Forms.DateTimePicker dtpAniversario;
+        private System.Windows.Forms.NumericUpDown numComissaoDeVendedor;
 
         private System.Windows.Forms.Button btnIncluir;
         private System.Windows.Forms.Button btnSalvar;
@@ -49,6 +50,7 @@
         private System.Windows.Forms.Label lblPix;
         private System.Windows.Forms.Label lblObs;
         private System.Windows.Forms.Label lblComissao;
+        private System.Windows.Forms.Label lblComissaoVendedor;
         private System.Windows.Forms.Label lblSaldoCredito;
         private System.Windows.Forms.Label lblBusca;
         private System.Windows.Forms.Label lblAniversario;
@@ -225,7 +227,23 @@
 
             this.chkAutorizaDoacao = new System.Windows.Forms.CheckBox();
             this.chkAutorizaDoacao.Text = "Autoriza Doação";
-            this.chkAutorizaDoacao.Location = new System.Drawing.Point(580, 520);
+            this.chkAutorizaDoacao.Location = new System.Drawing.Point(580, 555);
+
+            // ============================================================
+            //  COMISSÃO DE VENDEDOR (%)
+            // ============================================================
+            this.lblComissaoVendedor = new System.Windows.Forms.Label();
+            this.lblComissaoVendedor.Text = "Comissão Vendedor (%):";
+            this.lblComissaoVendedor.Location = new System.Drawing.Point(580, 520);
+            this.lblComissaoVendedor.AutoSize = true;
+
+            this.numComissaoDeVendedor = new System.Windows.Forms.NumericUpDown();
+            this.numComissaoDeVendedor.Location = new System.Drawing.Point(730, 517);
+            this.numComissaoDeVendedor.Size = new System.Drawing.Size(80, 27);
+            this.numComissaoDeVendedor.DecimalPlaces = 2;
+            this.numComissaoDeVendedor.Minimum = 0;
+            this.numComissaoDeVendedor.Maximum = 100;
+            this.numComissaoDeVendedor.Value = 0;
 
             // ============================================================
             //  BUSCA
@@ -333,6 +351,9 @@
             this.Controls.Add(this.dtpAniversario);
 
             this.Controls.Add(this.chkAutorizaDoacao);
+
+            this.Controls.Add(this.lblComissaoVendedor);
+            this.Controls.Add(this.numComissaoDeVendedor);
 
             this.Controls.Add(this.lblBusca);
             this.Controls.Add(this.txtBusca);

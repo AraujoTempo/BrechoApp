@@ -15,15 +15,6 @@ namespace BrechoApp
         }
 
         // ============================================================
-        // BOTÃO: CADASTRAR COMISSÃO DE VENDEDORES
-        // ============================================================
-        private void btnComissaoParceiro_Click(object sender, EventArgs e)
-        {
-            var form = new FormCadastroComissaoVendedor();
-            form.ShowDialog();
-        }
-
-        // ============================================================
         // BOTÃO: AJUSTES DE ESTOQUE
         // Ainda não implementado
         // ============================================================

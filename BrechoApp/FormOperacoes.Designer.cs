@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.lblTitulo = new System.Windows.Forms.Label();
-            this.btnComissaoParceiro = new System.Windows.Forms.Button();
             this.btnAjustesEstoque = new System.Windows.Forms.Button();
             this.btnAjustesVendas = new System.Windows.Forms.Button();
             this.btnAuditorias = new System.Windows.Forms.Button();
@@ -51,23 +50,6 @@
             this.lblTitulo.Text = "OPERAÇÕES";
             
             // ============================================================
-            // BOTÃO: CADASTRAR COMISSÃO DE VENDEDORES
-            // ============================================================
-            this.btnComissaoParceiro.BackColor = System.Drawing.Color.FromArgb(52, 152, 219);
-            this.btnComissaoParceiro.FlatAppearance.BorderSize = 0;
-            this.btnComissaoParceiro.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnComissaoParceiro.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.btnComissaoParceiro.ForeColor = System.Drawing.Color.White;
-            this.btnComissaoParceiro.Location = new System.Drawing.Point(40, 80);
-            this.btnComissaoParceiro.Name = "btnComissaoParceiro";
-            this.btnComissaoParceiro.Size = new System.Drawing.Size(320, 60);
-            this.btnComissaoParceiro.TabIndex = 1;
-            this.btnComissaoParceiro.Text = "Cadastrar Comissão de Vendedores";
-            this.btnComissaoParceiro.UseVisualStyleBackColor = false;
-            this.btnComissaoParceiro.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnComissaoParceiro.Click += new System.EventHandler(this.btnComissaoParceiro_Click);
-            
-            // ============================================================
             // BOTÃO: AJUSTES DE ESTOQUE
             // ============================================================
             this.btnAjustesEstoque.BackColor = System.Drawing.Color.FromArgb(52, 152, 219);
@@ -76,10 +58,10 @@
             this.btnAjustesEstoque.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAjustesEstoque.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnAjustesEstoque.ForeColor = System.Drawing.Color.White;
-            this.btnAjustesEstoque.Location = new System.Drawing.Point(40, 150);
+            this.btnAjustesEstoque.Location = new System.Drawing.Point(40, 80);
             this.btnAjustesEstoque.Name = "btnAjustesEstoque";
             this.btnAjustesEstoque.Size = new System.Drawing.Size(320, 60);
-            this.btnAjustesEstoque.TabIndex = 2;
+            this.btnAjustesEstoque.TabIndex = 1;
             this.btnAjustesEstoque.Text = "Ajustes de Estoque\r\n(Em Desenvolvimento)";
             this.btnAjustesEstoque.UseVisualStyleBackColor = false;
             this.btnAjustesEstoque.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -94,10 +76,10 @@
             this.btnAjustesVendas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAjustesVendas.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnAjustesVendas.ForeColor = System.Drawing.Color.White;
-            this.btnAjustesVendas.Location = new System.Drawing.Point(40, 220);
+            this.btnAjustesVendas.Location = new System.Drawing.Point(40, 150);
             this.btnAjustesVendas.Name = "btnAjustesVendas";
             this.btnAjustesVendas.Size = new System.Drawing.Size(320, 60);
-            this.btnAjustesVendas.TabIndex = 3;
+            this.btnAjustesVendas.TabIndex = 2;
             this.btnAjustesVendas.Text = "Ajustes de Vendas\r\n(Alteração de Data) (Em Desenvolvimento)";
             this.btnAjustesVendas.UseVisualStyleBackColor = false;
             this.btnAjustesVendas.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -112,10 +94,10 @@
             this.btnAuditorias.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAuditorias.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnAuditorias.ForeColor = System.Drawing.Color.White;
-            this.btnAuditorias.Location = new System.Drawing.Point(40, 290);
+            this.btnAuditorias.Location = new System.Drawing.Point(40, 220);
             this.btnAuditorias.Name = "btnAuditorias";
             this.btnAuditorias.Size = new System.Drawing.Size(320, 60);
-            this.btnAuditorias.TabIndex = 4;
+            this.btnAuditorias.TabIndex = 3;
             this.btnAuditorias.Text = "Auditorias\r\n(Em Desenvolvimento)";
             this.btnAuditorias.UseVisualStyleBackColor = false;
             this.btnAuditorias.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -130,10 +112,10 @@
             this.btnDoacoes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDoacoes.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnDoacoes.ForeColor = System.Drawing.Color.White;
-            this.btnDoacoes.Location = new System.Drawing.Point(40, 360);
+            this.btnDoacoes.Location = new System.Drawing.Point(40, 290);
             this.btnDoacoes.Name = "btnDoacoes";
             this.btnDoacoes.Size = new System.Drawing.Size(320, 60);
-            this.btnDoacoes.TabIndex = 5;
+            this.btnDoacoes.TabIndex = 4;
             this.btnDoacoes.Text = "Doações\r\n(Em Desenvolvimento)";
             this.btnDoacoes.UseVisualStyleBackColor = false;
             this.btnDoacoes.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -148,10 +130,10 @@
             this.btnDevolucoes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDevolucoes.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnDevolucoes.ForeColor = System.Drawing.Color.White;
-            this.btnDevolucoes.Location = new System.Drawing.Point(40, 430);
+            this.btnDevolucoes.Location = new System.Drawing.Point(40, 360);
             this.btnDevolucoes.Name = "btnDevolucoes";
             this.btnDevolucoes.Size = new System.Drawing.Size(320, 60);
-            this.btnDevolucoes.TabIndex = 6;
+            this.btnDevolucoes.TabIndex = 5;
             this.btnDevolucoes.Text = "Devoluções\r\n(Em Desenvolvimento)";
             this.btnDevolucoes.UseVisualStyleBackColor = false;
             this.btnDevolucoes.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -165,10 +147,10 @@
             this.btnCadastroCategorias.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCadastroCategorias.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnCadastroCategorias.ForeColor = System.Drawing.Color.White;
-            this.btnCadastroCategorias.Location = new System.Drawing.Point(40, 500);
+            this.btnCadastroCategorias.Location = new System.Drawing.Point(40, 430);
             this.btnCadastroCategorias.Name = "btnCadastroCategorias";
             this.btnCadastroCategorias.Size = new System.Drawing.Size(320, 60);
-            this.btnCadastroCategorias.TabIndex = 7;
+            this.btnCadastroCategorias.TabIndex = 6;
             this.btnCadastroCategorias.Text = "Cadastro de Categorias de Produtos";
             this.btnCadastroCategorias.UseVisualStyleBackColor = false;
             this.btnCadastroCategorias.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -182,10 +164,10 @@
             this.btnVoltar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnVoltar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnVoltar.ForeColor = System.Drawing.Color.White;
-            this.btnVoltar.Location = new System.Drawing.Point(40, 580);
+            this.btnVoltar.Location = new System.Drawing.Point(40, 510);
             this.btnVoltar.Name = "btnVoltar";
             this.btnVoltar.Size = new System.Drawing.Size(320, 50);
-            this.btnVoltar.TabIndex = 8;
+            this.btnVoltar.TabIndex = 7;
             this.btnVoltar.Text = "Voltar";
             this.btnVoltar.UseVisualStyleBackColor = false;
             this.btnVoltar.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -205,7 +187,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(400, 660);
+            this.ClientSize = new System.Drawing.Size(400, 590);
             this.Controls.Add(this.btnVoltar);
             this.Controls.Add(this.btnCadastroCategorias);
             this.Controls.Add(this.btnDevolucoes);
@@ -213,7 +195,6 @@
             this.Controls.Add(this.btnAuditorias);
             this.Controls.Add(this.btnAjustesVendas);
             this.Controls.Add(this.btnAjustesEstoque);
-            this.Controls.Add(this.btnComissaoParceiro);
             this.Controls.Add(this.lblTitulo);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
@@ -228,7 +209,6 @@
         #endregion
 
         private System.Windows.Forms.Label lblTitulo;
-        private System.Windows.Forms.Button btnComissaoParceiro;
         private System.Windows.Forms.Button btnAjustesEstoque;
         private System.Windows.Forms.Button btnAjustesVendas;
         private System.Windows.Forms.Button btnAuditorias;
