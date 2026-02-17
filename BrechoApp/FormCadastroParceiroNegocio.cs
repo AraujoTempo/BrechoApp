@@ -114,6 +114,17 @@ namespace BrechoApp
             txtPercentualComissao.Text = row.Cells["PercentualComissao"].Value?.ToString();
             txtSaldoCredito.Text = row.Cells["SaldoCredito"].Value?.ToString();
 
+            // Carregar ComissaoDeVendedor
+            if (row.Cells["ComissaoDeVendedor"].Value != null && 
+                decimal.TryParse(row.Cells["ComissaoDeVendedor"].Value.ToString(), out decimal comissaoVendedor))
+            {
+                numComissaoDeVendedor.Value = comissaoVendedor;
+            }
+            else
+            {
+                numComissaoDeVendedor.Value = 0;
+            }
+
             chkAutorizaDoacao.Checked = row.Cells["AutorizaDoacao"].Value?.ToString() == "1";
 
             if (DateTime.TryParse(row.Cells["Aniversario"].Value?.ToString(), out DateTime aniversario))
@@ -201,6 +212,7 @@ namespace BrechoApp
                     Pix = txtPix.Text,
                     Observacao = txtObservacao.Text,
                     PercentualComissao = double.TryParse(txtPercentualComissao.Text, out double comissao) ? comissao : 0,
+                    ComissaoDeVendedor = numComissaoDeVendedor.Value > 0 ? (decimal?)numComissaoDeVendedor.Value : null,
                     SaldoCredito = double.TryParse(txtSaldoCredito.Text, out double saldo) ? saldo : 0,
                     AutorizaDoacao = chkAutorizaDoacao.Checked,
                     Aniversario = dtpAniversario.Value.ToString("yyyy-MM-dd")
@@ -355,6 +367,7 @@ namespace BrechoApp
             txtPix.Clear();
             txtObservacao.Clear();
             txtPercentualComissao.Clear();
+            numComissaoDeVendedor.Value = 0;
             txtSaldoCredito.Clear();
             chkAutorizaDoacao.Checked = false;
             dtpAniversario.Value = DateTime.Now;

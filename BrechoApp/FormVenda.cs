@@ -158,13 +158,8 @@ namespace BrechoApp
         private void btnSelecionarVendedor_Click(object sender, EventArgs e)
         {
             // Criar formulário em modo de seleção
-            // Nota: Como precisamos filtrar por dois tipos (Socio OU Vendedor),
-            // fazemos o filtro manualmente após a construção
+            // Agora qualquer PN pode ser vendedor, então não precisamos filtrar
             var form = new FormCadastroParceiroNegocio(modoSelecao: true);
-            
-            // Filtrar apenas vendedores
-            var vendedores = _parceiroRepo.ListarVendedores();
-            form.dataGridParceiros.DataSource = vendedores;
 
             if (form.ShowDialog() == DialogResult.OK)
             {
