@@ -18,8 +18,9 @@ namespace BrechoApp
 
         private void btnGerarVenda_Click(object sender, EventArgs e)
         {
-            // Por enquanto apenas abre e fecha
-            MessageBox.Show("Módulo de vendas ainda será desenvolvido.");
+            // Abrir o formulário de vendas
+            var form = new FormVenda();
+            form.ShowDialog();
         }
 
         private void btnVoltar_Click(object sender, EventArgs e)
