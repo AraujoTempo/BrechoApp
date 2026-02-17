@@ -9,7 +9,7 @@ namespace BrechoApp
     public partial class FormCadastroCategorias : Form
     {
         private readonly CategoriaRepository _repo = new CategoriaRepository();
-        private Categoria _categoriaSelecionada = null;
+        private Categoria? _categoriaSelecionada = null;
 
         public FormCadastroCategorias()
         {
