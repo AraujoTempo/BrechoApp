@@ -6,6 +6,6 @@ namespace BrechoApp.Models
     {
         public int Id { get; set; }
         public string NomeCategoria { get; set; } = string.Empty;
-        public DateTime DataCriacao { get; set; } = DateTime.Now;
+        public DateTime DataCriacao { get; set; }
     }
 }

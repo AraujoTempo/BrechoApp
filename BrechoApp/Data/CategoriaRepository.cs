@@ -26,7 +26,7 @@ namespace BrechoApp.Data
                 {
                     Id = reader.GetInt32(0),
                     NomeCategoria = reader.GetString(1),
-                    DataCriacao = DateTime.Parse(reader.GetString(2))
+                    DataCriacao = DateTime.ParseExact(reader.GetString(2), "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)
                 });
             }
             return categorias;
