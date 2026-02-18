@@ -224,6 +224,8 @@ namespace BrechoApp.Data
                     ValorTotalOriginal REAL NOT NULL,
                     DescontoPercentual REAL DEFAULT 0,
                     DescontoValor REAL DEFAULT 0,
+                    Campanha TEXT,
+                    DescontoCampanha REAL DEFAULT 0,
                     ValorTotalFinal REAL NOT NULL,
                     FormaPagamento TEXT NOT NULL,
                     Observacoes TEXT,

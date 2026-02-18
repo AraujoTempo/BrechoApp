@@ -65,6 +65,8 @@ namespace BrechoApp
             txtCodigoProduto.Clear();
             txtDescontoPercentual.Text = "0";
             txtDescontoValor.Text = "0,00";
+            txtCampanha.Clear();
+            txtDescontoCampanha.Text = "0,00";
             txtValorTotalOriginal.Text = "0,00";
             txtValorTotalFinal.Text = "0,00";
             cboFormaPagamento.SelectedIndex = -1;
@@ -336,9 +338,17 @@ namespace BrechoApp
                 }
             }
 
+            // Ler desconto de campanha
+            double descontoCampanha = 0;
+            if (double.TryParse(txtDescontoCampanha.Text, out descontoCampanha))
+            {
+                if (descontoCampanha < 0) descontoCampanha = 0;
+            }
+
             _vendaAtual.DescontoPercentual = descontoPercentual;
             _vendaAtual.DescontoValor = descontoValor;
-            _vendaAtual.ValorTotalFinal = _vendaAtual.ValorTotalOriginal - descontoValor;
+            _vendaAtual.DescontoCampanha = descontoCampanha;
+            _vendaAtual.ValorTotalFinal = _vendaAtual.ValorTotalOriginal - descontoValor - descontoCampanha;
 
             // Ratear desconto entre os itens
             RatearDesconto();
@@ -357,7 +367,7 @@ namespace BrechoApp
             if (_vendaAtual.Itens.Count == 0) return;
 
             double totalOriginal = _vendaAtual.Itens.Sum(i => i.PrecoOriginal);
-            double descontoTotal = _vendaAtual.DescontoValor;
+            double descontoTotal = _vendaAtual.DescontoValor + _vendaAtual.DescontoCampanha;
 
             foreach (var item in _vendaAtual.Itens)
             {
@@ -385,6 +395,11 @@ namespace BrechoApp
         }
 
         private void txtDescontoValor_TextChanged(object sender, EventArgs e)
+        {
+            AplicarDesconto();
+        }
+
+        private void txtDescontoCampanha_TextChanged(object sender, EventArgs e)
         {
             AplicarDesconto();
         }
@@ -443,6 +458,9 @@ namespace BrechoApp
                 // Preencher dados finais
                 _vendaAtual.FormaPagamento = cboFormaPagamento.Text;
                 _vendaAtual.Observacoes = txtObservacoes.Text.Trim();
+                _vendaAtual.Campanha = txtCampanha.Text.Trim();
+                if (string.IsNullOrWhiteSpace(_vendaAtual.Campanha))
+                    _vendaAtual.Campanha = null;
 
                 // Salvar venda (incluindo atualização de status dos produtos)
                 _vendaRepo.SalvarVenda(_vendaAtual);
