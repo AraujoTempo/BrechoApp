@@ -29,6 +29,14 @@ namespace BrechoApp
             this.cmbMes = new System.Windows.Forms.ComboBox();
             this.lblAno = new System.Windows.Forms.Label();
             this.numAno = new System.Windows.Forms.NumericUpDown();
+            this.lblVendedor = new System.Windows.Forms.Label();
+            this.txtVendedor = new System.Windows.Forms.TextBox();
+            this.btnSelecionarVendedor = new System.Windows.Forms.Button();
+            this.btnLimparVendedor = new System.Windows.Forms.Button();
+            this.lblCliente = new System.Windows.Forms.Label();
+            this.txtCliente = new System.Windows.Forms.TextBox();
+            this.btnSelecionarCliente = new System.Windows.Forms.Button();
+            this.btnLimparCliente = new System.Windows.Forms.Button();
             this.btnGerar = new System.Windows.Forms.Button();
             this.btnExportar = new System.Windows.Forms.Button();
             this.grpRelatorio = new System.Windows.Forms.GroupBox();
@@ -41,6 +49,8 @@ namespace BrechoApp
             this.colFormaPagamento = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colDescontoPerc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colDescontoValor = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDescontoCampanhaPerc = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colDescontoCampanhaValor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colValorOriginal = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colValorFinal = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.grpItens = new System.Windows.Forms.GroupBox();
@@ -82,11 +92,19 @@ namespace BrechoApp
             this.grpFiltros.Controls.Add(this.cmbMes);
             this.grpFiltros.Controls.Add(this.lblAno);
             this.grpFiltros.Controls.Add(this.numAno);
+            this.grpFiltros.Controls.Add(this.lblVendedor);
+            this.grpFiltros.Controls.Add(this.txtVendedor);
+            this.grpFiltros.Controls.Add(this.btnSelecionarVendedor);
+            this.grpFiltros.Controls.Add(this.btnLimparVendedor);
+            this.grpFiltros.Controls.Add(this.lblCliente);
+            this.grpFiltros.Controls.Add(this.txtCliente);
+            this.grpFiltros.Controls.Add(this.btnSelecionarCliente);
+            this.grpFiltros.Controls.Add(this.btnLimparCliente);
             this.grpFiltros.Controls.Add(this.btnGerar);
             this.grpFiltros.Controls.Add(this.btnExportar);
             this.grpFiltros.Location = new System.Drawing.Point(10, 45);
             this.grpFiltros.Name = "grpFiltros";
-            this.grpFiltros.Size = new System.Drawing.Size(1180, 70);
+            this.grpFiltros.Size = new System.Drawing.Size(1180, 120);
             this.grpFiltros.TabIndex = 1;
             this.grpFiltros.TabStop = false;
             this.grpFiltros.Text = "Filtros";
@@ -140,12 +158,86 @@ namespace BrechoApp
             0,
             0});
             // 
+            // lblVendedor
+            // 
+            this.lblVendedor.AutoSize = true;
+            this.lblVendedor.Location = new System.Drawing.Point(15, 65);
+            this.lblVendedor.Name = "lblVendedor";
+            this.lblVendedor.Size = new System.Drawing.Size(60, 15);
+            this.lblVendedor.TabIndex = 4;
+            this.lblVendedor.Text = "Vendedor:";
+            // 
+            // txtVendedor
+            // 
+            this.txtVendedor.Location = new System.Drawing.Point(80, 62);
+            this.txtVendedor.Name = "txtVendedor";
+            this.txtVendedor.ReadOnly = true;
+            this.txtVendedor.Size = new System.Drawing.Size(250, 23);
+            this.txtVendedor.TabIndex = 5;
+            // 
+            // btnSelecionarVendedor
+            // 
+            this.btnSelecionarVendedor.Location = new System.Drawing.Point(340, 61);
+            this.btnSelecionarVendedor.Name = "btnSelecionarVendedor";
+            this.btnSelecionarVendedor.Size = new System.Drawing.Size(90, 25);
+            this.btnSelecionarVendedor.TabIndex = 6;
+            this.btnSelecionarVendedor.Text = "Selecionar";
+            this.btnSelecionarVendedor.UseVisualStyleBackColor = true;
+            this.btnSelecionarVendedor.Click += new System.EventHandler(this.btnSelecionarVendedor_Click);
+            // 
+            // btnLimparVendedor
+            // 
+            this.btnLimparVendedor.Location = new System.Drawing.Point(440, 61);
+            this.btnLimparVendedor.Name = "btnLimparVendedor";
+            this.btnLimparVendedor.Size = new System.Drawing.Size(70, 25);
+            this.btnLimparVendedor.TabIndex = 7;
+            this.btnLimparVendedor.Text = "Limpar";
+            this.btnLimparVendedor.UseVisualStyleBackColor = true;
+            this.btnLimparVendedor.Click += new System.EventHandler(this.btnLimparVendedor_Click);
+            // 
+            // lblCliente
+            // 
+            this.lblCliente.AutoSize = true;
+            this.lblCliente.Location = new System.Drawing.Point(530, 65);
+            this.lblCliente.Name = "lblCliente";
+            this.lblCliente.Size = new System.Drawing.Size(47, 15);
+            this.lblCliente.TabIndex = 8;
+            this.lblCliente.Text = "Cliente:";
+            // 
+            // txtCliente
+            // 
+            this.txtCliente.Location = new System.Drawing.Point(580, 62);
+            this.txtCliente.Name = "txtCliente";
+            this.txtCliente.ReadOnly = true;
+            this.txtCliente.Size = new System.Drawing.Size(250, 23);
+            this.txtCliente.TabIndex = 9;
+            // 
+            // btnSelecionarCliente
+            // 
+            this.btnSelecionarCliente.Location = new System.Drawing.Point(840, 61);
+            this.btnSelecionarCliente.Name = "btnSelecionarCliente";
+            this.btnSelecionarCliente.Size = new System.Drawing.Size(90, 25);
+            this.btnSelecionarCliente.TabIndex = 10;
+            this.btnSelecionarCliente.Text = "Selecionar";
+            this.btnSelecionarCliente.UseVisualStyleBackColor = true;
+            this.btnSelecionarCliente.Click += new System.EventHandler(this.btnSelecionarCliente_Click);
+            // 
+            // btnLimparCliente
+            // 
+            this.btnLimparCliente.Location = new System.Drawing.Point(940, 61);
+            this.btnLimparCliente.Name = "btnLimparCliente";
+            this.btnLimparCliente.Size = new System.Drawing.Size(70, 25);
+            this.btnLimparCliente.TabIndex = 11;
+            this.btnLimparCliente.Text = "Limpar";
+            this.btnLimparCliente.UseVisualStyleBackColor = true;
+            this.btnLimparCliente.Click += new System.EventHandler(this.btnLimparCliente_Click);
+            // 
             // btnGerar
             // 
             this.btnGerar.Location = new System.Drawing.Point(360, 25);
             this.btnGerar.Name = "btnGerar";
             this.btnGerar.Size = new System.Drawing.Size(120, 30);
-            this.btnGerar.TabIndex = 4;
+            this.btnGerar.TabIndex = 12;
             this.btnGerar.Text = "Gerar Relatório";
             this.btnGerar.UseVisualStyleBackColor = true;
             this.btnGerar.Click += new System.EventHandler(this.btnGerar_Click);
@@ -156,7 +248,7 @@ namespace BrechoApp
             this.btnExportar.Location = new System.Drawing.Point(490, 25);
             this.btnExportar.Name = "btnExportar";
             this.btnExportar.Size = new System.Drawing.Size(150, 30);
-            this.btnExportar.TabIndex = 5;
+            this.btnExportar.TabIndex = 13;
             this.btnExportar.Text = "Exportar para Excel";
             this.btnExportar.UseVisualStyleBackColor = true;
             this.btnExportar.Click += new System.EventHandler(this.btnExportar_Click);
@@ -164,7 +256,7 @@ namespace BrechoApp
             // grpRelatorio
             // 
             this.grpRelatorio.Controls.Add(this.dgvRelatorio);
-            this.grpRelatorio.Location = new System.Drawing.Point(10, 120);
+            this.grpRelatorio.Location = new System.Drawing.Point(10, 170);
             this.grpRelatorio.Name = "grpRelatorio";
             this.grpRelatorio.Size = new System.Drawing.Size(1180, 300);
             this.grpRelatorio.TabIndex = 2;
@@ -186,6 +278,8 @@ namespace BrechoApp
             this.colFormaPagamento,
             this.colDescontoPerc,
             this.colDescontoValor,
+            this.colDescontoCampanhaPerc,
+            this.colDescontoCampanhaValor,
             this.colValorOriginal,
             this.colValorFinal});
             this.dgvRelatorio.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -247,6 +341,18 @@ namespace BrechoApp
             this.colDescontoValor.Name = "colDescontoValor";
             this.colDescontoValor.ReadOnly = true;
             // 
+            // colDescontoCampanhaPerc
+            // 
+            this.colDescontoCampanhaPerc.HeaderText = "Desc Camp (%)";
+            this.colDescontoCampanhaPerc.Name = "colDescontoCampanhaPerc";
+            this.colDescontoCampanhaPerc.ReadOnly = true;
+            // 
+            // colDescontoCampanhaValor
+            // 
+            this.colDescontoCampanhaValor.HeaderText = "Desc Camp (R$)";
+            this.colDescontoCampanhaValor.Name = "colDescontoCampanhaValor";
+            this.colDescontoCampanhaValor.ReadOnly = true;
+            // 
             // colValorOriginal
             // 
             this.colValorOriginal.HeaderText = "Total Orig.";
@@ -262,7 +368,7 @@ namespace BrechoApp
             // grpItens
             // 
             this.grpItens.Controls.Add(this.dgvItens);
-            this.grpItens.Location = new System.Drawing.Point(10, 430);
+            this.grpItens.Location = new System.Drawing.Point(10, 480);
             this.grpItens.Name = "grpItens";
             this.grpItens.Size = new System.Drawing.Size(1180, 200);
             this.grpItens.TabIndex = 3;
@@ -337,7 +443,7 @@ namespace BrechoApp
             // 
             this.pnlTotalizadores.Controls.Add(this.lblTotalVendas);
             this.pnlTotalizadores.Controls.Add(this.lblTotalArrecadado);
-            this.pnlTotalizadores.Location = new System.Drawing.Point(10, 640);
+            this.pnlTotalizadores.Location = new System.Drawing.Point(10, 690);
             this.pnlTotalizadores.Name = "pnlTotalizadores";
             this.pnlTotalizadores.Size = new System.Drawing.Size(1180, 40);
             this.pnlTotalizadores.TabIndex = 4;
@@ -362,7 +468,7 @@ namespace BrechoApp
             // 
             // btnFechar
             // 
-            this.btnFechar.Location = new System.Drawing.Point(1090, 690);
+            this.btnFechar.Location = new System.Drawing.Point(1090, 740);
             this.btnFechar.Name = "btnFechar";
             this.btnFechar.Size = new System.Drawing.Size(100, 35);
             this.btnFechar.TabIndex = 5;
@@ -374,7 +480,7 @@ namespace BrechoApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1200, 735);
+            this.ClientSize = new System.Drawing.Size(1200, 785);
             this.Controls.Add(this.btnFechar);
             this.Controls.Add(this.pnlTotalizadores);
             this.Controls.Add(this.grpItens);
@@ -407,6 +513,14 @@ namespace BrechoApp
         private System.Windows.Forms.ComboBox cmbMes;
         private System.Windows.Forms.Label lblAno;
         private System.Windows.Forms.NumericUpDown numAno;
+        private System.Windows.Forms.Label lblVendedor;
+        private System.Windows.Forms.TextBox txtVendedor;
+        private System.Windows.Forms.Button btnSelecionarVendedor;
+        private System.Windows.Forms.Button btnLimparVendedor;
+        private System.Windows.Forms.Label lblCliente;
+        private System.Windows.Forms.TextBox txtCliente;
+        private System.Windows.Forms.Button btnSelecionarCliente;
+        private System.Windows.Forms.Button btnLimparCliente;
         private System.Windows.Forms.Button btnGerar;
         private System.Windows.Forms.Button btnExportar;
         private System.Windows.Forms.GroupBox grpRelatorio;
@@ -419,6 +533,8 @@ namespace BrechoApp
         private System.Windows.Forms.DataGridViewTextBoxColumn colFormaPagamento;
         private System.Windows.Forms.DataGridViewTextBoxColumn colDescontoPerc;
         private System.Windows.Forms.DataGridViewTextBoxColumn colDescontoValor;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colDescontoCampanhaPerc;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colDescontoCampanhaValor;
         private System.Windows.Forms.DataGridViewTextBoxColumn colValorOriginal;
         private System.Windows.Forms.DataGridViewTextBoxColumn colValorFinal;
         private System.Windows.Forms.GroupBox grpItens;

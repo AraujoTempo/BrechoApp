@@ -21,6 +21,8 @@ namespace BrechoApp
         private readonly ParceiroNegocioRepository _parceiroRepository;
         private List<Venda> _vendasCarregadas;
         private Dictionary<string, string> _cacheParceiros; // Código -> Nome
+        private string _vendedorSelecionado = string.Empty;
+        private string _clienteSelecionado = string.Empty;
 
         public FormRelatorioVendasMes()
         {
@@ -126,7 +128,20 @@ namespace BrechoApp
                 DateTime fim = inicio.AddMonths(1).AddDays(-1);
 
                 // Buscar vendas
-                _vendasCarregadas = _vendaRepository.ListarVendasPorPeriodo(inicio, fim);
+                var vendas = _vendaRepository.ListarVendasPorPeriodo(inicio, fim);
+
+                // Aplicar filtros de vendedor e cliente
+                if (!string.IsNullOrEmpty(_vendedorSelecionado))
+                {
+                    vendas = vendas.Where(v => v.IdVendedor == _vendedorSelecionado).ToList();
+                }
+
+                if (!string.IsNullOrEmpty(_clienteSelecionado))
+                {
+                    vendas = vendas.Where(v => v.IdCliente == _clienteSelecionado).ToList();
+                }
+
+                _vendasCarregadas = vendas;
 
                 if (_vendasCarregadas.Count == 0)
                 {
@@ -182,6 +197,8 @@ namespace BrechoApp
                     venda.FormaPagamento,
                     venda.DescontoPercentual.ToString("F2") + "%",
                     venda.DescontoValor.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")),
+                    venda.DescontoCampanhaPercentual.ToString("F2") + "%",
+                    venda.DescontoCampanha.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")),
                     venda.ValorTotalOriginal.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")),
                     venda.ValorTotalFinal.ToString("C2", CultureInfo.GetCultureInfo("pt-BR"))
                 );
@@ -298,11 +315,13 @@ namespace BrechoApp
                     ws.Cell(row, 6).Value = "Forma Pag.";
                     ws.Cell(row, 7).Value = "Desc %";
                     ws.Cell(row, 8).Value = "Desc R$";
-                    ws.Cell(row, 9).Value = "Total Orig.";
-                    ws.Cell(row, 10).Value = "Total Final";
+                    ws.Cell(row, 9).Value = "Desc Camp %";
+                    ws.Cell(row, 10).Value = "Desc Camp R$";
+                    ws.Cell(row, 11).Value = "Total Orig.";
+                    ws.Cell(row, 12).Value = "Total Final";
 
                     // Formatar cabeçalho
-                    var headerRange = ws.Range(row, 1, row, 10);
+                    var headerRange = ws.Range(row, 1, row, 12);
                     headerRange.Style.Font.Bold = true;
                     headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
                     headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
@@ -326,13 +345,16 @@ namespace BrechoApp
                         ws.Cell(row, 6).Value = venda.FormaPagamento;
                         ws.Cell(row, 7).Value = venda.DescontoPercentual.ToString("F2") + "%";
                         ws.Cell(row, 8).Value = venda.DescontoValor;
-                        ws.Cell(row, 9).Value = venda.ValorTotalOriginal;
-                        ws.Cell(row, 10).Value = venda.ValorTotalFinal;
+                        ws.Cell(row, 9).Value = venda.DescontoCampanhaPercentual.ToString("F2") + "%";
+                        ws.Cell(row, 10).Value = venda.DescontoCampanha;
+                        ws.Cell(row, 11).Value = venda.ValorTotalOriginal;
+                        ws.Cell(row, 12).Value = venda.ValorTotalFinal;
 
                         // Formatar valores monetários
                         ws.Cell(row, 8).Style.NumberFormat.Format = "R$ #,##0.00";
-                        ws.Cell(row, 9).Style.NumberFormat.Format = "R$ #,##0.00";
                         ws.Cell(row, 10).Style.NumberFormat.Format = "R$ #,##0.00";
+                        ws.Cell(row, 11).Style.NumberFormat.Format = "R$ #,##0.00";
+                        ws.Cell(row, 12).Style.NumberFormat.Format = "R$ #,##0.00";
 
                         row++;
 
@@ -460,6 +482,76 @@ namespace BrechoApp
         private void btnFechar_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        // ============================================================
+        // BOTÃO: SELECIONAR VENDEDOR
+        // ============================================================
+        private void btnSelecionarVendedor_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var form = new FormCadastroParceiroNegocio(modoSelecao: true);
+                
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    var vendedor = _parceiroRepository.BuscarPorCodigo(form.ParceiroSelecionado);
+                    if (vendedor != null)
+                    {
+                        _vendedorSelecionado = vendedor.CodigoParceiro;
+                        txtVendedor.Text = $"{vendedor.CodigoParceiro} - {vendedor.Nome}";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao selecionar vendedor:\n\n{ex.Message}",
+                    "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // ============================================================
+        // BOTÃO: LIMPAR VENDEDOR
+        // ============================================================
+        private void btnLimparVendedor_Click(object sender, EventArgs e)
+        {
+            _vendedorSelecionado = string.Empty;
+            txtVendedor.Text = string.Empty;
+        }
+
+        // ============================================================
+        // BOTÃO: SELECIONAR CLIENTE
+        // ============================================================
+        private void btnSelecionarCliente_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var form = new FormCadastroParceiroNegocio(modoSelecao: true);
+                
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    var cliente = _parceiroRepository.BuscarPorCodigo(form.ParceiroSelecionado);
+                    if (cliente != null)
+                    {
+                        _clienteSelecionado = cliente.CodigoParceiro;
+                        txtCliente.Text = $"{cliente.CodigoParceiro} - {cliente.Nome}";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao selecionar cliente:\n\n{ex.Message}",
+                    "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // ============================================================
+        // BOTÃO: LIMPAR CLIENTE
+        // ============================================================
+        private void btnLimparCliente_Click(object sender, EventArgs e)
+        {
+            _clienteSelecionado = string.Empty;
+            txtCliente.Text = string.Empty;
         }
     }
 }
