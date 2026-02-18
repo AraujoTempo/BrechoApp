@@ -115,14 +115,15 @@ namespace BrechoApp
             // 
             // txtCampanha
             // 
-            this.txtCampanha.Location = new System.Drawing.Point(700, 460);
+            this.txtCampanha.Location = new System.Drawing.Point(150, 490);
+            this.txtCampanha.MaxLength = 25;
             this.txtCampanha.Name = "txtCampanha";
             this.txtCampanha.Size = new System.Drawing.Size(200, 23);
             this.txtCampanha.TabIndex = 11;
             // 
             // txtDescontoCampanha
             // 
-            this.txtDescontoCampanha.Location = new System.Drawing.Point(700, 500);
+            this.txtDescontoCampanha.Location = new System.Drawing.Point(700, 460);
             this.txtDescontoCampanha.Name = "txtDescontoCampanha";
             this.txtDescontoCampanha.Size = new System.Drawing.Size(150, 23);
             this.txtDescontoCampanha.TabIndex = 12;
@@ -225,7 +226,8 @@ namespace BrechoApp
             "Débito",
             "Crédito",
             "Transferência",
-            "Outros"});
+            "Combinado",
+            "Futuro"});
             this.cboFormaPagamento.Location = new System.Drawing.Point(150, 580);
             this.cboFormaPagamento.Name = "cboFormaPagamento";
             this.cboFormaPagamento.Size = new System.Drawing.Size(200, 23);
@@ -309,7 +311,7 @@ namespace BrechoApp
             // lblCampanha
             // 
             this.lblCampanha.AutoSize = true;
-            this.lblCampanha.Location = new System.Drawing.Point(600, 463);
+            this.lblCampanha.Location = new System.Drawing.Point(30, 493);
             this.lblCampanha.Name = "lblCampanha";
             this.lblCampanha.Size = new System.Drawing.Size(67, 15);
             this.lblCampanha.TabIndex = 107;
@@ -318,7 +320,7 @@ namespace BrechoApp
             // lblDescontoCampanha
             // 
             this.lblDescontoCampanha.AutoSize = true;
-            this.lblDescontoCampanha.Location = new System.Drawing.Point(600, 503);
+            this.lblDescontoCampanha.Location = new System.Drawing.Point(600, 463);
             this.lblDescontoCampanha.Name = "lblDescontoCampanha";
             this.lblDescontoCampanha.Size = new System.Drawing.Size(94, 15);
             this.lblDescontoCampanha.TabIndex = 108;
