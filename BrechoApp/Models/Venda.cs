@@ -65,6 +65,17 @@ namespace BrechoApp.Models
         public double DescontoValor { get; set; }
 
         /// <summary>
+        /// Nome da campanha promocional associada à venda (opcional).
+        /// Ex: "Natal 2025", "Dia das Mães", "Aniversário"
+        /// </summary>
+        public string? Campanha { get; set; }
+
+        /// <summary>
+        /// Desconto aplicado devido à campanha promocional.
+        /// </summary>
+        public double DescontoCampanha { get; set; }
+
+        /// <summary>
         /// Valor total final após desconto.
         /// </summary>
         public double ValorTotalFinal { get; set; }
