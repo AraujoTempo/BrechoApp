@@ -289,10 +289,11 @@ namespace BrechoApp.Data
                     alterCmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception)
+            catch (SqliteException ex)
             {
-                // If migration fails, it's likely because the column already exists or the table doesn't exist yet
-                // In either case, we can safely ignore the error
+                // Log the error but don't fail initialization
+                // The column might already exist or the table might not exist yet
+                System.Diagnostics.Debug.WriteLine($"Migration warning: {ex.Message}");
             }
         }
     }
