@@ -148,11 +148,11 @@ namespace BrechoApp
             // 
             // txtObservacoes
             // 
-            this.txtObservacoes.Location = new System.Drawing.Point(150, 580);
+            this.txtObservacoes.Location = new System.Drawing.Point(150, 620);
             this.txtObservacoes.Multiline = true;
             this.txtObservacoes.Name = "txtObservacoes";
             this.txtObservacoes.Size = new System.Drawing.Size(600, 60);
-            this.txtObservacoes.TabIndex = 14;
+            this.txtObservacoes.TabIndex = 16;
             // 
             // btnSelecionarVendedor
             // 
@@ -197,20 +197,20 @@ namespace BrechoApp
             // btnFinalizarVenda
             // 
             this.btnFinalizarVenda.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnFinalizarVenda.Location = new System.Drawing.Point(150, 660);
+            this.btnFinalizarVenda.Location = new System.Drawing.Point(150, 695);
             this.btnFinalizarVenda.Name = "btnFinalizarVenda";
             this.btnFinalizarVenda.Size = new System.Drawing.Size(300, 40);
-            this.btnFinalizarVenda.TabIndex = 15;
+            this.btnFinalizarVenda.TabIndex = 17;
             this.btnFinalizarVenda.Text = "Finalizar Venda";
             this.btnFinalizarVenda.UseVisualStyleBackColor = true;
             this.btnFinalizarVenda.Click += new System.EventHandler(this.btnFinalizarVenda_Click);
             // 
             // btnCancelar
             // 
-            this.btnCancelar.Location = new System.Drawing.Point(470, 660);
+            this.btnCancelar.Location = new System.Drawing.Point(470, 695);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(280, 40);
-            this.btnCancelar.TabIndex = 16;
+            this.btnCancelar.TabIndex = 18;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
             this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
@@ -226,10 +226,10 @@ namespace BrechoApp
             "Crédito",
             "Transferência",
             "Outros"});
-            this.cboFormaPagamento.Location = new System.Drawing.Point(150, 540);
+            this.cboFormaPagamento.Location = new System.Drawing.Point(150, 580);
             this.cboFormaPagamento.Name = "cboFormaPagamento";
             this.cboFormaPagamento.Size = new System.Drawing.Size(200, 23);
-            this.cboFormaPagamento.TabIndex = 13;
+            this.cboFormaPagamento.TabIndex = 15;
             // 
             // dgvProdutos
             // 
