@@ -71,7 +71,13 @@ namespace BrechoApp.Models
         public string? Campanha { get; set; }
 
         /// <summary>
-        /// Desconto aplicado devido à campanha promocional.
+        /// Desconto percentual aplicado devido à campanha promocional (0 a 100).
+        /// </summary>
+        public double DescontoCampanhaPercentual { get; set; }
+
+        /// <summary>
+        /// Desconto aplicado devido à campanha promocional em valor monetário.
+        /// Calculado automaticamente a partir de DescontoCampanhaPercentual.
         /// </summary>
         public double DescontoCampanha { get; set; }
 
