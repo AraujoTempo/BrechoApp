@@ -35,7 +35,8 @@ namespace BrechoApp
             this.txtDescontoPercentual = new System.Windows.Forms.TextBox();
             this.txtDescontoValor = new System.Windows.Forms.TextBox();
             this.txtCampanha = new System.Windows.Forms.TextBox();
-            this.txtDescontoCampanha = new System.Windows.Forms.TextBox();
+            this.txtDescontoCampanhaPercentual = new System.Windows.Forms.TextBox();
+            this.txtDescontoCampanhaValor = new System.Windows.Forms.TextBox();
             this.txtValorTotalOriginal = new System.Windows.Forms.TextBox();
             this.txtValorTotalFinal = new System.Windows.Forms.TextBox();
             this.txtObservacoes = new System.Windows.Forms.TextBox();
@@ -55,7 +56,8 @@ namespace BrechoApp
             this.lblDescontoPercentual = new System.Windows.Forms.Label();
             this.lblDescontoValor = new System.Windows.Forms.Label();
             this.lblCampanha = new System.Windows.Forms.Label();
-            this.lblDescontoCampanha = new System.Windows.Forms.Label();
+            this.lblDescontoCampanhaPercentual = new System.Windows.Forms.Label();
+            this.lblDescontoCampanhaValor = new System.Windows.Forms.Label();
             this.lblValorTotalOriginal = new System.Windows.Forms.Label();
             this.lblValorTotalFinal = new System.Windows.Forms.Label();
             this.lblFormaPagamento = new System.Windows.Forms.Label();
@@ -121,14 +123,23 @@ namespace BrechoApp
             this.txtCampanha.Size = new System.Drawing.Size(200, 23);
             this.txtCampanha.TabIndex = 11;
             // 
-            // txtDescontoCampanha
+            // txtDescontoCampanhaPercentual
             // 
-            this.txtDescontoCampanha.Location = new System.Drawing.Point(700, 460);
-            this.txtDescontoCampanha.Name = "txtDescontoCampanha";
-            this.txtDescontoCampanha.Size = new System.Drawing.Size(150, 23);
-            this.txtDescontoCampanha.TabIndex = 12;
-            this.txtDescontoCampanha.Text = "0,00";
-            this.txtDescontoCampanha.TextChanged += new System.EventHandler(this.txtDescontoCampanha_TextChanged);
+            this.txtDescontoCampanhaPercentual.Location = new System.Drawing.Point(480, 490);
+            this.txtDescontoCampanhaPercentual.Name = "txtDescontoCampanhaPercentual";
+            this.txtDescontoCampanhaPercentual.Size = new System.Drawing.Size(100, 23);
+            this.txtDescontoCampanhaPercentual.TabIndex = 12;
+            this.txtDescontoCampanhaPercentual.Text = "0";
+            this.txtDescontoCampanhaPercentual.TextChanged += new System.EventHandler(this.txtDescontoCampanhaPercentual_TextChanged);
+            // 
+            // txtDescontoCampanhaValor
+            // 
+            this.txtDescontoCampanhaValor.Location = new System.Drawing.Point(700, 490);
+            this.txtDescontoCampanhaValor.Name = "txtDescontoCampanhaValor";
+            this.txtDescontoCampanhaValor.ReadOnly = true;
+            this.txtDescontoCampanhaValor.Size = new System.Drawing.Size(150, 23);
+            this.txtDescontoCampanhaValor.TabIndex = 13;
+            this.txtDescontoCampanhaValor.Text = "0,00";
             // 
             // txtValorTotalOriginal
             // 
@@ -136,7 +147,7 @@ namespace BrechoApp
             this.txtValorTotalOriginal.Name = "txtValorTotalOriginal";
             this.txtValorTotalOriginal.ReadOnly = true;
             this.txtValorTotalOriginal.Size = new System.Drawing.Size(150, 23);
-            this.txtValorTotalOriginal.TabIndex = 13;
+            this.txtValorTotalOriginal.TabIndex = 14;
             // 
             // txtValorTotalFinal
             // 
@@ -145,7 +156,7 @@ namespace BrechoApp
             this.txtValorTotalFinal.Name = "txtValorTotalFinal";
             this.txtValorTotalFinal.ReadOnly = true;
             this.txtValorTotalFinal.Size = new System.Drawing.Size(150, 29);
-            this.txtValorTotalFinal.TabIndex = 14;
+            this.txtValorTotalFinal.TabIndex = 15;
             // 
             // txtObservacoes
             // 
@@ -153,7 +164,7 @@ namespace BrechoApp
             this.txtObservacoes.Multiline = true;
             this.txtObservacoes.Name = "txtObservacoes";
             this.txtObservacoes.Size = new System.Drawing.Size(600, 60);
-            this.txtObservacoes.TabIndex = 16;
+            this.txtObservacoes.TabIndex = 17;
             // 
             // btnSelecionarVendedor
             // 
@@ -201,7 +212,7 @@ namespace BrechoApp
             this.btnFinalizarVenda.Location = new System.Drawing.Point(150, 695);
             this.btnFinalizarVenda.Name = "btnFinalizarVenda";
             this.btnFinalizarVenda.Size = new System.Drawing.Size(300, 40);
-            this.btnFinalizarVenda.TabIndex = 17;
+            this.btnFinalizarVenda.TabIndex = 18;
             this.btnFinalizarVenda.Text = "Finalizar Venda";
             this.btnFinalizarVenda.UseVisualStyleBackColor = true;
             this.btnFinalizarVenda.Click += new System.EventHandler(this.btnFinalizarVenda_Click);
@@ -211,7 +222,7 @@ namespace BrechoApp
             this.btnCancelar.Location = new System.Drawing.Point(470, 695);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(280, 40);
-            this.btnCancelar.TabIndex = 18;
+            this.btnCancelar.TabIndex = 19;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
             this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
@@ -231,7 +242,7 @@ namespace BrechoApp
             this.cboFormaPagamento.Location = new System.Drawing.Point(150, 580);
             this.cboFormaPagamento.Name = "cboFormaPagamento";
             this.cboFormaPagamento.Size = new System.Drawing.Size(200, 23);
-            this.cboFormaPagamento.TabIndex = 15;
+            this.cboFormaPagamento.TabIndex = 16;
             // 
             // dgvProdutos
             // 
@@ -317,14 +328,23 @@ namespace BrechoApp
             this.lblCampanha.TabIndex = 107;
             this.lblCampanha.Text = "Campanha:";
             // 
-            // lblDescontoCampanha
+            // lblDescontoCampanhaPercentual
             // 
-            this.lblDescontoCampanha.AutoSize = true;
-            this.lblDescontoCampanha.Location = new System.Drawing.Point(600, 463);
-            this.lblDescontoCampanha.Name = "lblDescontoCampanha";
-            this.lblDescontoCampanha.Size = new System.Drawing.Size(94, 15);
-            this.lblDescontoCampanha.TabIndex = 108;
-            this.lblDescontoCampanha.Text = "Desconto Camp.:";
+            this.lblDescontoCampanhaPercentual.AutoSize = true;
+            this.lblDescontoCampanhaPercentual.Location = new System.Drawing.Point(360, 493);
+            this.lblDescontoCampanhaPercentual.Name = "lblDescontoCampanhaPercentual";
+            this.lblDescontoCampanhaPercentual.Size = new System.Drawing.Size(114, 15);
+            this.lblDescontoCampanhaPercentual.TabIndex = 108;
+            this.lblDescontoCampanhaPercentual.Text = "Desconto Camp %:";
+            // 
+            // lblDescontoCampanhaValor
+            // 
+            this.lblDescontoCampanhaValor.AutoSize = true;
+            this.lblDescontoCampanhaValor.Location = new System.Drawing.Point(590, 493);
+            this.lblDescontoCampanhaValor.Name = "lblDescontoCampanhaValor";
+            this.lblDescontoCampanhaValor.Size = new System.Drawing.Size(104, 15);
+            this.lblDescontoCampanhaValor.TabIndex = 109;
+            this.lblDescontoCampanhaValor.Text = "Desc Camp R$:";
             // 
             // lblValorTotalOriginal
             // 
@@ -332,7 +352,7 @@ namespace BrechoApp
             this.lblValorTotalOriginal.Location = new System.Drawing.Point(30, 543);
             this.lblValorTotalOriginal.Name = "lblValorTotalOriginal";
             this.lblValorTotalOriginal.Size = new System.Drawing.Size(104, 15);
-            this.lblValorTotalOriginal.TabIndex = 109;
+            this.lblValorTotalOriginal.TabIndex = 110;
             this.lblValorTotalOriginal.Text = "Valor Total Original:";
             // 
             // lblValorTotalFinal
@@ -342,7 +362,7 @@ namespace BrechoApp
             this.lblValorTotalFinal.Location = new System.Drawing.Point(310, 543);
             this.lblValorTotalFinal.Name = "lblValorTotalFinal";
             this.lblValorTotalFinal.Size = new System.Drawing.Size(82, 19);
-            this.lblValorTotalFinal.TabIndex = 110;
+            this.lblValorTotalFinal.TabIndex = 111;
             this.lblValorTotalFinal.Text = "Valor Final:";
             // 
             // lblFormaPagamento
@@ -351,7 +371,7 @@ namespace BrechoApp
             this.lblFormaPagamento.Location = new System.Drawing.Point(30, 583);
             this.lblFormaPagamento.Name = "lblFormaPagamento";
             this.lblFormaPagamento.Size = new System.Drawing.Size(120, 15);
-            this.lblFormaPagamento.TabIndex = 111;
+            this.lblFormaPagamento.TabIndex = 112;
             this.lblFormaPagamento.Text = "Forma de Pagamento:";
             // 
             // lblObservacoes
@@ -360,7 +380,7 @@ namespace BrechoApp
             this.lblObservacoes.Location = new System.Drawing.Point(30, 623);
             this.lblObservacoes.Name = "lblObservacoes";
             this.lblObservacoes.Size = new System.Drawing.Size(77, 15);
-            this.lblObservacoes.TabIndex = 112;
+            this.lblObservacoes.TabIndex = 113;
             this.lblObservacoes.Text = "Observações:";
             // 
             // FormVenda
@@ -372,7 +392,8 @@ namespace BrechoApp
             this.Controls.Add(this.lblFormaPagamento);
             this.Controls.Add(this.lblValorTotalFinal);
             this.Controls.Add(this.lblValorTotalOriginal);
-            this.Controls.Add(this.lblDescontoCampanha);
+            this.Controls.Add(this.lblDescontoCampanhaValor);
+            this.Controls.Add(this.lblDescontoCampanhaPercentual);
             this.Controls.Add(this.lblCampanha);
             this.Controls.Add(this.lblDescontoValor);
             this.Controls.Add(this.lblDescontoPercentual);
@@ -392,7 +413,8 @@ namespace BrechoApp
             this.Controls.Add(this.txtObservacoes);
             this.Controls.Add(this.txtValorTotalFinal);
             this.Controls.Add(this.txtValorTotalOriginal);
-            this.Controls.Add(this.txtDescontoCampanha);
+            this.Controls.Add(this.txtDescontoCampanhaValor);
+            this.Controls.Add(this.txtDescontoCampanhaPercentual);
             this.Controls.Add(this.txtCampanha);
             this.Controls.Add(this.txtDescontoValor);
             this.Controls.Add(this.txtDescontoPercentual);
@@ -419,7 +441,8 @@ namespace BrechoApp
         private System.Windows.Forms.TextBox txtDescontoPercentual;
         private System.Windows.Forms.TextBox txtDescontoValor;
         private System.Windows.Forms.TextBox txtCampanha;
-        private System.Windows.Forms.TextBox txtDescontoCampanha;
+        private System.Windows.Forms.TextBox txtDescontoCampanhaPercentual;
+        private System.Windows.Forms.TextBox txtDescontoCampanhaValor;
         private System.Windows.Forms.TextBox txtValorTotalOriginal;
         private System.Windows.Forms.TextBox txtValorTotalFinal;
         private System.Windows.Forms.TextBox txtObservacoes;
@@ -439,7 +462,8 @@ namespace BrechoApp
         private System.Windows.Forms.Label lblDescontoPercentual;
         private System.Windows.Forms.Label lblDescontoValor;
         private System.Windows.Forms.Label lblCampanha;
-        private System.Windows.Forms.Label lblDescontoCampanha;
+        private System.Windows.Forms.Label lblDescontoCampanhaPercentual;
+        private System.Windows.Forms.Label lblDescontoCampanhaValor;
         private System.Windows.Forms.Label lblValorTotalOriginal;
         private System.Windows.Forms.Label lblValorTotalFinal;
         private System.Windows.Forms.Label lblFormaPagamento;

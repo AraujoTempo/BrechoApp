@@ -225,6 +225,7 @@ namespace BrechoApp.Data
                     DescontoPercentual REAL DEFAULT 0,
                     DescontoValor REAL DEFAULT 0,
                     Campanha TEXT,
+                    DescontoCampanhaPercentual REAL DEFAULT 0,
                     DescontoCampanha REAL DEFAULT 0,
                     ValorTotalFinal REAL NOT NULL,
                     FormaPagamento TEXT NOT NULL,
@@ -264,6 +265,36 @@ namespace BrechoApp.Data
 
             using var cmd = new SqliteCommand(sql, connection);
             cmd.ExecuteNonQuery();
+
+            // Run migrations for existing databases
+            RunMigrations(connection);
+        }
+
+        /// <summary>
+        /// Executa migrações para adicionar novas colunas em bancos de dados existentes.
+        /// </summary>
+        private static void RunMigrations(SqliteConnection connection)
+        {
+            // Migration: Add DescontoCampanhaPercentual column to Vendas table if it doesn't exist
+            try
+            {
+                string checkColumnSql = "SELECT COUNT(*) FROM pragma_table_info('Vendas') WHERE name='DescontoCampanhaPercentual'";
+                using var checkCmd = new SqliteCommand(checkColumnSql, connection);
+                var columnExists = Convert.ToInt32(checkCmd.ExecuteScalar()) > 0;
+
+                if (!columnExists)
+                {
+                    string addColumnSql = "ALTER TABLE Vendas ADD COLUMN DescontoCampanhaPercentual REAL DEFAULT 0";
+                    using var alterCmd = new SqliteCommand(addColumnSql, connection);
+                    alterCmd.ExecuteNonQuery();
+                }
+            }
+            catch (SqliteException ex)
+            {
+                // Log the error but don't fail initialization
+                // The column might already exist or the table might not exist yet
+                System.Diagnostics.Debug.WriteLine($"Migration warning: {ex.Message}");
+            }
         }
     }
 }

@@ -72,11 +72,11 @@ namespace BrechoApp.Data
                 string sqlVenda = @"
                     INSERT INTO Vendas (
                         CodigoVenda, IdVendedor, IdCliente, DataVenda,
-                        ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanha, ValorTotalFinal,
+                        ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
                         FormaPagamento, Observacoes, DataCriacao
                     ) VALUES (
                         @CodigoVenda, @IdVendedor, @IdCliente, @DataVenda,
-                        @ValorTotalOriginal, @DescontoPercentual, @DescontoValor, @Campanha, @DescontoCampanha, @ValorTotalFinal,
+                        @ValorTotalOriginal, @DescontoPercentual, @DescontoValor, @Campanha, @DescontoCampanhaPercentual, @DescontoCampanha, @ValorTotalFinal,
                         @FormaPagamento, @Observacoes, @DataCriacao
                     );
                     SELECT last_insert_rowid();
@@ -93,6 +93,7 @@ namespace BrechoApp.Data
                     cmd.Parameters.AddWithValue("@DescontoPercentual", venda.DescontoPercentual);
                     cmd.Parameters.AddWithValue("@DescontoValor", venda.DescontoValor);
                     cmd.Parameters.AddWithValue("@Campanha", (object?)venda.Campanha ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@DescontoCampanhaPercentual", venda.DescontoCampanhaPercentual);
                     cmd.Parameters.AddWithValue("@DescontoCampanha", venda.DescontoCampanha);
                     cmd.Parameters.AddWithValue("@ValorTotalFinal", venda.ValorTotalFinal);
                     cmd.Parameters.AddWithValue("@FormaPagamento", venda.FormaPagamento);
@@ -160,7 +161,7 @@ namespace BrechoApp.Data
             // Buscar venda principal
             string sqlVenda = @"
                 SELECT IdVenda, CodigoVenda, IdVendedor, IdCliente, DataVenda,
-                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanha, ValorTotalFinal,
+                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
                        FormaPagamento, Observacoes, DataCriacao
                 FROM Vendas
                 WHERE CodigoVenda = @CodigoVenda
@@ -188,6 +189,7 @@ namespace BrechoApp.Data
                     DescontoPercentual = Convert.ToDouble(reader["DescontoPercentual"], CultureInfo.InvariantCulture),
                     DescontoValor = Convert.ToDouble(reader["DescontoValor"], CultureInfo.InvariantCulture),
                     Campanha = reader["Campanha"] == DBNull.Value ? null : reader["Campanha"].ToString(),
+                    DescontoCampanhaPercentual = Convert.ToDouble(reader["DescontoCampanhaPercentual"], CultureInfo.InvariantCulture),
                     DescontoCampanha = Convert.ToDouble(reader["DescontoCampanha"], CultureInfo.InvariantCulture),
                     ValorTotalFinal = Convert.ToDouble(reader["ValorTotalFinal"], CultureInfo.InvariantCulture),
                     FormaPagamento = reader["FormaPagamento"].ToString(),
@@ -217,7 +219,7 @@ namespace BrechoApp.Data
 
             string sql = @"
                 SELECT IdVenda, CodigoVenda, IdVendedor, IdCliente, DataVenda,
-                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanha, ValorTotalFinal,
+                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
                        FormaPagamento, Observacoes, DataCriacao
                 FROM Vendas
                 ORDER BY DataVenda DESC;
@@ -239,6 +241,7 @@ namespace BrechoApp.Data
                     DescontoPercentual = Convert.ToDouble(reader["DescontoPercentual"], CultureInfo.InvariantCulture),
                     DescontoValor = Convert.ToDouble(reader["DescontoValor"], CultureInfo.InvariantCulture),
                     Campanha = reader["Campanha"] == DBNull.Value ? null : reader["Campanha"].ToString(),
+                    DescontoCampanhaPercentual = Convert.ToDouble(reader["DescontoCampanhaPercentual"], CultureInfo.InvariantCulture),
                     DescontoCampanha = Convert.ToDouble(reader["DescontoCampanha"], CultureInfo.InvariantCulture),
                     ValorTotalFinal = Convert.ToDouble(reader["ValorTotalFinal"], CultureInfo.InvariantCulture),
                     FormaPagamento = reader["FormaPagamento"].ToString(),
@@ -262,7 +265,7 @@ namespace BrechoApp.Data
 
             string sql = @"
                 SELECT IdVenda, CodigoVenda, IdVendedor, IdCliente, DataVenda,
-                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanha, ValorTotalFinal,
+                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
                        FormaPagamento, Observacoes, DataCriacao
                 FROM Vendas
                 WHERE DataVenda BETWEEN @Inicio AND @Fim
@@ -288,6 +291,7 @@ namespace BrechoApp.Data
                     DescontoPercentual = Convert.ToDouble(reader["DescontoPercentual"], CultureInfo.InvariantCulture),
                     DescontoValor = Convert.ToDouble(reader["DescontoValor"], CultureInfo.InvariantCulture),
                     Campanha = reader["Campanha"] == DBNull.Value ? null : reader["Campanha"].ToString(),
+                    DescontoCampanhaPercentual = Convert.ToDouble(reader["DescontoCampanhaPercentual"], CultureInfo.InvariantCulture),
                     DescontoCampanha = Convert.ToDouble(reader["DescontoCampanha"], CultureInfo.InvariantCulture),
                     ValorTotalFinal = Convert.ToDouble(reader["ValorTotalFinal"], CultureInfo.InvariantCulture),
                     FormaPagamento = reader["FormaPagamento"].ToString(),

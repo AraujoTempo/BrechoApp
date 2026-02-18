@@ -66,7 +66,8 @@ namespace BrechoApp
             txtDescontoPercentual.Text = "0";
             txtDescontoValor.Text = "0,00";
             txtCampanha.Clear();
-            txtDescontoCampanha.Text = "0,00";
+            txtDescontoCampanhaPercentual.Text = "0";
+            txtDescontoCampanhaValor.Text = "0,00";
             txtValorTotalOriginal.Text = "0,00";
             txtValorTotalFinal.Text = "0,00";
             cboFormaPagamento.SelectedIndex = -1;
@@ -338,17 +339,25 @@ namespace BrechoApp
                 }
             }
 
-            // Ler desconto de campanha
-            double descontoCampanha = 0;
-            if (double.TryParse(txtDescontoCampanha.Text, out descontoCampanha))
+            // Ler desconto de campanha percentual e calcular valor
+            double descontoCampanhaPercentual = 0;
+            double descontoCampanhaValor = 0;
+            
+            if (double.TryParse(txtDescontoCampanhaPercentual.Text, out descontoCampanhaPercentual))
             {
-                if (descontoCampanha < 0) descontoCampanha = 0;
+                if (descontoCampanhaPercentual < 0) descontoCampanhaPercentual = 0;
+                if (descontoCampanhaPercentual > 100) descontoCampanhaPercentual = 100;
+                
+                // Calcular o valor do desconto de campanha
+                descontoCampanhaValor = _vendaAtual.ValorTotalOriginal * (descontoCampanhaPercentual / 100);
+                txtDescontoCampanhaValor.Text = descontoCampanhaValor.ToString("F2");
             }
 
             _vendaAtual.DescontoPercentual = descontoPercentual;
             _vendaAtual.DescontoValor = descontoValor;
-            _vendaAtual.DescontoCampanha = descontoCampanha;
-            _vendaAtual.ValorTotalFinal = _vendaAtual.ValorTotalOriginal - descontoValor - descontoCampanha;
+            _vendaAtual.DescontoCampanhaPercentual = descontoCampanhaPercentual;
+            _vendaAtual.DescontoCampanha = descontoCampanhaValor;
+            _vendaAtual.ValorTotalFinal = _vendaAtual.ValorTotalOriginal - descontoValor - descontoCampanhaValor;
 
             // Ratear desconto entre os itens
             RatearDesconto();
@@ -399,7 +408,7 @@ namespace BrechoApp
             AplicarDesconto();
         }
 
-        private void txtDescontoCampanha_TextChanged(object sender, EventArgs e)
+        private void txtDescontoCampanhaPercentual_TextChanged(object sender, EventArgs e)
         {
             AplicarDesconto();
         }
