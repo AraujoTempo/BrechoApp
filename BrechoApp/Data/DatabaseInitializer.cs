@@ -442,6 +442,21 @@ namespace BrechoApp.Data
                     NomeCategoria TEXT NOT NULL UNIQUE,
                     DataCriacao TEXT NOT NULL
                 );
+
+                ---------------------------------------------------------
+                -- TABELA DE PAGAMENTOS DA VENDA
+                -- Armazena cada linha de pagamento (suporte a Combinado)
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS VendaPagamentos (
+                    IdVendaPagamento INTEGER PRIMARY KEY AUTOINCREMENT,
+                    IdVenda INTEGER NOT NULL,
+                    FormaPagamento TEXT NOT NULL,
+                    Valor REAL NOT NULL,
+                    IdCentroFinanceiro INTEGER,
+
+                    FOREIGN KEY (IdVenda) REFERENCES Vendas (IdVenda),
+                    FOREIGN KEY (IdCentroFinanceiro) REFERENCES CentrosFinanceiros (IdCentroFinanceiro)
+                );
             ";
 
             using var cmd = new SqliteCommand(sql, connection);
@@ -475,6 +490,27 @@ namespace BrechoApp.Data
                 // Log the error but don't fail initialization
                 // The column might already exist or the table might not exist yet
                 System.Diagnostics.Debug.WriteLine($"Migration warning: {ex.Message}");
+            }
+
+            // Migration: Create VendaPagamentos table if it doesn't exist
+            try
+            {
+                string createTableSql = @"
+                    CREATE TABLE IF NOT EXISTS VendaPagamentos (
+                        IdVendaPagamento INTEGER PRIMARY KEY AUTOINCREMENT,
+                        IdVenda INTEGER NOT NULL,
+                        FormaPagamento TEXT NOT NULL,
+                        Valor REAL NOT NULL,
+                        IdCentroFinanceiro INTEGER,
+                        FOREIGN KEY (IdVenda) REFERENCES Vendas (IdVenda),
+                        FOREIGN KEY (IdCentroFinanceiro) REFERENCES CentrosFinanceiros (IdCentroFinanceiro)
+                    );";
+                using var createCmd = new SqliteCommand(createTableSql, connection);
+                createCmd.ExecuteNonQuery();
+            }
+            catch (SqliteException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Migration warning (VendaPagamentos): {ex.Message}");
             }
         }
     }

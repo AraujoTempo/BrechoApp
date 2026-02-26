@@ -139,8 +139,17 @@ namespace BrechoApp.Data
                     cmdStatus.ExecuteNonQuery();
                 }
 
+                // 4. Inserir pagamentos da venda (se houver)
+                if (venda.Pagamentos != null && venda.Pagamentos.Count > 0)
+                {
+                    SalvarPagamentos(idVenda, venda.Pagamentos, connection, transaction);
+                }
+
                 // Confirma transação
                 transaction.Commit();
+
+                // Retornar o IdVenda gerado
+                venda.IdVenda = idVenda;
             }
             catch
             {
@@ -247,6 +256,7 @@ namespace BrechoApp.Data
             if (venda != null)
             {
                 venda.Itens = ListarItensPorVenda(venda.IdVenda);
+                venda.Pagamentos = ListarPagamentosPorVenda(venda.IdVenda);
             }
 
             return venda;
@@ -386,6 +396,64 @@ namespace BrechoApp.Data
                     NomeProduto = reader["NomeDoItem"].ToString(),
                     MarcaProduto = reader["MarcaDoItem"].ToString(),
                     CategoriaProduto = reader["CategoriaDoItem"].ToString()
+                });
+            }
+
+            return lista;
+        }
+
+        // ============================================================
+        //  SALVAR PAGAMENTOS DA VENDA
+        // ============================================================
+        private void SalvarPagamentos(int idVenda, List<VendaPagamento> pagamentos, SqliteConnection connection, SqliteTransaction transaction)
+        {
+            string sql = @"
+                INSERT INTO VendaPagamentos (IdVenda, FormaPagamento, Valor, IdCentroFinanceiro)
+                VALUES (@IdVenda, @FormaPagamento, @Valor, @IdCentroFinanceiro);
+            ";
+
+            foreach (var pag in pagamentos)
+            {
+                using var cmd = new SqliteCommand(sql, connection, transaction);
+                cmd.Parameters.AddWithValue("@IdVenda", idVenda);
+                cmd.Parameters.AddWithValue("@FormaPagamento", pag.FormaPagamento);
+                cmd.Parameters.AddWithValue("@Valor", (double)pag.Valor);
+                cmd.Parameters.AddWithValue("@IdCentroFinanceiro", (object?)pag.IdCentroFinanceiro ?? DBNull.Value);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        // ============================================================
+        //  LISTAR PAGAMENTOS DE UMA VENDA
+        // ============================================================
+        public List<VendaPagamento> ListarPagamentosPorVenda(int idVenda)
+        {
+            var lista = new List<VendaPagamento>();
+
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            string sql = @"
+                SELECT IdVendaPagamento, IdVenda, FormaPagamento, Valor, IdCentroFinanceiro
+                FROM VendaPagamentos
+                WHERE IdVenda = @IdVenda
+                ORDER BY IdVendaPagamento;
+            ";
+
+            using var cmd = new SqliteCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@IdVenda", idVenda);
+
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new VendaPagamento
+                {
+                    IdVendaPagamento = Convert.ToInt32(reader["IdVendaPagamento"]),
+                    IdVenda = Convert.ToInt32(reader["IdVenda"]),
+                    FormaPagamento = reader["FormaPagamento"].ToString(),
+                    Valor = Convert.ToDecimal(reader["Valor"], CultureInfo.InvariantCulture),
+                    IdCentroFinanceiro = reader["IdCentroFinanceiro"] == DBNull.Value ? null : (int?)Convert.ToInt32(reader["IdCentroFinanceiro"])
                 });
             }
 

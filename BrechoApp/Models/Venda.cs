@@ -119,5 +119,16 @@ namespace BrechoApp.Models
         /// Não é persistida diretamente, mas carregada da tabela VendasItens.
         /// </summary>
         public List<VendaItem> Itens { get; set; } = new List<VendaItem>();
+
+        // ============================================================
+        // PAGAMENTOS DA VENDA
+        // ============================================================
+
+        /// <summary>
+        /// Lista de pagamentos associados à venda.
+        /// Uma venda pode ter um ou vários pagamentos (modo Combinado).
+        /// Carregada da tabela VendaPagamentos.
+        /// </summary>
+        public List<VendaPagamento> Pagamentos { get; set; } = new List<VendaPagamento>();
     }
 }
