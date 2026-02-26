@@ -222,7 +222,7 @@ namespace BrechoApp
 
             if (string.IsNullOrWhiteSpace(codigoProduto))
             {
-                MessageBox.Show("Digite o código do produto.", "Atenção", 
+                MessageBox.Show("Digite o código do produto.", "Atenção",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtCodigoProduto.Focus();
                 return;
@@ -253,7 +253,7 @@ namespace BrechoApp
             // Verificar se produto está disponível
             if (produto.StatusDoProduto != "Disponível")
             {
-                MessageBox.Show($"Este produto não está disponível para venda.\nStatus atual: {produto.StatusDoProduto}", 
+                MessageBox.Show($"Este produto não está disponível para venda.\nStatus atual: {produto.StatusDoProduto}",
                     "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtCodigoProduto.Clear();
                 txtCodigoProduto.Focus();
@@ -329,7 +329,7 @@ namespace BrechoApp
                 if (double.TryParse(txtDescontoValor.Text, out descontoValor))
                 {
                     if (descontoValor < 0) descontoValor = 0;
-                    if (descontoValor > _vendaAtual.ValorTotalOriginal) 
+                    if (descontoValor > _vendaAtual.ValorTotalOriginal)
                         descontoValor = _vendaAtual.ValorTotalOriginal;
 
                     descontoPercentual = _vendaAtual.ValorTotalOriginal > 0
@@ -342,12 +342,12 @@ namespace BrechoApp
             // Ler desconto de campanha percentual e calcular valor
             double descontoCampanhaPercentual = 0;
             double descontoCampanhaValor = 0;
-            
+
             if (double.TryParse(txtDescontoCampanhaPercentual.Text, out descontoCampanhaPercentual))
             {
                 if (descontoCampanhaPercentual < 0) descontoCampanhaPercentual = 0;
                 if (descontoCampanhaPercentual > 100) descontoCampanhaPercentual = 100;
-                
+
                 // Calcular o valor do desconto de campanha
                 descontoCampanhaValor = _vendaAtual.ValorTotalOriginal * (descontoCampanhaPercentual / 100);
                 txtDescontoCampanhaValor.Text = descontoCampanhaValor.ToString("F2");
@@ -388,7 +388,7 @@ namespace BrechoApp
             // Garantir que soma final bate exatamente
             double somaFinal = _vendaAtual.Itens.Sum(i => i.PrecoFinalNegociado);
             double diferencaArredondamento = _vendaAtual.ValorTotalFinal - somaFinal;
-            
+
             if (Math.Abs(diferencaArredondamento) > ROUNDING_TOLERANCE)
             {
                 _vendaAtual.Itens[0].PrecoFinalNegociado += diferencaArredondamento;
@@ -440,38 +440,25 @@ namespace BrechoApp
                 return;
             }
 
-            if (cboFormaPagamento.SelectedIndex < 0)
+            // Abrir tela de finalização (onde escolhe forma de pagamento)
+            using (var form = new FormFinalizarVenda(_vendaAtual))
             {
-                MessageBox.Show("Selecione a forma de pagamento.", "Atenção",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                if (form.ShowDialog() != DialogResult.OK)
+                    return;
+
+                // Recebe os pagamentos escolhidos
+                _vendaAtual.Pagamentos = form.PagamentosSelecionados;
             }
-
-            // Confirmar venda
-            var confirmacao = MessageBox.Show(
-                $"Confirmar venda {_vendaAtual.CodigoVenda}?\n\n" +
-                $"Vendedor: {txtVendedor.Text}\n" +
-                $"Cliente: {txtCliente.Text}\n" +
-                $"Total de produtos: {_vendaAtual.Itens.Count}\n" +
-                $"Valor final: {_vendaAtual.ValorTotalFinal:C2}\n" +
-                $"Forma de pagamento: {cboFormaPagamento.Text}",
-                "Confirmar Venda",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (confirmacao != DialogResult.Yes)
-                return;
 
             try
             {
                 // Preencher dados finais
-                _vendaAtual.FormaPagamento = cboFormaPagamento.Text;
                 _vendaAtual.Observacoes = txtObservacoes.Text.Trim();
                 _vendaAtual.Campanha = txtCampanha.Text.Trim();
                 if (string.IsNullOrWhiteSpace(_vendaAtual.Campanha))
                     _vendaAtual.Campanha = null;
 
-                // Salvar venda (incluindo atualização de status dos produtos)
+                // Salvar venda
                 _vendaRepo.SalvarVenda(_vendaAtual);
 
                 MessageBox.Show(
@@ -481,7 +468,7 @@ namespace BrechoApp
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
 
-                // Inicializar nova venda
+                // Nova venda
                 InicializarNovaVenda();
             }
             catch (Exception ex)
@@ -490,7 +477,6 @@ namespace BrechoApp
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         // ============================================================
         //  BOTÃO: CANCELAR
         // ============================================================

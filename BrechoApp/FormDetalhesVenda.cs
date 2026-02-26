@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using BrechoApp.Models;
+using System.Linq;
 
 namespace BrechoApp
 {
@@ -30,7 +31,13 @@ namespace BrechoApp
             txtDescontoCampanha.Text = _venda.DescontoCampanha.ToString("F2");
             txtValorFinal.Text = _venda.ValorTotalFinal.ToString("F2");
 
-            txtFormaPagamento.Text = _venda.FormaPagamento;
+            // NOVO: pagamentos combinados
+            string formasPagamento = string.Join(", ",
+                _venda.Pagamentos.Select(p => p.Tipo.ToString())
+            );
+
+            txtFormaPagamento.Text = formasPagamento;
+
             txtObservacoes.Text = _venda.Observacoes;
         }
     }

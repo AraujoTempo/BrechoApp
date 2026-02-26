@@ -40,7 +40,6 @@ namespace BrechoApp
         // ============================================================
         private void ConfigurarFormulario()
         {
-            // Configurar ComboBox de mês
             cmbMes.Items.Clear();
             cmbMes.Items.Add("Janeiro (1)");
             cmbMes.Items.Add("Fevereiro (2)");
@@ -55,23 +54,19 @@ namespace BrechoApp
             cmbMes.Items.Add("Novembro (11)");
             cmbMes.Items.Add("Dezembro (12)");
 
-            // Selecionar mês atual
             cmbMes.SelectedIndex = DateTime.Now.Month - 1;
 
-            // Configurar NumericUpDown de ano
             numAno.Minimum = 2020;
             numAno.Maximum = 2050;
             numAno.Value = DateTime.Now.Year;
 
-            // Desabilitar botão de exportar inicialmente
             btnExportar.Enabled = false;
 
-            // Carregar cache de parceiros
             CarregarCacheParceiros();
         }
 
         // ============================================================
-        // CARREGA CACHE DE PARCEIROS (performance)
+        // CARREGA CACHE DE PARCEIROS
         // ============================================================
         private void CarregarCacheParceiros()
         {
@@ -81,9 +76,7 @@ namespace BrechoApp
                 _cacheParceiros.Clear();
 
                 foreach (var p in parceiros)
-                {
                     _cacheParceiros[p.CodigoParceiro] = p.Nome;
-                }
             }
             catch (Exception ex)
             {
@@ -93,15 +86,15 @@ namespace BrechoApp
         }
 
         // ============================================================
-        // OBTER NOME DO PARCEIRO (usa cache)
+        // OBTER NOME DO PARCEIRO
         // ============================================================
         private string ObterNomeParceiro(string codigo)
         {
             if (string.IsNullOrWhiteSpace(codigo))
                 return "N/A";
 
-            return _cacheParceiros.ContainsKey(codigo) 
-                ? _cacheParceiros[codigo] 
+            return _cacheParceiros.ContainsKey(codigo)
+                ? _cacheParceiros[codigo]
                 : codigo;
         }
 
@@ -112,10 +105,9 @@ namespace BrechoApp
         {
             try
             {
-                // Validar seleção
                 if (cmbMes.SelectedIndex < 0)
                 {
-                    MessageBox.Show("Selecione um mês.", "Atenção", 
+                    MessageBox.Show("Selecione um mês.", "Atenção",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -123,23 +115,16 @@ namespace BrechoApp
                 int mes = cmbMes.SelectedIndex + 1;
                 int ano = (int)numAno.Value;
 
-                // Calcular período
                 DateTime inicio = new DateTime(ano, mes, 1);
                 DateTime fim = inicio.AddMonths(1).AddDays(-1);
 
-                // Buscar vendas
                 var vendas = _vendaRepository.ListarVendasPorPeriodo(inicio, fim);
 
-                // Aplicar filtros de vendedor e cliente
                 if (!string.IsNullOrEmpty(_vendedorSelecionado))
-                {
                     vendas = vendas.Where(v => v.IdVendedor == _vendedorSelecionado).ToList();
-                }
 
                 if (!string.IsNullOrEmpty(_clienteSelecionado))
-                {
                     vendas = vendas.Where(v => v.IdCliente == _clienteSelecionado).ToList();
-                }
 
                 _vendasCarregadas = vendas;
 
@@ -147,21 +132,18 @@ namespace BrechoApp
                 {
                     MessageBox.Show($"Nenhuma venda encontrada para {cmbMes.Text} de {ano}.",
                         "Informação", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    
+
                     LimparGrid();
                     AtualizarTotalizadores(0, 0);
                     btnExportar.Enabled = false;
                     return;
                 }
 
-                // Exibir no grid
                 PreencherGridVendas();
 
-                // Atualizar totalizadores
                 double totalArrecadado = _vendasCarregadas.Sum(v => v.ValorTotalFinal);
                 AtualizarTotalizadores(_vendasCarregadas.Count, totalArrecadado);
 
-                // Habilitar exportação
                 btnExportar.Enabled = true;
 
                 MessageBox.Show($"Relatório gerado com sucesso!\n\n" +
@@ -188,13 +170,16 @@ namespace BrechoApp
                 string nomeVendedor = ObterNomeParceiro(venda.IdVendedor);
                 string nomeCliente = ObterNomeParceiro(venda.IdCliente);
 
+                string formasPagamento = string.Join(", ",
+                    venda.Pagamentos.Select(p => p.Tipo.ToString()));
+
                 dgvRelatorio.Rows.Add(
                     venda.IdVenda,
                     venda.CodigoVenda,
                     venda.DataVenda.ToString("dd/MM/yyyy"),
                     nomeVendedor,
                     nomeCliente,
-                    venda.FormaPagamento,
+                    formasPagamento,
                     venda.DescontoPercentual.ToString("F2") + "%",
                     venda.DescontoValor.ToString("C2", CultureInfo.GetCultureInfo("pt-BR")),
                     venda.DescontoCampanhaPercentual.ToString("F2") + "%",
@@ -224,7 +209,7 @@ namespace BrechoApp
         }
 
         // ============================================================
-        // SELEÇÃO DE VENDA NO GRID
+        // SELEÇÃO DE VENDA
         // ============================================================
         private void dgvRelatorio_SelectionChanged(object sender, EventArgs e)
         {
@@ -272,7 +257,7 @@ namespace BrechoApp
         }
 
         // ============================================================
-        // BOTÃO: EXPORTAR PARA EXCEL
+        // EXPORTAR PARA EXCEL
         // ============================================================
         private void btnExportar_Click(object sender, EventArgs e)
         {
@@ -320,7 +305,6 @@ namespace BrechoApp
                     ws.Cell(row, 11).Value = "Total Orig.";
                     ws.Cell(row, 12).Value = "Total Final";
 
-                    // Formatar cabeçalho
                     var headerRange = ws.Range(row, 1, row, 12);
                     headerRange.Style.Font.Bold = true;
                     headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
@@ -337,12 +321,15 @@ namespace BrechoApp
                         string nomeVendedor = ObterNomeParceiro(venda.IdVendedor);
                         string nomeCliente = ObterNomeParceiro(venda.IdCliente);
 
+                        string formasPagamento = string.Join(", ",
+                            venda.Pagamentos.Select(p => p.Tipo.ToString()));
+
                         ws.Cell(row, 1).Value = venda.IdVenda;
                         ws.Cell(row, 2).Value = venda.CodigoVenda;
                         ws.Cell(row, 3).Value = venda.DataVenda.ToString("dd/MM/yyyy");
                         ws.Cell(row, 4).Value = nomeVendedor;
                         ws.Cell(row, 5).Value = nomeCliente;
-                        ws.Cell(row, 6).Value = venda.FormaPagamento;
+                        ws.Cell(row, 6).Value = formasPagamento;
                         ws.Cell(row, 7).Value = venda.DescontoPercentual.ToString("F2") + "%";
                         ws.Cell(row, 8).Value = venda.DescontoValor;
                         ws.Cell(row, 9).Value = venda.DescontoCampanhaPercentual.ToString("F2") + "%";
@@ -350,7 +337,6 @@ namespace BrechoApp
                         ws.Cell(row, 11).Value = venda.ValorTotalOriginal;
                         ws.Cell(row, 12).Value = venda.ValorTotalFinal;
 
-                        // Formatar valores monetários
                         ws.Cell(row, 8).Style.NumberFormat.Format = "R$ #,##0.00";
                         ws.Cell(row, 10).Style.NumberFormat.Format = "R$ #,##0.00";
                         ws.Cell(row, 11).Style.NumberFormat.Format = "R$ #,##0.00";
@@ -362,10 +348,9 @@ namespace BrechoApp
                         // ITENS DA VENDA
                         // ============================================================
                         var itens = _vendaRepository.ListarItensPorVenda(venda.IdVenda);
-                        
+
                         if (itens.Count > 0)
                         {
-                            // Cabeçalho dos itens
                             ws.Cell(row, 2).Value = "Itens da Venda:";
                             ws.Cell(row, 2).Style.Font.Italic = true;
                             ws.Cell(row, 2).Style.Font.Bold = true;
@@ -397,14 +382,13 @@ namespace BrechoApp
                                 ws.Cell(row, 7).Value = item.PrecoOriginal;
                                 ws.Cell(row, 8).Value = item.PrecoFinalNegociado;
 
-                                // Formatar valores
                                 ws.Cell(row, 7).Style.NumberFormat.Format = "R$ #,##0.00";
                                 ws.Cell(row, 8).Style.NumberFormat.Format = "R$ #,##0.00";
 
                                 row++;
                             }
 
-                            row++; // Linha em branco entre vendas
+                            row++;
                         }
                     }
 
@@ -429,12 +413,9 @@ namespace BrechoApp
                     ws.Cell(row, 2).Style.NumberFormat.Format = "R$ #,##0.00";
                     ws.Cell(row, 2).Style.Font.Bold = true;
 
-                    // ============================================================
-                    // FORMATAÇÃO FINAL
-                    // ============================================================
                     ws.Columns().AdjustToContents();
                     ws.RangeUsed().SetAutoFilter();
-                    ws.SheetView.FreezeRows(4); // Congelar até a linha de cabeçalho
+                    ws.SheetView.FreezeRows(4);
 
                     // ============================================================
                     // SALVAR ARQUIVO
@@ -477,7 +458,7 @@ namespace BrechoApp
         }
 
         // ============================================================
-        // BOTÃO: FECHAR
+        // BOTÕES DE FILTRO
         // ============================================================
         private void btnFechar_Click(object sender, EventArgs e)
         {
@@ -492,7 +473,7 @@ namespace BrechoApp
             try
             {
                 var form = new FormCadastroParceiroNegocio(modoSelecao: true);
-                
+
                 if (form.ShowDialog() == DialogResult.OK)
                 {
                     var vendedor = _parceiroRepository.BuscarPorCodigo(form.ParceiroSelecionado);
@@ -527,7 +508,7 @@ namespace BrechoApp
             try
             {
                 var form = new FormCadastroParceiroNegocio(modoSelecao: true);
-                
+
                 if (form.ShowDialog() == DialogResult.OK)
                 {
                     var cliente = _parceiroRepository.BuscarPorCodigo(form.ParceiroSelecionado);

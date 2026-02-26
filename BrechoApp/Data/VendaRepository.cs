@@ -1,4 +1,5 @@
 using BrechoApp.Models;
+using BrechoApp.Enums;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
@@ -6,16 +7,6 @@ using System.Globalization;
 
 namespace BrechoApp.Data
 {
-    /// <summary>
-    /// Repositório responsável por todas as operações de banco
-    /// relacionadas a Vendas e VendasItens.
-    /// 
-    /// Gerencia vendas completas com múltiplos itens,
-    /// aplicação de descontos e atualização de status de produtos.
-    /// 
-    /// Padrão de código de venda:
-    ///     V-1, V-2, V-3...
-    /// </summary>
     public class VendaRepository
     {
         private readonly string _connectionString = DatabaseConfig.ConnectionString;
@@ -56,14 +47,13 @@ namespace BrechoApp.Data
         }
 
         // ============================================================
-        //  SALVAR VENDA (com itens) - TRANSAÇÃO
+        //  SALVAR VENDA (com itens e pagamentos)
         // ============================================================
         public void SalvarVenda(Venda venda)
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
-            // Inicia transação para garantir consistência
             using var transaction = connection.BeginTransaction();
 
             try
@@ -72,12 +62,14 @@ namespace BrechoApp.Data
                 string sqlVenda = @"
                     INSERT INTO Vendas (
                         CodigoVenda, IdVendedor, IdCliente, DataVenda,
-                        ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
-                        FormaPagamento, Observacoes, DataCriacao
+                        ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha,
+                        DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
+                        Observacoes, DataCriacao
                     ) VALUES (
                         @CodigoVenda, @IdVendedor, @IdCliente, @DataVenda,
-                        @ValorTotalOriginal, @DescontoPercentual, @DescontoValor, @Campanha, @DescontoCampanhaPercentual, @DescontoCampanha, @ValorTotalFinal,
-                        @FormaPagamento, @Observacoes, @DataCriacao
+                        @ValorTotalOriginal, @DescontoPercentual, @DescontoValor, @Campanha,
+                        @DescontoCampanhaPercentual, @DescontoCampanha, @ValorTotalFinal,
+                        @Observacoes, @DataCriacao
                     );
                     SELECT last_insert_rowid();
                 ";
@@ -96,7 +88,6 @@ namespace BrechoApp.Data
                     cmd.Parameters.AddWithValue("@DescontoCampanhaPercentual", venda.DescontoCampanhaPercentual);
                     cmd.Parameters.AddWithValue("@DescontoCampanha", venda.DescontoCampanha);
                     cmd.Parameters.AddWithValue("@ValorTotalFinal", venda.ValorTotalFinal);
-                    cmd.Parameters.AddWithValue("@FormaPagamento", venda.FormaPagamento);
                     cmd.Parameters.AddWithValue("@Observacoes", (object?)venda.Observacoes ?? DBNull.Value);
                     cmd.Parameters.AddWithValue("@DataCriacao", venda.DataCriacao.ToString("yyyy-MM-dd HH:mm:ss"));
 
@@ -123,7 +114,25 @@ namespace BrechoApp.Data
                     cmdItem.ExecuteNonQuery();
                 }
 
-                // 3. Atualizar status dos produtos para "Vendido"
+                // 3. Inserir pagamentos
+                string sqlPagamento = @"
+                    INSERT INTO VendasPagamentos (
+                        IdVenda, TipoPagamento, Valor
+                    ) VALUES (
+                        @IdVenda, @TipoPagamento, @Valor
+                    );
+                ";
+
+                foreach (var pag in venda.Pagamentos)
+                {
+                    using var cmdPag = new SqliteCommand(sqlPagamento, connection, transaction);
+                    cmdPag.Parameters.AddWithValue("@IdVenda", idVenda);
+                    cmdPag.Parameters.AddWithValue("@TipoPagamento", pag.Tipo.ToString());
+                    cmdPag.Parameters.AddWithValue("@Valor", pag.Valor);
+                    cmdPag.ExecuteNonQuery();
+                }
+
+                // 4. Atualizar status dos produtos
                 string sqlUpdateStatus = @"
                     UPDATE Produtos 
                     SET StatusDoProduto = 'Vendido',
@@ -139,19 +148,17 @@ namespace BrechoApp.Data
                     cmdStatus.ExecuteNonQuery();
                 }
 
-                // Confirma transação
                 transaction.Commit();
             }
             catch
             {
-                // Reverte transação em caso de erro
                 transaction.Rollback();
                 throw;
             }
         }
 
         // ============================================================
-        //  ATUALIZAR VENDA (somente campos principais)
+        //  ATUALIZAR VENDA
         // ============================================================
         public void AtualizarVenda(Venda venda)
         {
@@ -161,18 +168,17 @@ namespace BrechoApp.Data
             string sql = @"
                  UPDATE Vendas
                  SET 
-                     IdVendedor                     = @IdVendedor,
-                     IdCliente                      = @IdCliente,
-                     DataVenda                      = @DataVenda,
-                     ValorTotalOriginal             = @ValorTotalOriginal,
-                     DescontoPercentual             = @DescontoPercentual,
-                     DescontoValor                  = @DescontoValor,
-                     Campanha                       = @Campanha,
-                     DescontoCampanhaPercentual     = @DescontoCampanhaPercentual,
-                     DescontoCampanha               = @DescontoCampanha,
-                     ValorTotalFinal                = @ValorTotalFinal,
-                     FormaPagamento                 = @FormaPagamento,
-                     Observacoes                    = @Observacoes
+                     IdVendedor                 = @IdVendedor,
+                     IdCliente                  = @IdCliente,
+                     DataVenda                  = @DataVenda,
+                     ValorTotalOriginal         = @ValorTotalOriginal,
+                     DescontoPercentual         = @DescontoPercentual,
+                     DescontoValor              = @DescontoValor,
+                     Campanha                   = @Campanha,
+                     DescontoCampanhaPercentual = @DescontoCampanhaPercentual,
+                     DescontoCampanha           = @DescontoCampanha,
+                     ValorTotalFinal            = @ValorTotalFinal,
+                     Observacoes                = @Observacoes
                  WHERE IdVenda = @IdVenda;
              ";
 
@@ -189,25 +195,24 @@ namespace BrechoApp.Data
             cmd.Parameters.AddWithValue("@DescontoCampanhaPercentual", venda.DescontoCampanhaPercentual);
             cmd.Parameters.AddWithValue("@DescontoCampanha", venda.DescontoCampanha);
             cmd.Parameters.AddWithValue("@ValorTotalFinal", venda.ValorTotalFinal);
-            cmd.Parameters.AddWithValue("@FormaPagamento", venda.FormaPagamento);
             cmd.Parameters.AddWithValue("@Observacoes", (object?)venda.Observacoes ?? DBNull.Value);
 
             cmd.ExecuteNonQuery();
         }
 
         // ============================================================
-        //  BUSCAR VENDA POR CÓDIGO (com itens)
+        //  BUSCAR VENDA POR CÓDIGO
         // ============================================================
         public Venda BuscarPorCodigo(string codigoVenda)
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
-            // Buscar venda principal
             string sqlVenda = @"
                 SELECT IdVenda, CodigoVenda, IdVendedor, IdCliente, DataVenda,
-                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
-                       FormaPagamento, Observacoes, DataCriacao
+                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha,
+                       DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
+                       Observacoes, DataCriacao
                 FROM Vendas
                 WHERE CodigoVenda = @CodigoVenda
                 LIMIT 1;
@@ -237,23 +242,22 @@ namespace BrechoApp.Data
                     DescontoCampanhaPercentual = Convert.ToDouble(reader["DescontoCampanhaPercentual"], CultureInfo.InvariantCulture),
                     DescontoCampanha = Convert.ToDouble(reader["DescontoCampanha"], CultureInfo.InvariantCulture),
                     ValorTotalFinal = Convert.ToDouble(reader["ValorTotalFinal"], CultureInfo.InvariantCulture),
-                    FormaPagamento = reader["FormaPagamento"].ToString(),
                     Observacoes = reader["Observacoes"]?.ToString(),
                     DataCriacao = DateTime.Parse(reader["DataCriacao"].ToString())
                 };
             }
 
-            // Buscar itens da venda
             if (venda != null)
             {
                 venda.Itens = ListarItensPorVenda(venda.IdVenda);
+                venda.Pagamentos = ListarPagamentosPorVenda(venda.IdVenda);
             }
 
             return venda;
         }
 
         // ============================================================
-        //  LISTAR TODOS AS VENDAS
+        //  LISTAR TODAS AS VENDAS
         // ============================================================
         public List<Venda> ListarVendas()
         {
@@ -264,8 +268,9 @@ namespace BrechoApp.Data
 
             string sql = @"
                 SELECT IdVenda, CodigoVenda, IdVendedor, IdCliente, DataVenda,
-                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
-                       FormaPagamento, Observacoes, DataCriacao
+                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha,
+                       DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
+                       Observacoes, DataCriacao
                 FROM Vendas
                 ORDER BY DataVenda DESC;
             ";
@@ -275,7 +280,7 @@ namespace BrechoApp.Data
 
             while (reader.Read())
             {
-                lista.Add(new Venda
+                var venda = new Venda
                 {
                     IdVenda = Convert.ToInt32(reader["IdVenda"]),
                     CodigoVenda = reader["CodigoVenda"].ToString(),
@@ -289,10 +294,13 @@ namespace BrechoApp.Data
                     DescontoCampanhaPercentual = Convert.ToDouble(reader["DescontoCampanhaPercentual"], CultureInfo.InvariantCulture),
                     DescontoCampanha = Convert.ToDouble(reader["DescontoCampanha"], CultureInfo.InvariantCulture),
                     ValorTotalFinal = Convert.ToDouble(reader["ValorTotalFinal"], CultureInfo.InvariantCulture),
-                    FormaPagamento = reader["FormaPagamento"].ToString(),
                     Observacoes = reader["Observacoes"]?.ToString(),
                     DataCriacao = DateTime.Parse(reader["DataCriacao"].ToString())
-                });
+                };
+
+                venda.Pagamentos = ListarPagamentosPorVenda(venda.IdVenda);
+
+                lista.Add(venda);
             }
 
             return lista;
@@ -310,8 +318,9 @@ namespace BrechoApp.Data
 
             string sql = @"
                 SELECT IdVenda, CodigoVenda, IdVendedor, IdCliente, DataVenda,
-                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha, DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
-                       FormaPagamento, Observacoes, DataCriacao
+                       ValorTotalOriginal, DescontoPercentual, DescontoValor, Campanha,
+                       DescontoCampanhaPercentual, DescontoCampanha, ValorTotalFinal,
+                       Observacoes, DataCriacao
                 FROM Vendas
                 WHERE DataVenda BETWEEN @Inicio AND @Fim
                 ORDER BY DataVenda DESC;
@@ -325,7 +334,7 @@ namespace BrechoApp.Data
 
             while (reader.Read())
             {
-                lista.Add(new Venda
+                var venda = new Venda
                 {
                     IdVenda = Convert.ToInt32(reader["IdVenda"]),
                     CodigoVenda = reader["CodigoVenda"].ToString(),
@@ -339,17 +348,20 @@ namespace BrechoApp.Data
                     DescontoCampanhaPercentual = Convert.ToDouble(reader["DescontoCampanhaPercentual"], CultureInfo.InvariantCulture),
                     DescontoCampanha = Convert.ToDouble(reader["DescontoCampanha"], CultureInfo.InvariantCulture),
                     ValorTotalFinal = Convert.ToDouble(reader["ValorTotalFinal"], CultureInfo.InvariantCulture),
-                    FormaPagamento = reader["FormaPagamento"].ToString(),
                     Observacoes = reader["Observacoes"]?.ToString(),
                     DataCriacao = DateTime.Parse(reader["DataCriacao"].ToString())
-                });
+                };
+
+                venda.Pagamentos = ListarPagamentosPorVenda(venda.IdVenda);
+
+                lista.Add(venda);
             }
 
             return lista;
         }
 
         // ============================================================
-        //  LISTAR ITENS DE UMA VENDA ESPECÍFICA
+        //  LISTAR ITENS DE UMA VENDA
         // ============================================================
         public List<VendaItem> ListarItensPorVenda(int idVenda)
         {
@@ -386,6 +398,39 @@ namespace BrechoApp.Data
                     NomeProduto = reader["NomeDoItem"].ToString(),
                     MarcaProduto = reader["MarcaDoItem"].ToString(),
                     CategoriaProduto = reader["CategoriaDoItem"].ToString()
+                });
+            }
+
+            return lista;
+        }
+
+        // ============================================================
+        //  LISTAR PAGAMENTOS DE UMA VENDA
+        // ============================================================
+        public List<Pagamento> ListarPagamentosPorVenda(int idVenda)
+        {
+            var lista = new List<Pagamento>();
+
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            string sql = @"
+                SELECT TipoPagamento, Valor
+                FROM VendasPagamentos
+                WHERE IdVenda = @IdVenda;
+            ";
+
+            using var cmd = new SqliteCommand(sql, connection);
+            cmd.Parameters.AddWithValue("@IdVenda", idVenda);
+
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                lista.Add(new Pagamento
+                {
+                    Tipo = Enum.Parse<TipoPagamento>(reader["TipoPagamento"].ToString()),
+                    Valor = Convert.ToDouble(reader["Valor"], CultureInfo.InvariantCulture)
                 });
             }
 
