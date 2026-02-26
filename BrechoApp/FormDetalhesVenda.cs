@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Linq;
 using System.Windows.Forms;
 using BrechoApp.Models;
 
@@ -30,7 +31,28 @@ namespace BrechoApp
             txtDescontoCampanha.Text = _venda.DescontoCampanha.ToString("F2");
             txtValorFinal.Text = _venda.ValorTotalFinal.ToString("F2");
 
-            txtFormaPagamento.Text = _venda.FormaPagamento;
+            // Exibir pagamentos: se houver lista detalhada, mostrá-la; senão, usar campo legado
+            if (_venda.Pagamentos != null && _venda.Pagamentos.Count > 1)
+            {
+                // Combinado: mostrar lista
+                string detalhes = string.Join("\n", _venda.Pagamentos
+                    .Select(p => $"  {p.FormaPagamento}: {p.Valor:C2}"));
+                txtFormaPagamento.Text = $"Combinado:\n{detalhes}";
+                txtFormaPagamento.Multiline = true;
+                int linhas = _venda.Pagamentos.Count + 1;
+                txtFormaPagamento.Size = new System.Drawing.Size(
+                    txtFormaPagamento.Width,
+                    Math.Max(txtFormaPagamento.Height, linhas * 18 + 4));
+            }
+            else if (_venda.Pagamentos != null && _venda.Pagamentos.Count == 1)
+            {
+                txtFormaPagamento.Text = $"{_venda.Pagamentos[0].FormaPagamento}: {_venda.Pagamentos[0].Valor:C2}";
+            }
+            else
+            {
+                txtFormaPagamento.Text = _venda.FormaPagamento;
+            }
+
             txtObservacoes.Text = _venda.Observacoes;
         }
     }

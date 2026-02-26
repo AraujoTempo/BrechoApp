@@ -70,7 +70,6 @@ namespace BrechoApp
             txtDescontoCampanhaValor.Text = "0,00";
             txtValorTotalOriginal.Text = "0,00";
             txtValorTotalFinal.Text = "0,00";
-            cboFormaPagamento.SelectedIndex = -1;
             txtObservacoes.Clear();
 
             _vendaAtual.IdVendedor = string.Empty;
@@ -440,21 +439,31 @@ namespace BrechoApp
                 return;
             }
 
-            if (cboFormaPagamento.SelectedIndex < 0)
-            {
-                MessageBox.Show("Selecione a forma de pagamento.", "Atenção",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            // Abrir tela de pagamento
+            var totalFinal = (decimal)_vendaAtual.ValorTotalFinal;
+            var formPagamento = new FormPagamentoVenda(totalFinal);
+            if (formPagamento.ShowDialog() != DialogResult.OK)
                 return;
-            }
+
+            var pagamentos = formPagamento.PagamentosConfirmados;
+
+            // Determinar FormaPagamento resumida (para compatibilidade com relatórios)
+            string formaSumario = pagamentos.Count == 1
+                ? pagamentos[0].FormaPagamento
+                : "Combinado";
 
             // Confirmar venda
+            string detalhesPagamento = pagamentos.Count == 1
+                ? pagamentos[0].FormaPagamento
+                : string.Join(" + ", pagamentos.Select(p => $"{p.FormaPagamento}: {p.Valor:C2}"));
+
             var confirmacao = MessageBox.Show(
                 $"Confirmar venda {_vendaAtual.CodigoVenda}?\n\n" +
                 $"Vendedor: {txtVendedor.Text}\n" +
                 $"Cliente: {txtCliente.Text}\n" +
                 $"Total de produtos: {_vendaAtual.Itens.Count}\n" +
                 $"Valor final: {_vendaAtual.ValorTotalFinal:C2}\n" +
-                $"Forma de pagamento: {cboFormaPagamento.Text}",
+                $"Pagamento: {detalhesPagamento}",
                 "Confirmar Venda",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
@@ -465,14 +474,18 @@ namespace BrechoApp
             try
             {
                 // Preencher dados finais
-                _vendaAtual.FormaPagamento = cboFormaPagamento.Text;
+                _vendaAtual.FormaPagamento = formaSumario;
+                _vendaAtual.Pagamentos = pagamentos;
                 _vendaAtual.Observacoes = txtObservacoes.Text.Trim();
                 _vendaAtual.Campanha = txtCampanha.Text.Trim();
                 if (string.IsNullOrWhiteSpace(_vendaAtual.Campanha))
                     _vendaAtual.Campanha = null;
 
-                // Salvar venda (incluindo atualização de status dos produtos)
+                // Salvar venda (incluindo pagamentos e atualização de status dos produtos)
                 _vendaRepo.SalvarVenda(_vendaAtual);
+
+                // Gerar movimentações financeiras para cada pagamento
+                GerarMovimentacoesFinanceiras(_vendaAtual);
 
                 MessageBox.Show(
                     $"Venda {_vendaAtual.CodigoVenda} finalizada com sucesso!\n\n" +
@@ -488,6 +501,42 @@ namespace BrechoApp
             {
                 MessageBox.Show($"Erro ao finalizar venda:\n{ex.Message}", "Erro",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        // ============================================================
+        //  GERAR MOVIMENTAÇÕES FINANCEIRAS
+        // ============================================================
+        private void GerarMovimentacoesFinanceiras(Venda venda)
+        {
+            var movRepo = new MovimentacaoFinanceiraRepository();
+
+            foreach (var pag in venda.Pagamentos)
+            {
+                if (pag.IdCentroFinanceiro == null) continue;
+
+                bool previsto = pag.FormaPagamento == "Futuro";
+
+                var mov = new MovimentacaoFinanceira
+                {
+                    Data = venda.DataVenda,
+                    Tipo = "Entrada",
+                    Valor = pag.Valor,
+                    IdCentroDestino = pag.IdCentroFinanceiro,
+                    Categoria = "Venda",
+                    Descricao = $"Venda {venda.CodigoVenda}",
+                    IdVenda = venda.IdVenda,
+                    Previsto = previsto
+                };
+
+                try
+                {
+                    movRepo.Inserir(mov);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Aviso: erro ao gerar movimentação financeira: {ex.Message}");
+                }
             }
         }
 

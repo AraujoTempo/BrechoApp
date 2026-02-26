@@ -225,7 +225,7 @@ namespace BrechoApp
             this.btnCancelar.UseVisualStyleBackColor = true;
             this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
-            // cboFormaPagamento
+            // cboFormaPagamento (hidden - moved to FormPagamentoVenda)
             // 
             this.cboFormaPagamento.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboFormaPagamento.FormattingEnabled = true;
@@ -241,6 +241,7 @@ namespace BrechoApp
             this.cboFormaPagamento.Name = "cboFormaPagamento";
             this.cboFormaPagamento.Size = new System.Drawing.Size(200, 23);
             this.cboFormaPagamento.TabIndex = 16;
+            this.cboFormaPagamento.Visible = false;
             // 
             // dgvProdutos
             // 
@@ -363,7 +364,7 @@ namespace BrechoApp
             this.lblValorTotalFinal.TabIndex = 111;
             this.lblValorTotalFinal.Text = "Valor Final:";
             // 
-            // lblFormaPagamento
+            // lblFormaPagamento (hidden - moved to FormPagamentoVenda)
             // 
             this.lblFormaPagamento.AutoSize = true;
             this.lblFormaPagamento.Location = new System.Drawing.Point(30, 583);
@@ -371,6 +372,7 @@ namespace BrechoApp
             this.lblFormaPagamento.Size = new System.Drawing.Size(120, 15);
             this.lblFormaPagamento.TabIndex = 112;
             this.lblFormaPagamento.Text = "Forma de Pagamento:";
+            this.lblFormaPagamento.Visible = false;
             // 
             // lblObservacoes
             // 
