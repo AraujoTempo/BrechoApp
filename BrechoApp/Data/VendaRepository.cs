@@ -151,6 +151,51 @@ namespace BrechoApp.Data
         }
 
         // ============================================================
+        //  ATUALIZAR VENDA (somente campos principais)
+        // ============================================================
+        public void AtualizarVenda(Venda venda)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            connection.Open();
+
+            string sql = @"
+                 UPDATE Vendas
+                 SET 
+                     IdVendedor                     = @IdVendedor,
+                     IdCliente                      = @IdCliente,
+                     DataVenda                      = @DataVenda,
+                     ValorTotalOriginal             = @ValorTotalOriginal,
+                     DescontoPercentual             = @DescontoPercentual,
+                     DescontoValor                  = @DescontoValor,
+                     Campanha                       = @Campanha,
+                     DescontoCampanhaPercentual     = @DescontoCampanhaPercentual,
+                     DescontoCampanha               = @DescontoCampanha,
+                     ValorTotalFinal                = @ValorTotalFinal,
+                     FormaPagamento                 = @FormaPagamento,
+                     Observacoes                    = @Observacoes
+                 WHERE IdVenda = @IdVenda;
+             ";
+
+            using var cmd = new SqliteCommand(sql, connection);
+
+            cmd.Parameters.AddWithValue("@IdVenda", venda.IdVenda);
+            cmd.Parameters.AddWithValue("@IdVendedor", venda.IdVendedor);
+            cmd.Parameters.AddWithValue("@IdCliente", venda.IdCliente);
+            cmd.Parameters.AddWithValue("@DataVenda", venda.DataVenda.ToString("yyyy-MM-dd HH:mm:ss"));
+            cmd.Parameters.AddWithValue("@ValorTotalOriginal", venda.ValorTotalOriginal);
+            cmd.Parameters.AddWithValue("@DescontoPercentual", venda.DescontoPercentual);
+            cmd.Parameters.AddWithValue("@DescontoValor", venda.DescontoValor);
+            cmd.Parameters.AddWithValue("@Campanha", (object?)venda.Campanha ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@DescontoCampanhaPercentual", venda.DescontoCampanhaPercentual);
+            cmd.Parameters.AddWithValue("@DescontoCampanha", venda.DescontoCampanha);
+            cmd.Parameters.AddWithValue("@ValorTotalFinal", venda.ValorTotalFinal);
+            cmd.Parameters.AddWithValue("@FormaPagamento", venda.FormaPagamento);
+            cmd.Parameters.AddWithValue("@Observacoes", (object?)venda.Observacoes ?? DBNull.Value);
+
+            cmd.ExecuteNonQuery();
+        }
+
+        // ============================================================
         //  BUSCAR VENDA POR CÓDIGO (com itens)
         // ============================================================
         public Venda BuscarPorCodigo(string codigoVenda)

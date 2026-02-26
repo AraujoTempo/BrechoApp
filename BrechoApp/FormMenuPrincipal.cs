@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-
-namespace BrechoApp
+﻿namespace BrechoApp
 {
     /// <summary>
     /// Tela principal do sistema.
@@ -15,21 +12,23 @@ namespace BrechoApp
         }
 
         // ============================================================
-        // BOTÃO: FINANCEIRO
-        // Módulo ainda não implementado
+        // BOTÃO: VENDAS
+        // Abre o formulário de vendas
         // ============================================================
-        private void btnFinanceiro_Click(object sender, EventArgs e)
+        private void btnVendas_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Módulo Financeiro ainda não implementado.");
+            var form = new FormVenda();
+            form.ShowDialog();
         }
 
         // ============================================================
-        // BOTÃO: MARKETING
-        // Módulo ainda não implementado
+        // BOTÃO: FINANCEIRO
+        // Agora abre o menu financeiro
         // ============================================================
-        private void btnMarketing_Click(object sender, EventArgs e)
+        private void btnFinanceiro_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Módulo Marketing ainda não implementado.");
+            var form = new FormMenuFinanceiro();
+            form.ShowDialog();
         }
 
         // ============================================================
@@ -45,22 +44,14 @@ namespace BrechoApp
         }
 
         // ============================================================
-        // BOTÃO: OPERAÇÕES
-        // Abre o módulo de operações (exportações, relatórios, etc.)
+        // BOTÃO / MENU: COMISSÕES
+        // Abre o módulo de Gestão de Comissões
         // ============================================================
-        private void btnOperacoes_Click(object sender, EventArgs e)
+        private void btnComissoes_Click(object sender, EventArgs e)
         {
-            var form = new FormOperacoes();
-            form.ShowDialog();
-        }
-
-        // ============================================================
-        // BOTÃO: VENDAS
-        // Abre o formulário de vendas
-        // ============================================================
-        private void btnVendas_Click(object sender, EventArgs e)
-        {
-            var form = new FormVenda();
+            // Aqui você pode futuramente abrir um menu completo de comissões.
+            // Por enquanto, vamos direto para o Extrato de Comissões.
+            var form = new FormMenuComissoes();
             form.ShowDialog();
         }
 
@@ -73,5 +64,27 @@ namespace BrechoApp
             var form = new FormRelatoriosGerenciais();
             form.ShowDialog();
         }
+
+        // ============================================================
+        // BOTÃO: OPERAÇÕES
+        // Abre o módulo de operações (exportações, relatórios, etc.)
+        // ============================================================
+        private void btnOperacoes_Click(object sender, EventArgs e)
+        {
+            var form = new FormOperacoes();
+            form.ShowDialog();
+        }
+
+        // ============================================================
+        // BOTÃO: MARKETING
+        // Módulo ainda não implementado
+        // ============================================================
+        private void btnMarketing_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Módulo Marketing ainda não implementado.");
+        }
+
     }
 }
+
+

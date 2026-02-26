@@ -210,6 +210,88 @@ namespace BrechoApp.Data
                     FOREIGN KEY (CodigoLoteDevolucao) REFERENCES LoteDevolucao (CodigoLoteDevolucao),
                     FOREIGN KEY (CodigoProduto) REFERENCES Produtos (CodigoProduto)
                 );
+                ---------------------------------------------------------
+                -- TABELA: CONTAS A RECEBER
+                -- Registra valores que o PN deve ao brechó (Futuro)
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS ContasAReceber (
+                    IdContasAReceber INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                    CodigoParceiro TEXT NOT NULL,
+                    IdVenda INTEGER,
+
+                    ValorOriginal REAL NOT NULL,
+                    ValorAberto REAL NOT NULL,
+
+                    DataCriacao TEXT NOT NULL,
+                    DataBaixa TEXT,
+
+                    Status TEXT NOT NULL, -- Aberto, Parcial, Baixado
+                    Observacao TEXT,
+
+                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro),
+                    FOREIGN KEY (IdVenda) REFERENCES Vendas (IdVenda)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA: COMISSOES A PAGAR
+                -- Registra valores que o brechó deve ao PN (comissões)
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS ComissoesAPagar (
+                    IdComissao INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                    CodigoParceiro TEXT NOT NULL,
+
+                    ValorOriginal REAL NOT NULL,
+                    ValorAberto REAL NOT NULL,
+
+                    MesReferencia INTEGER NOT NULL,
+                    AnoReferencia INTEGER NOT NULL,
+
+                    DataCriacao TEXT NOT NULL,
+                    DataBaixa TEXT,
+
+                    Status TEXT NOT NULL, -- Aberto, Parcial, Baixado
+                    Observacao TEXT,
+
+                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA: FECHAMENTO DE COMISSOES (CABECALHO)
+                -- Registra cada fechamento mensal realizado
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS FechamentoComissoes (
+                    IdFechamento INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                    Mes INTEGER NOT NULL,
+                    Ano INTEGER NOT NULL,
+
+                    DataFechamento TEXT NOT NULL,
+                    Observacao TEXT
+                );
+
+                ---------------------------------------------------------
+                -- TABELA: FECHAMENTO DE COMISSOES - ITENS
+                -- Saldo final de cada PN no fechamento mensal
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS FechamentoComissoesItem (
+                    IdFechamentoItem INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                    IdFechamento INTEGER NOT NULL,
+                    CodigoParceiro TEXT NOT NULL,
+
+                    TotalComissoes REAL NOT NULL,
+                    TotalContasAReceber REAL NOT NULL,
+
+                    SaldoFinal REAL NOT NULL, -- Comissoes - CAR
+                    TipoSaldo TEXT NOT NULL,  -- A Favor, Contra, Zero
+
+                    DataRegistro TEXT NOT NULL,
+
+                    FOREIGN KEY (IdFechamento) REFERENCES FechamentoComissoes (IdFechamento),
+                    FOREIGN KEY (CodigoParceiro) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
 
                 ---------------------------------------------------------
                 -- TABELA DE VENDAS
@@ -251,6 +333,105 @@ namespace BrechoApp.Data
                     FOREIGN KEY (IdVenda) REFERENCES Vendas (IdVenda),
                     FOREIGN KEY (IdProduto) REFERENCES Produtos (CodigoProduto),
                     FOREIGN KEY (IdFornecedor) REFERENCES ParceirosNegocio (CodigoParceiro)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE CENTROS FINANCEIROS
+                -- Usado para controlar contas, caixas, bancos, fundos etc.
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS CentrosFinanceiros (
+                    IdCentroFinanceiro INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                    Nome TEXT NOT NULL,
+                    Tipo TEXT NOT NULL, -- Caixa, ContaCorrente, CartaoAReceber, ContasAReceber, ComissoesAPagar etc.
+
+                    SaldoInicial REAL NOT NULL DEFAULT 0,
+                    SaldoAtual REAL NOT NULL DEFAULT 0,
+
+                    Ativo INTEGER NOT NULL DEFAULT 1
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE PERÍODOS DE COMISSÃO
+                -- Controla o fechamento mensal de comissões
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS ComissaoPeriodo (
+                    IdPeriodo INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                    Mes INTEGER NOT NULL,
+                    Ano INTEGER NOT NULL,
+
+                    DataAbertura TEXT NOT NULL DEFAULT (datetime('now')),
+                    DataFechamento TEXT,
+
+                    Status TEXT NOT NULL
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE SALDOS CONSOLIDADOS POR PN
+                -- Armazena comissões, contas a receber e saldo final
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS ComissaoSaldoPN (
+                    IdSaldo INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                    IdPeriodo INTEGER NOT NULL,
+                    CodigoPN TEXT NOT NULL,
+
+                    ComissoesAPagar REAL NOT NULL DEFAULT 0,
+                    ContasAReceber REAL NOT NULL DEFAULT 0,
+
+                    SaldoFinal REAL NOT NULL DEFAULT 0,
+                    SaldoCompensado REAL NOT NULL DEFAULT 0,
+
+                    Status TEXT NOT NULL,
+
+                    FOREIGN KEY (IdPeriodo) REFERENCES ComissaoPeriodo (IdPeriodo)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE MOVIMENTOS DE COMISSÃO
+                -- Registra pagamentos e recebimentos do PN
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS ComissaoMovimento (
+                    IdMovimento INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                    IdSaldo INTEGER NOT NULL,
+
+                    Tipo TEXT NOT NULL, -- PagamentoPN ou RecebimentoPN
+                    Valor REAL NOT NULL,
+                    FormaPagamento TEXT NOT NULL,
+
+                    DataMovimento TEXT NOT NULL DEFAULT (datetime('now')),
+                    Observacao TEXT,
+
+                    FOREIGN KEY (IdSaldo) REFERENCES ComissaoSaldoPN (IdSaldo)
+                );
+
+                ---------------------------------------------------------
+                -- TABELA DE MOVIMENTAÇÕES FINANCEIRAS
+                -- Registra entradas, saídas e transferências
+                ---------------------------------------------------------
+                CREATE TABLE IF NOT EXISTS MovimentacoesFinanceiras (
+                    IdMovimentacao INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Data TEXT NOT NULL,
+                    Tipo TEXT NOT NULL, -- Entrada, Saída, Transferência
+                    Valor REAL NOT NULL,
+
+                    IdCentroOrigem INTEGER,
+                    IdCentroDestino INTEGER,
+
+                    Categoria TEXT,
+                    Descricao TEXT,
+
+                    IdVenda INTEGER,
+                    IdParceiro TEXT,
+
+                    Previsto INTEGER NOT NULL DEFAULT 0,
+
+                    FOREIGN KEY (IdCentroOrigem) REFERENCES CentrosFinanceiros (IdCentroFinanceiro),
+                    FOREIGN KEY (IdCentroDestino) REFERENCES CentrosFinanceiros (IdCentroFinanceiro),
+                    FOREIGN KEY (IdVenda) REFERENCES Vendas (IdVenda),
+                    FOREIGN KEY (IdParceiro) REFERENCES ParceirosNegocio (CodigoParceiro)
                 );
 
                 ---------------------------------------------------------

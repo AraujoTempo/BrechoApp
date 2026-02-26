@@ -27,6 +27,16 @@ namespace BrechoApp
         }
 
         // ============================================================
+        // BOTÃO: RELATÓRIO ANALÍTICO DE VENDAS
+        // Abre o relatório analítico recém-implementado
+        // ============================================================
+        private void btnRelatorioAnaliticoVendas_Click(object sender, EventArgs e)
+        {
+            var form = new FormRelatorioAnaliticoVendas();
+            form.ShowDialog();
+        }
+
+        // ============================================================
         // BOTÃO: LISTAR PRODUTOS DISPONÍVEIS
         // Exporta produtos disponíveis para Excel
         // ============================================================
@@ -39,7 +49,7 @@ namespace BrechoApp
 
                 if (produtos.Count == 0)
                 {
-                    MessageBox.Show("Não há produtos disponíveis para exportar.", 
+                    MessageBox.Show("Não há produtos disponíveis para exportar.",
                         "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
@@ -96,7 +106,6 @@ namespace BrechoApp
 
                         row++;
                     }
-
                     // ============================================================
                     // FORMATAÇÃO FINAL
                     // ============================================================
@@ -129,7 +138,7 @@ namespace BrechoApp
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
                         wb.SaveAs(dialog.FileName);
-                        
+
                         var result = MessageBox.Show(
                             $"Arquivo Excel gerado com sucesso!\n\n" +
                             $"Total de produtos: {produtos.Count}\n" +
@@ -152,20 +161,19 @@ namespace BrechoApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao gerar arquivo Excel:\n\n{ex.Message}", 
+                MessageBox.Show($"Erro ao gerar arquivo Excel:\n\n{ex.Message}",
                     "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
         // ============================================================
         // BOTÃO: RELATÓRIO DE CAIXA
         // Ainda não implementado
         // ============================================================
         private void btnRelatorioCaixa_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Relatório de Caixa em desenvolvimento.", 
-                "Em Desenvolvimento", 
-                MessageBoxButtons.OK, 
+            MessageBox.Show("Relatório de Caixa em desenvolvimento.",
+                "Em Desenvolvimento",
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
 
@@ -175,9 +183,9 @@ namespace BrechoApp
         // ============================================================
         private void btnRelatorioLucro_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Relatório de Lucro em desenvolvimento.", 
-                "Em Desenvolvimento", 
-                MessageBoxButtons.OK, 
+            MessageBox.Show("Relatório de Lucro em desenvolvimento.",
+                "Em Desenvolvimento",
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
 
@@ -187,9 +195,9 @@ namespace BrechoApp
         // ============================================================
         private void btnRelatorioFinanceiro_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Relatório Financeiro em desenvolvimento.", 
-                "Em Desenvolvimento", 
-                MessageBoxButtons.OK, 
+            MessageBox.Show("Relatório Financeiro em desenvolvimento.",
+                "Em Desenvolvimento",
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
 
@@ -199,9 +207,9 @@ namespace BrechoApp
         // ============================================================
         private void btnRelatorioComissoes_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Relatório de Comissões em desenvolvimento.", 
-                "Em Desenvolvimento", 
-                MessageBoxButtons.OK, 
+            MessageBox.Show("Relatório de Comissões em desenvolvimento.",
+                "Em Desenvolvimento",
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
 
@@ -211,9 +219,9 @@ namespace BrechoApp
         // ============================================================
         private void btnRelatorioProdutosDevolvidos_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Relatório de Produtos Devolvidos em desenvolvimento.", 
-                "Em Desenvolvimento", 
-                MessageBoxButtons.OK, 
+            MessageBox.Show("Relatório de Produtos Devolvidos em desenvolvimento.",
+                "Em Desenvolvimento",
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
 
@@ -223,9 +231,9 @@ namespace BrechoApp
         // ============================================================
         private void btnRelatorioEstoque_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Relatório de Estoque em desenvolvimento.", 
-                "Em Desenvolvimento", 
-                MessageBoxButtons.OK, 
+            MessageBox.Show("Relatório de Estoque em desenvolvimento.",
+                "Em Desenvolvimento",
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
 
@@ -235,9 +243,9 @@ namespace BrechoApp
         // ============================================================
         private void btnRelatorioFornecedores_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Relatório de Fornecedores em desenvolvimento.", 
-                "Em Desenvolvimento", 
-                MessageBoxButtons.OK, 
+            MessageBox.Show("Relatório de Fornecedores em desenvolvimento.",
+                "Em Desenvolvimento",
+                MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
 
@@ -251,3 +259,5 @@ namespace BrechoApp
         }
     }
 }
+
+
