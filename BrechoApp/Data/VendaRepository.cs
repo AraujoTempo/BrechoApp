@@ -11,6 +11,18 @@ namespace BrechoApp.Data
     {
         private readonly string _connectionString = DatabaseConfig.ConnectionString;
 
+        private static readonly Dictionary<TipoPagamento, string> _mapaCentrosFinanceiros = new()
+        {
+            { TipoPagamento.Dinheiro,       "Caixa Fisico" },
+            { TipoPagamento.Pix,            "Conta Corrente - Brecho" },
+            { TipoPagamento.DepositoBrecho, "Conta Corrente - Brecho" },
+            { TipoPagamento.DepositoSocio1, "Conta Corrente - Socio1" },
+            { TipoPagamento.DepositoSocio2, "Conta Corrente - Socio2" },
+            { TipoPagamento.Credito,        "Cartao Credito - A receber" },
+            { TipoPagamento.Debito,         "Debito" },
+            { TipoPagamento.Futuro,         "Contas a Receber - Vendas nao pagas" }
+        };
+
         public VendaRepository()
         {
             DatabaseInitializer.Initialize();
@@ -92,6 +104,7 @@ namespace BrechoApp.Data
                     cmd.Parameters.AddWithValue("@DataCriacao", venda.DataCriacao.ToString("yyyy-MM-dd HH:mm:ss"));
 
                     idVenda = Convert.ToInt32(cmd.ExecuteScalar());
+                    venda.IdVenda = idVenda;
                 }
 
                 // 2. Inserir itens da venda
@@ -116,19 +129,40 @@ namespace BrechoApp.Data
 
                 // 3. Inserir pagamentos
                 string sqlPagamento = @"
-                    INSERT INTO VendasPagamentos (
-                        IdVenda, TipoPagamento, Valor
+                    INSERT INTO VendaPagamentos (
+                        IdVenda, FormaPagamento, Valor, IdCentroFinanceiro
                     ) VALUES (
-                        @IdVenda, @TipoPagamento, @Valor
+                        @IdVenda, @FormaPagamento, @Valor, @IdCentroFinanceiro
                     );
+                ";
+
+                string sqlBuscarCentro = @"
+                    SELECT IdCentroFinanceiro
+                    FROM CentrosFinanceiros
+                    WHERE Nome = @Nome AND Ativo = 1
+                    LIMIT 1;
                 ";
 
                 foreach (var pag in venda.Pagamentos)
                 {
+                    if (!_mapaCentrosFinanceiros.TryGetValue(pag.Tipo, out string nomeCentro))
+                        throw new InvalidOperationException($"TipoPagamento '{pag.Tipo}' não possui mapeamento para CentroFinanceiro.");
+
+                    int idCentro;
+                    using (var cmdCentro = new SqliteCommand(sqlBuscarCentro, connection, transaction))
+                    {
+                        cmdCentro.Parameters.AddWithValue("@Nome", nomeCentro);
+                        var resultCentro = cmdCentro.ExecuteScalar();
+                        if (resultCentro == null || resultCentro == DBNull.Value)
+                            throw new InvalidOperationException($"Centro financeiro ativo com nome '{nomeCentro}' não encontrado. Verifique o cadastro.");
+                        idCentro = Convert.ToInt32(resultCentro);
+                    }
+
                     using var cmdPag = new SqliteCommand(sqlPagamento, connection, transaction);
                     cmdPag.Parameters.AddWithValue("@IdVenda", idVenda);
-                    cmdPag.Parameters.AddWithValue("@TipoPagamento", pag.Tipo.ToString());
+                    cmdPag.Parameters.AddWithValue("@FormaPagamento", pag.Tipo.ToString());
                     cmdPag.Parameters.AddWithValue("@Valor", pag.Valor);
+                    cmdPag.Parameters.AddWithValue("@IdCentroFinanceiro", idCentro);
                     cmdPag.ExecuteNonQuery();
                 }
 
@@ -414,24 +448,47 @@ namespace BrechoApp.Data
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
 
-            string sql = @"
-                SELECT TipoPagamento, Valor
-                FROM VendasPagamentos
+            // Lê preferencialmente da tabela nova VendaPagamentos
+            string sqlNew = @"
+                SELECT FormaPagamento, Valor
+                FROM VendaPagamentos
                 WHERE IdVenda = @IdVenda;
             ";
 
-            using var cmd = new SqliteCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@IdVenda", idVenda);
-
-            using var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
+            using (var cmd = new SqliteCommand(sqlNew, connection))
             {
-                lista.Add(new Pagamento
+                cmd.Parameters.AddWithValue("@IdVenda", idVenda);
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    Tipo = Enum.Parse<TipoPagamento>(reader["TipoPagamento"].ToString()),
-                    Valor = Convert.ToDouble(reader["Valor"], CultureInfo.InvariantCulture)
-                });
+                    lista.Add(new Pagamento
+                    {
+                        Tipo = Enum.Parse<TipoPagamento>(reader["FormaPagamento"].ToString()),
+                        Valor = Convert.ToDouble(reader["Valor"], CultureInfo.InvariantCulture)
+                    });
+                }
+            }
+
+            // Fallback: se não houver registros em VendaPagamentos, lê da tabela legada VendasPagamentos
+            if (lista.Count == 0)
+            {
+                string sqlLegacy = @"
+                    SELECT TipoPagamento, Valor
+                    FROM VendasPagamentos
+                    WHERE IdVenda = @IdVenda;
+                ";
+
+                using var cmdLegacy = new SqliteCommand(sqlLegacy, connection);
+                cmdLegacy.Parameters.AddWithValue("@IdVenda", idVenda);
+                using var readerLegacy = cmdLegacy.ExecuteReader();
+                while (readerLegacy.Read())
+                {
+                    lista.Add(new Pagamento
+                    {
+                        Tipo = Enum.Parse<TipoPagamento>(readerLegacy["TipoPagamento"].ToString()),
+                        Valor = Convert.ToDouble(readerLegacy["Valor"], CultureInfo.InvariantCulture)
+                    });
+                }
             }
 
             return lista;
