@@ -18,6 +18,48 @@ Abrir somente pelo `.csproj` faz com que o painel Git fique desabilitado.
 
 ---
 
+## ⛔ ATENÇÃO — Nunca Abra o VS pelo Link do GitHub
+
+O site `https://github.com/AraujoTempo/BrechoApp` tem um botão **"Open in Visual Studio"** ou
+permite clonar via URL. **Isso cria uma NOVA cópia do projeto em uma pasta diferente**
+e o VS não saberá onde está o `.sln` — o Git ficará desabilitado.
+
+**O correto é:**
+1. Abrir o **Windows Explorer** (não o VS, não o GitHub)
+2. Navegar até a pasta onde o projeto já está clonado (ex.: `C:\Projetos\BrechoApp`)
+3. Dar duplo clique em **`BrechoApp-expansao1.sln`**
+
+> 💡 Se não souber onde está a pasta do projeto:
+> - No VS (mesmo sem Git): `File → Open → Project/Solution`
+> - Ou pesquisar no Windows: `BrechoApp-expansao1.sln`
+
+---
+
+## 🔧 Situação Atual — Sincronizar VS Após Trabalho no GitHub
+
+Se você fez um merge/PR no GitHub e quer atualizar o Visual Studio:
+
+**Passo 1 — Abrir corretamente:**
+- Fechar todo o Visual Studio
+- Abrir via `BrechoApp-expansao1.sln` no Windows Explorer
+
+**Passo 2 — Mudar para o branch principal (main):**
+- No VS: canto inferior direito → clicar no nome do branch atual
+- Selecionar **`main`** (ou `master`)
+- Clicar em **Checkout**
+
+**Passo 3 — Trazer o merge do GitHub para o VS:**
+- No painel **Git Changes**: clicar em **↻ Fetch All**
+- Depois clicar em **↓ Pull** (ou `Git → Pull`)
+- Aguardar a mensagem "Everything is up-to-date"
+
+**Passo 4 — Confirmar que o código está atualizado:**
+- O painel **Git Repository** (`Git → Manage Branches`) deve mostrar o branch `main`
+  sem setas pendentes (↑ push / ↓ pull)
+- O código no editor deve refletir as últimas alterações do PR
+
+---
+
 ## 📋 Antes de Começar a Trabalhar
 
 - [ ] Abrir o Visual Studio pelo arquivo **`BrechoApp-expansao1.sln`**
@@ -49,6 +91,12 @@ Abrir somente pelo `.csproj` faz com que o painel Git fique desabilitado.
 ## 🚨 Quando o Git Ficar Desabilitado — Recuperação
 
 Siga os passos nesta ordem até resolver:
+
+**Passo 0 — Se abriu pelo GitHub.com ou pela URL:**
+- Fechar o Visual Studio completamente
+- Abrir o **Windows Explorer**, navegar até a pasta do projeto (ex.: `C:\Projetos\BrechoApp` — a pasta onde está o `BrechoApp-expansao1.sln`)
+- Dar duplo clique em **`BrechoApp-expansao1.sln`** — o Git voltará automaticamente
+- Se o Git já estiver ativo após isso, **pare aqui** (não precisa dos passos seguintes)
 
 **Passo 1 — Reabrir os painéis Git:**
 - `Git → Git Changes` (ou `Alt+F8`)
@@ -111,9 +159,12 @@ Se algum desses arquivos aparecer em "Changes" no painel Git,
 ## 🔗 Fluxo de Trabalho Recomendado
 
 ```
-Abrir BrechoApp-expansao1.sln
+Abrir BrechoApp-expansao1.sln (Windows Explorer, duplo clique)
         ↓
-   Git → Pull (sincronizar)
+   Git → Pull (branch main — pegar o merge mais recente)
+        ↓
+   Criar branch novo para a próxima funcionalidade
+   (Git → New Branch → dar nome como "minha-nova-feature")
         ↓
    Codificar / Fazer alterações
         ↓
@@ -123,7 +174,21 @@ Abrir BrechoApp-expansao1.sln
         ↓
    Criar PR no GitHub (se necessário)
         ↓
-   Voltar ao VS → Git → Fetch → Pull
+   Aguardar merge do PR no GitHub
         ↓
-   Continuar trabalhando
+   Voltar ao VS → mudar para main → Git → Pull
+        ↓
+   Criar novo branch e repetir
 ```
+
+---
+
+## ⚠️ O Que NÃO Fazer
+
+| ❌ Não fazer | ✅ Fazer em vez disso |
+|---|---|
+| Clicar em "Open in Visual Studio" no GitHub.com | Abrir `BrechoApp-expansao1.sln` no Windows Explorer |
+| Abrir o VS e usar `File → Open → Folder` | Usar `File → Open → Project/Solution` e selecionar o `.sln` |
+| Trabalhar diretamente no branch `main` | Criar um branch novo para cada funcionalidade |
+| Acumular dias de trabalho sem push | Fazer push pelo menos uma vez por dia |
+| Ignorar avisos de conflito | Resolver conflitos antes de continuar |
