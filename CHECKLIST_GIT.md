@@ -5,6 +5,105 @@
 
 ---
 
+## 🆘 SOCORRO — "O Git está desabilitado no VS depois do merge"
+
+> **Este é o cenário mais comum:** o Copilot fez o merge no GitHub → você abriu o
+> Visual Studio → o painel Git está cinza/desabilitado → não consegue fazer Pull.
+> **Siga os passos abaixo NA ORDEM. Pare assim que funcionar.**
+
+---
+
+### 🔴 Passo 1 — Fechar o Visual Studio completamente
+
+- Feche **todo** o Visual Studio (clicar no **X** da janela, não minimizar)
+- Se aparecer pergunta "Salvar?", clique **Não** (nada se perde — o código está no GitHub)
+- Aguarde até o VS desaparecer completamente da barra de tarefas
+
+---
+
+### 🔴 Passo 2 — Abrir o projeto pelo arquivo `.sln` via pesquisa do Windows
+
+1. Pressione **`Win + S`** (abre a pesquisa do Windows)
+2. Digite: **`BrechoApp-expansao1`**
+3. Clique no arquivo **`BrechoApp-expansao1.sln`** que aparecer nos resultados
+   - Ele terá um ícone colorido do Visual Studio (roxo/azul)
+4. Aguarde o Visual Studio abrir
+
+**✅ Teste:** Olhe o menu no topo — se aparecer **`Git`** na barra de menus,
+o Git está ativo. Clique nele para confirmar.
+
+> Se o menu **`Git`** apareceu → vá direto para o **Passo 5** (Pull).
+> Se ainda estiver desabilitado → continue no **Passo 3**.
+
+---
+
+### 🔴 Passo 3 — Fechar e reabrir a solução dentro do VS
+
+Dentro do Visual Studio (com Git ainda desabilitado):
+
+1. Clique em **`File`** → **`Close Solution`**
+2. Clique em **`File`** → **`Open`** → **`Project/Solution...`**
+3. Na janela que abrir, navegue até a pasta do BrechoApp
+4. Selecione **`BrechoApp-expansao1.sln`** e clique em **`Open`**
+
+**✅ Teste:** O menu **`Git`** apareceu?
+> Sim → vá para o **Passo 5**.
+> Não → continue no **Passo 4**.
+
+---
+
+### 🔴 Passo 4 — Apagar o cache do VS (resolve em ~90% dos casos restantes)
+
+> Esta pasta é recriada automaticamente — não há risco de perder código.
+
+1. Feche o Visual Studio completamente (X na janela)
+2. Pressione **`Win + E`** para abrir o Windows Explorer
+3. Navegue até a pasta do projeto (ex.: `C:\Users\<seu nome>\source\repos\BrechoApp`)
+4. Ative a visualização de arquivos ocultos:
+   - Clique em **`View`** (Exibir) no Windows Explorer
+   - Marque a opção **`Hidden items`** (Itens ocultos)
+5. Procure a pasta chamada **`.vs`** (começa com ponto — pode estar oculta)
+6. Clique com o botão direito em **`.vs`** → **`Delete`** (Excluir)
+7. Confirme a exclusão
+8. Agora abra o projeto pelo `BrechoApp-expansao1.sln` (duplo clique)
+
+**✅ Teste:** O menu **`Git`** apareceu?
+> Sim → vá para o **Passo 5**.
+> Não → vá para o **Passo 4b** abaixo.
+
+#### Passo 4b — Verificar o plugin Git no VS
+
+1. No Visual Studio, clique em **`Tools`** → **`Options`**
+2. Na árvore da esquerda, clique em **`Source Control`**
+3. Em **"Current source control plug-in"**, verifique se está **`Git`**
+   - Se estiver vazio ou diferente, selecione **`Git`** no dropdown
+   - Clique **`OK`**
+4. Reinicie o Visual Studio e abra pelo `.sln` novamente
+
+---
+
+### 🟢 Passo 5 — Fazer Pull para baixar o merge do GitHub
+
+Com o Git ativo no VS:
+
+1. Clique no menu **`Git`** → **`Git Changes`**
+   - O painel "Git Changes" abrirá no lado direito (ou inferior)
+2. Clique na seta **`↓ Pull`** (ou no botão com seta apontando para baixo)
+   - Pode também estar como **`Sync`** — clique nele também funciona
+3. Aguarde a mensagem **"Everything is up-to-date"** ou similar
+4. O código agora está atualizado com o merge feito pelo GitHub ✅
+
+---
+
+### ✅ Como confirmar que funcionou
+
+Após o Pull, no painel **Git Changes**:
+- O campo "Outgoing / Incoming" deve estar vazio (sem setas pendentes)
+- O branch deve mostrar **`main`** no canto inferior direito do VS
+- O código no editor deve ter as alterações do PR mais recente
+
+---
+
 ## 🔑 Regra de Ouro
 
 **Sempre abra o projeto pelo arquivo `.sln`, nunca pelo `.csproj`:**
