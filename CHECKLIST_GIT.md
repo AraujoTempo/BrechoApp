@@ -18,6 +18,41 @@ Abrir somente pelo `.csproj` faz com que o painel Git fique desabilitado.
 
 ---
 
+## ❓ O que é o arquivo `.sln` e como abrir por ele?
+
+O arquivo `.sln` (**Solution file**) é o "arquivo mestre" do projeto. Ele diz ao
+Visual Studio onde estão todos os arquivos do BrechoApp e ativa recursos como o Git.
+
+### 📂 Passo a passo para abrir pelo `.sln`
+
+**Método 1 — Windows Explorer (mais fácil):**
+
+1. Pressione **`Win + E`** para abrir o Windows Explorer
+2. Navegue até a pasta do projeto no seu computador
+   - Geralmente em: `C:\Users\<seu nome>\source\repos\BrechoApp`
+   - Ou em: `C:\Projetos\BrechoApp` (depende de onde você clonou)
+3. Procure o arquivo **`BrechoApp-expansao1.sln`** — ele tem um ícone do Visual Studio
+4. Dê **duplo clique** nele — o Visual Studio abrirá já com o Git ativo
+
+**Método 2 — Pesquisa do Windows (se não souber onde está):**
+
+1. Clique na lupa da barra de tarefas (ou pressione **`Win + S`**)
+2. Digite: **`BrechoApp-expansao1.sln`**
+3. Clique no resultado que aparecer — o VS abrirá automaticamente
+
+**Método 3 — Visual Studio → Projetos Recentes:**
+
+1. Abra o Visual Studio normalmente
+2. Na tela inicial, procure **`BrechoApp-expansao1.sln`** na lista de projetos recentes
+3. Clique nele — o Git será ativado
+
+> ⚠️ **Diferença importante:**
+> - `BrechoApp-expansao1.sln` → abre o projeto **completo** com Git ✅
+> - `BrechoApp.csproj` → abre só o código, **sem Git** ❌
+> - Pasta no GitHub.com → cria uma **cópia nova** num lugar diferente ❌
+
+---
+
 ## ⛔ ATENÇÃO — Nunca Abra o VS pelo Link do GitHub
 
 O site `https://github.com/AraujoTempo/BrechoApp` tem um botão **"Open in Visual Studio"** ou
