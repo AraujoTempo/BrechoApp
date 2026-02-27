@@ -12,7 +12,7 @@ namespace BrechoApp
 
         private void btnCentrosFinanceiros_Click(object sender, EventArgs e)
         {
-            var form = new FormCentroFinanceiro();
+            var form = new FormCentroFinanceiro(somenteLeitura: true);
             form.ShowDialog();
         }
 
