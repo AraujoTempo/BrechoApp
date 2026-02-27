@@ -151,6 +151,42 @@ namespace BrechoApp.Data
         }
 
         // ============================================================
+        // BUSCAR POR NOME EXATO
+        // ============================================================
+        public CentroFinanceiro BuscarPorNome(string nome)
+        {
+            using (var conn = new SqliteConnection(_connectionString))
+            {
+                conn.Open();
+
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = @"SELECT IdCentroFinanceiro, Nome, Tipo, SaldoAtual, Ativo
+                                    FROM CentrosFinanceiros
+                                    WHERE Nome = $nome
+                                    LIMIT 1";
+
+                cmd.Parameters.AddWithValue("$nome", nome);
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        return new CentroFinanceiro
+                        {
+                            IdCentroFinanceiro = reader.GetInt32(0),
+                            Nome = reader.GetString(1),
+                            Tipo = reader.GetString(2),
+                            SaldoAtual = reader.GetDecimal(3),
+                            Ativo = reader.GetBoolean(4)
+                        };
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        // ============================================================
         // SOMAR SALDO
         // ============================================================
         public void SomarSaldo(int idCentro, decimal valor)
