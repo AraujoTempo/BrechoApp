@@ -8,10 +8,19 @@ namespace BrechoApp
     {
         private readonly CentroFinanceiroRepository _repository;
 
-        public FormCentroFinanceiro()
+        public FormCentroFinanceiro(bool somenteLeitura = false)
         {
             InitializeComponent();
             _repository = new CentroFinanceiroRepository();
+
+            if (somenteLeitura)
+            {
+                btnNovo.Visible = false;
+                btnEditar.Visible = false;
+                btnExcluir.Visible = false;
+                this.Text = "Centros Financeiros (somente leitura)";
+            }
+
             CarregarCentros();
         }
 

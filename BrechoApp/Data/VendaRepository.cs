@@ -92,6 +92,7 @@ namespace BrechoApp.Data
                     cmd.Parameters.AddWithValue("@DataCriacao", venda.DataCriacao.ToString("yyyy-MM-dd HH:mm:ss"));
 
                     idVenda = Convert.ToInt32(cmd.ExecuteScalar());
+                    venda.IdVenda = idVenda;
                 }
 
                 // 2. Inserir itens da venda
@@ -114,22 +115,73 @@ namespace BrechoApp.Data
                     cmdItem.ExecuteNonQuery();
                 }
 
-                // 3. Inserir pagamentos
-                string sqlPagamento = @"
-                    INSERT INTO VendasPagamentos (
-                        IdVenda, TipoPagamento, Valor
-                    ) VALUES (
-                        @IdVenda, @TipoPagamento, @Valor
-                    );
-                ";
+                // 3. Inserir pagamentos, movimentações financeiras e atualizar saldos
+                var mapaCentros = new System.Collections.Generic.Dictionary<Enums.TipoPagamento, string>
+                {
+                    { Enums.TipoPagamento.Dinheiro,       "Caixa Fisico" },
+                    { Enums.TipoPagamento.Pix,            "Conta Corrente - Brecho" },
+                    { Enums.TipoPagamento.DepositoBrecho, "Conta Corrente - Brecho" },
+                    { Enums.TipoPagamento.DepositoSocio1, "Conta Corrente - Socio1" },
+                    { Enums.TipoPagamento.DepositoSocio2, "Conta Corrente - Socio2" },
+                    { Enums.TipoPagamento.Credito,        "Cartao Credito - A receber" },
+                    { Enums.TipoPagamento.Debito,         "Debito" },
+                    { Enums.TipoPagamento.Futuro,         "Contas a Receber - Vendas nao pagas" }
+                };
 
                 foreach (var pag in venda.Pagamentos)
                 {
-                    using var cmdPag = new SqliteCommand(sqlPagamento, connection, transaction);
-                    cmdPag.Parameters.AddWithValue("@IdVenda", idVenda);
-                    cmdPag.Parameters.AddWithValue("@TipoPagamento", pag.Tipo.ToString());
-                    cmdPag.Parameters.AddWithValue("@Valor", pag.Valor);
-                    cmdPag.ExecuteNonQuery();
+                    // Resolver IdCentroFinanceiro pelo Nome
+                    string nomeCentro = mapaCentros[pag.Tipo];
+                    int idCentro;
+                    using (var cmdCentro = new SqliteCommand(
+                        "SELECT IdCentroFinanceiro FROM CentrosFinanceiros WHERE Nome = @Nome AND Ativo = 1 LIMIT 1;",
+                        connection, transaction))
+                    {
+                        cmdCentro.Parameters.AddWithValue("@Nome", nomeCentro);
+                        var resultado = cmdCentro.ExecuteScalar();
+                        if (resultado == null || resultado == DBNull.Value)
+                            throw new Exception($"Centro financeiro '{nomeCentro}' não encontrado ou inativo.");
+                        idCentro = Convert.ToInt32(resultado);
+                    }
+
+                    // Inserir em VendaPagamentos
+                    using (var cmdPag = new SqliteCommand(
+                        "INSERT INTO VendaPagamentos (IdVenda, FormaPagamento, Valor, IdCentroFinanceiro) VALUES (@IdVenda, @FormaPagamento, @Valor, @IdCentroFinanceiro);",
+                        connection, transaction))
+                    {
+                        cmdPag.Parameters.AddWithValue("@IdVenda", idVenda);
+                        cmdPag.Parameters.AddWithValue("@FormaPagamento", pag.Tipo.ToString());
+                        cmdPag.Parameters.AddWithValue("@Valor", pag.Valor);
+                        cmdPag.Parameters.AddWithValue("@IdCentroFinanceiro", idCentro);
+                        cmdPag.ExecuteNonQuery();
+                    }
+
+                    // Inserir movimentação financeira
+                    bool previsto = pag.Tipo == Enums.TipoPagamento.Futuro;
+                    string descricao = $"Venda {venda.CodigoVenda} ({pag.Tipo})";
+                    using (var cmdMov = new SqliteCommand(
+                        "INSERT INTO MovimentacoesFinanceiras (Data, Tipo, Valor, IdCentroDestino, Categoria, Descricao, IdVenda, Previsto) VALUES (@Data, 'Entrada', @Valor, @IdCentroDestino, 'Venda', @Descricao, @IdVenda, @Previsto);",
+                        connection, transaction))
+                    {
+                        cmdMov.Parameters.AddWithValue("@Data", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        cmdMov.Parameters.AddWithValue("@Valor", pag.Valor);
+                        cmdMov.Parameters.AddWithValue("@IdCentroDestino", idCentro);
+                        cmdMov.Parameters.AddWithValue("@Descricao", descricao);
+                        cmdMov.Parameters.AddWithValue("@IdVenda", idVenda);
+                        cmdMov.Parameters.AddWithValue("@Previsto", previsto ? 1 : 0);
+                        cmdMov.ExecuteNonQuery();
+                    }
+
+                    // Atualizar saldo no centro financeiro
+                    string sqlSaldo = previsto
+                        ? "UPDATE CentrosFinanceiros SET SaldoPrevisto = SaldoPrevisto + @Valor WHERE IdCentroFinanceiro = @IdCentroFinanceiro;"
+                        : "UPDATE CentrosFinanceiros SET SaldoAtual = SaldoAtual + @Valor WHERE IdCentroFinanceiro = @IdCentroFinanceiro;";
+                    using (var cmdSaldo = new SqliteCommand(sqlSaldo, connection, transaction))
+                    {
+                        cmdSaldo.Parameters.AddWithValue("@Valor", pag.Valor);
+                        cmdSaldo.Parameters.AddWithValue("@IdCentroFinanceiro", idCentro);
+                        cmdSaldo.ExecuteNonQuery();
+                    }
                 }
 
                 // 4. Atualizar status dos produtos
@@ -415,8 +467,8 @@ namespace BrechoApp.Data
             connection.Open();
 
             string sql = @"
-                SELECT TipoPagamento, Valor
-                FROM VendasPagamentos
+                SELECT FormaPagamento, Valor
+                FROM VendaPagamentos
                 WHERE IdVenda = @IdVenda;
             ";
 
@@ -429,7 +481,7 @@ namespace BrechoApp.Data
             {
                 lista.Add(new Pagamento
                 {
-                    Tipo = Enum.Parse<TipoPagamento>(reader["TipoPagamento"].ToString()),
+                    Tipo = Enum.Parse<TipoPagamento>(reader["FormaPagamento"].ToString()),
                     Valor = Convert.ToDouble(reader["Valor"], CultureInfo.InvariantCulture)
                 });
             }
